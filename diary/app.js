@@ -47,8 +47,27 @@
       el.appendChild(img); out.push(el); return;
     }
     if (slot === "main-cutout" && !S.photos[slot] && S.photos["main-photo"]) { el.style.display = "none"; out.push(el); return; }   // 내 사진을 넣었는데 컷아웃이 없으면 예시 실루엣을 숨긴다
+    // 사진이 하나도 없을 때: 겹친 동그라미 실루엣 대신 안내 자리 (10/23 자기야 "성의없어 보여") · 색은 테마를 따른다
+    if (slot === "main-cutout" && !S.photos[slot] && !S.photos["main-photo"]) { el.innerHTML = emptyMain(-(parseFloat(el.style.top) || 0) + 18); out.push(el); return; }
+    if (slot === "main-photo" && !S.slots["main-cutout"] && !S.photos[slot]) { el.innerHTML = `<div style="position:absolute;inset:0;background:linear-gradient(165deg,var(--p1),var(--p2))"></div>` + emptyMain(0); out.push(el); return; }   // 컷아웃 칸이 없는 틀(정사각)
+    if (/^id-photo-[ab]$/.test(slot) && !S.photos[slot]) { el.innerHTML = emptyId(slot === "id-photo-a" ? "①" : "②"); out.push(el); return; }
     const kids = []; node.childNodes.forEach((c) => build(c, scope, svg && tag !== "foreignobject", kids));
     kids.forEach((k) => el.appendChild(k)); out.push(el);
+  }
+  const CAM = (w, c) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.6"/></svg>`;
+  const HEART = (x, y, w, r, c) => `<svg viewBox="0 0 24 22" style="position:absolute;left:${x}px;top:${y}px;width:${w}px;transform:rotate(${r}deg)"><path d="M12 21C5 15 1 11 1 6.5 1 3 3.6 1 6.5 1c2.3 0 4.3 1.3 5.5 3.3C13.2 2.3 15.2 1 17.5 1 20.4 1 23 3 23 6.5 23 11 19 15 12 21z" fill="${c}" stroke="#fff" stroke-width="2"/></svg>`;
+  function emptyMain(top) {   // top: 칸 위쪽에서 실제 사진 자리까지 (컷아웃 칸은 액자 위로 튀어나와 있다)
+    return `<div style="position:absolute;left:0;right:0;top:${top}px;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center">
+      <div style="width:104px;height:104px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.45),0 8px 18px var(--sh)">${CAM(52, "var(--p3)")}</div>
+      <div style="font-family:'Black Han Sans';font-size:34px;line-height:1;color:var(--p3);text-shadow:3px 3px 0 #fff">우리 둘 사진</div>
+      <div style="font-family:'Gowun Batang',serif;font-weight:700;font-size:16px;color:var(--ink);background:#fff;padding:5px 14px;border-radius:999px">사진 탭에서 넣어 주세요 ♡</div>
+      <div style="font-family:'Gowun Batang',serif;font-size:12.5px;color:var(--ink);opacity:.8">배경 지운 PNG를 넣으면 액자 밖으로 튀어나와요</div>
+    </div>${HEART(60, 120, 30, -14, "var(--p3)")}${HEART(300, 150, 22, 12, "var(--p2)")}${HEART(318, 390, 26, -8, "var(--berry)")}${HEART(48, 400, 18, 10, "var(--p2)")}`;
+  }
+  function emptyId(n) {
+    return `<div style="width:100%;height:100%;position:relative;overflow:hidden;background:linear-gradient(180deg,#fff,var(--p1));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+      <div style="width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px var(--sh)">${CAM(28, "var(--p3)")}</div>
+      <div style="font-family:'Gowun Batang',serif;font-weight:700;font-size:14px;color:var(--p3)">증명사진 ${n}</div></div>`;
   }
   const themeVars = () => { const t = (S.Comp && S.Comp.THEMES[S.theme]) || {}; return Object.entries(t).map(([k, v]) => `--${k}:${v}`).join(";"); };
 
