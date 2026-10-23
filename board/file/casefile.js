@@ -291,11 +291,11 @@
     gif.finish(); download(URL.createObjectURL(new Blob([gif.bytes()], { type: "image/gif" })), "dopa_case_file.gif"); status("GIF를 저장했어요"); window.va("event", { name: "gif", data: { tool: "board-file" } });
   });
   const exportMp4 = () => withPause(async () => {
-    const FPS = 8, N = FPS * LOOP / 1000, vw = 960, vh = 600, frames = [], o = await opts({ canvasWidth: vw, canvasHeight: vh });
+    const HQ = /[?&]hq=1/.test(location.search), FPS = HQ ? 30 : 20, N = FPS * LOOP / 1000, vw = HQ ? 1600 : 1280, vh = HQ ? 1000 : 800, frames = [], o = await opts({ canvasWidth: vw, canvasHeight: vh });   // 10/23 화질 올림
     for (let f = 0; f < N; f++) { status(`영상 장면 만드는 중… ${f + 1}/${N}`); anim(S.motion ? f / N : 0.999); frames.push(await htmlToImage.toCanvas(root(), o)); }
     const rec = document.createElement("canvas"); rec.width = vw; rec.height = vh; const rx = rec.getContext("2d"); rx.drawImage(frames[0], 0, 0);
     const stream = rec.captureStream(30); let mime = "video/mp4"; if (!window.MediaRecorder || !MediaRecorder.isTypeSupported(mime)) mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : "video/webm";
-    const mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6e6 }); const chunks = []; mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    const mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: HQ ? 16e6 : 10e6 }); const chunks = []; mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((ok) => (mr.onstop = ok)); mr.start(); status("영상으로 묶는 중… 5초");
     for (let f = 0; f < N; f++) { rx.drawImage(frames[f], 0, 0); await new Promise((r) => setTimeout(r, 1000 / FPS)); }
     mr.stop(); await done; const blob = new Blob(chunks, { type: mr.mimeType || mime });

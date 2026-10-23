@@ -179,11 +179,11 @@
     gif.finish(); download(URL.createObjectURL(new Blob([gif.bytes()], { type: "image/gif" })), "dopa_movie.gif"); status("GIF를 저장했어요"); window.va("event", { name: "gif", data: { tool: "movie" } });
   });
   const exportMp4 = () => job(async () => {
-    const FPS = 12, N = FPS * LOOP / 1000, vw = 960, vh = 540, frames = [];
+    const HQ = /[?&]hq=1/.test(location.search), FPS = HQ ? 30 : 20, N = FPS * LOOP / 1000, vw = HQ ? 1600 : 1280, vh = HQ ? 900 : 720, frames = [];   // 10/23 자기야 "화질 후짐" → 720p·초당 20장 (?hq=1 이면 1600×900·30장)
     for (let f = 0; f < N; f++) { status(`영상 장면 만드는 중… ${f + 1}/${N}`); frames.push(await shot(S.motion ? f / N : T_STILL, vw, vh)); }
     const rec = document.createElement("canvas"); rec.width = vw; rec.height = vh; const rx = rec.getContext("2d"); rx.drawImage(frames[0], 0, 0);
     const stream = rec.captureStream(30); let mime = "video/mp4"; if (!window.MediaRecorder || !MediaRecorder.isTypeSupported(mime)) mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9") ? "video/webm;codecs=vp9" : "video/webm";
-    const mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8e6 }); const chunks = []; mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    const mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: HQ ? 16e6 : 10e6 }); const chunks = []; mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((ok) => (mr.onstop = ok)); mr.start(); status("영상으로 묶는 중… 5초");
     for (let f = 0; f < N; f++) { rx.drawImage(frames[f], 0, 0); await new Promise((r) => setTimeout(r, 1000 / FPS)); }
     mr.stop(); await done; const blob = new Blob(chunks, { type: mr.mimeType || mime });
