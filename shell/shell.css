@@ -215,3 +215,6 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 @media (max-width: 760px) { .sh-modes button { padding:5px 12px; font-size:.74rem; } }
 .sh-side .sh-sidek { margin:2px 0 12px; display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--muted); }
 .sh-side .sh-sidek b { font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.66rem; font-weight:600; letter-spacing:.14em; color:var(--accent); }   /* 영문 라벨만 고정폭 글꼴 · 한글은 본문 글꼴 */
+/* 미리보기 칸이 세로가 모자라면 눌려서 아래가 잘리던 것 (10/23 사건 파일) → 줄어들지 않게 하고, 폭을 화면 높이에 맞춰 넉넉히 */
+.sh-canvas { flex:none; max-width:min(100%, calc((100vh - 250px) * var(--ar, 1.7778))); }
+@media (max-width: 760px) { .sh-canvas { max-width:100%; } }

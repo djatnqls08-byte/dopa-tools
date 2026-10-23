@@ -7,8 +7,8 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const P0 = {
-    nameA: "서태영", nameAEn: "SEO TAEYOUNG", riskA: 34, traitA1: "원칙주의", traitA2: "방심",
-    nameB: "도가연", nameBEn: "DO GAYEON", riskB: 97, traitB1: "집요함", traitB2: "계획범", quoteB: "이제 이 화면, 내 거야.",
+    nameA: "A", nameAEn: "SUBJECT A", riskA: 34, traitA1: "원칙주의", traitA2: "방심",
+    nameB: "B", nameBEn: "SUBJECT B", riskB: 97, traitB1: "집요함", traitB2: "계획범", quoteB: "이제 이 화면, 내 거야.",
     bigText: "SYSTEM OVERRIDE", warnText: "접근 권한이 거부되었습니다.", marquee: "SUB_01 ⇄ SUB_02 /// OVERRIDE ///",
     log1: "접속 확인 · {A}", log1Type: "system", log2: "보고서 정리 끝. 로그아웃할게.", log2Type: "A", log3: "외부 접속 감지 · 포트 0427", log3Type: "error",
     log4: "늦었어. 이미 들어와 있거든.", log4Type: "B", log5: "권한 이전 완료", log5Type: "system",

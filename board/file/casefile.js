@@ -9,25 +9,25 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  // 예시: 도파 튜토리얼 · 서태영 × 도가연 (시트 '도파미너' 설정에서)
+  // 기본 예시는 이름 없이 A / B (10/23 자기야 "기본 템플릿은 A/B로") · 글은 클로드 디자인 시안 그대로
   const DEF = {
     no: "1027-B", date: "2026.10.27 02:14", status: "STATUS OPEN",
-    title: "樂園 사건", sub: "해결사와 팀장, 서로를 의심하는 밤",
-    a: { name: "서태영", code: "SUSPECT 01 · 1027-A", profile: "32세 · 비공식 해결사", alibi: "“그 시간엔 낮잠 자고 있었는데.”", threat: 30 },
-    b: { name: "도가연", code: "SUSPECT 02 · 1027-B", profile: "30세 · 전략기획팀장", alibi: "“야근 중이었어요. 혼자.”", threat: 90 },
-    ev1: "그날 밤, 사무소", ev2: "지워진 사내 메신저",
+    title: "白夜 사건", sub: "형사와 제보자, 서로를 의심하는 밤",
+    a: { name: "A", code: "SUSPECT 01 · 1027-A", profile: "29세 · 184cm · 강력계 형사", alibi: "“그 시간엔 잠복 중이었어.”", threat: 30 },
+    b: { name: "B", code: "SUSPECT 02 · 1027-B", profile: "26세 · 162cm · 화이트 해커", alibi: "“집에서 코딩했는데요. 혼자.”", threat: 90 },
+    ev1: "그날 밤, 골목", ev2: "지워진 통화 기록",
     tr: [
-      { time: "02:14", who: "a", text: "선입금은 들어왔고. 이제 말해 봐." },
-      { time: "02:14", who: "b", text: "사적인 이야기는 퇴근하고 해요." },
-      { time: "02:15", who: "a", text: "지금 퇴근 시간인데." },
+      { time: "02:14", who: "a", text: "너, 나한테 뭐 숨기는 거 있지." },
+      { time: "02:14", who: "b", text: "형사님이 먼저 물어보든가." },
+      { time: "02:15", who: "a", text: "그날 골목에 있었잖아." },
       { time: "02:15", who: "b", text: "기억 안 나요." },
       { time: "02:16", who: "-", text: "(침묵 4초)" },
     ],
     markLine: 3, note: "← 거짓말. 다 봤으면서",
     stamp: "CLASSIFIED", stampSub: "극비 · 외부 유출 금지",
     cards: [
-      { title: "반쯤 남은 믹스커피", desc: "새벽마다 책상 위에. 누가 두는지 모름" },
-      { title: "우디향 룸스프레이", desc: "사무소에서 같은 향이 났다" },
+      { title: "반쯤 남은 커피", desc: "새벽마다 책상 위에. 누가 두는지 모름" },
+      { title: "빌려 간 후드 집업", desc: "돌려받지 못함. 향이 바뀌었다" },
       { title: "지워진 메시지 1건", desc: "“오늘은 오지 마요”" },
       { title: "같은 우산", desc: "비 오던 날, 한 사람만 젖었다" },
     ],

@@ -6,12 +6,12 @@
   const W = 1600, H = 900, LOOP = 4000, LS = "dopa_movie_v1", T_STILL = 0.85;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  // 예시: 도파 튜토리얼 · 서태영 × 도가연 · 글 속 {A} {B} 는 이름으로 바뀐다
+  // 기본 예시는 이름 없이 A / B (10/23 자기야) · 글 속 {A} {B} 는 이름으로 바뀐다
   const P0 = {
-    nameA: "서태영", nameB: "도가연", ratingA: 4, ratingB: 5, subStyle: "자막",
+    nameA: "A", nameB: "B", ratingA: 4, ratingB: 5, subStyle: "자막",
     subA: "{A}: 우산, 같이 쓸래?", subB: "{B}: …어깨 다 젖잖아요.",
     title: "흐르는 밤", tag: "DOPA PAIR ORIGINAL", year: "2026", runtime: "1시간 52분", genre: "로맨스 · 드라마",
-    synopsis: "비 오는 밤, 막차를 놓친 해결사와 팀장. 같은 우산 아래에서 두 시간짜리 거짓말이 시작된다.",
+    synopsis: "비 오는 밤, 막차를 놓친 두 사람. 같은 우산 아래에서 두 시간짜리 거짓말이 시작된다.",
     date: "10.27 (토)", time: "23:40 – 01:32", hall: "7관 · 리클라이너", seat: "G16, G17", bookNo: "1027-0427", snack: "팝콘 L 1 · 콜라 2",
     badgeA: "다시 볼래요", badgeB: "최고예요",
     reviewA: "정류장 장면이 좀 길었어. 근데 버스가 그냥 지나갈 때 숨을 참게 되더라. 옆에서 조는 줄 알았던 사람이 그 장면에서만 눈을 뜨고 있었고.",
