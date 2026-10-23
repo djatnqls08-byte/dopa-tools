@@ -101,7 +101,13 @@
       <div class="sh-pane" data-pane="color" hidden>
         <div class="sh-sec">
           <div class="sh-h"><b>색 테마</b></div>
-          <select id="theme" class="sh-field" aria-label="색 테마"><option>딸기우유</option><option>라벤더</option><option>체리</option></select>
+          <div class="sh-chips" id="themeChips">
+            <button type="button" class="sh-chip" data-theme="딸기우유"><i style="background:linear-gradient(135deg,#ff9fc0,#e8457c)"></i>딸기우유</button>
+            <button type="button" class="sh-chip" data-theme="라벤더"><i style="background:linear-gradient(135deg,#f4a6cf,#9256d6)"></i>라벤더</button>
+            <button type="button" class="sh-chip" data-theme="체리"><i style="background:linear-gradient(135deg,#ff6f9c,#d61f45)"></i>체리</button>
+          </div>
+          <p class="sh-note">고른 색에 맞춰 편집 화면 버튼 색도 같이 바뀌어요.</p>
+          <select id="theme" hidden aria-hidden="true"><option>딸기우유</option><option>라벤더</option><option>체리</option></select>
         </div>
       </div>
       <div class="sh-pane" data-pane="deco" hidden>
@@ -155,6 +161,12 @@
   const ratio = () => { const w = parseFloat(stage.style.width) || 1600, h = parseFloat(stage.style.height) || 900; cv.style.maxWidth = `min(100%, calc((100vh - 230px) * ${w / h}))`; cv.style.setProperty("--ar", String(w / h)); };
   new MutationObserver(ratio).observe(stage, { attributes: true, attributeFilter: ["style"] }); ratio();
   new ResizeObserver(() => window.dispatchEvent(new Event("resize"))).observe(cv);
+  // 색 테마: 누르는 칩 (다른 도구의 색 고르기와 같은 모양) · 고른 테마 색을 편집 화면 포인트 색으로도 쓴다 (10/23 자기야)
+  const TC = { "딸기우유": ["#e8457c", "rgba(232,69,124,.22)"], "라벤더": ["#9256d6", "rgba(146,86,214,.22)"], "체리": ["#d61f45", "rgba(214,31,69,.22)"] };
+  const sel = document.getElementById("theme"), chips = [...document.querySelectorAll("#themeChips [data-theme]")];
+  const paint = () => { const v = sel.value, c = TC[v] || TC["딸기우유"]; chips.forEach((b) => b.classList.toggle("on", b.dataset.theme === v)); document.documentElement.style.setProperty("--accent", c[0]); document.documentElement.style.setProperty("--glow", c[1]); };
+  chips.forEach((b) => b.addEventListener("click", () => { sel.value = b.dataset.theme; sel.dispatchEvent(new Event("change")); paint(); }));
+  setTimeout(paint, 0);
 })();
 </script>
 <script src="/shell/shell.js"></script>

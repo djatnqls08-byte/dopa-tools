@@ -1,13 +1,14 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-mode="night">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>도삐의 무료 도구함 · DOPA</title>
-<meta name="description" content="캐릭터 이미지만 넣으면 끝 · 페어틀 무료 도구 모음 · 가입 없음">
+<meta name="description" content="캐릭터 이미지만 넣으면 끝 · 페어틀 무료 도구 모음 · 가입 없음 · PNG·GIF·MP4 저장">
 <meta property="og:title" content="도삐의 무료 도구함 · DOPA">
 <meta property="og:description" content="캐릭터 이미지만 넣으면 끝 · 페어틀 무료 도구 모음 · 가입 없음">
 <meta name="theme-color" content="#121314">
+<script>try { document.documentElement.dataset.mode = localStorage.getItem("dopa_tools_mode") || "night"; } catch (e) {}</script>
 <!-- 버셀 웹 분석 -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -17,62 +18,122 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* 도파 네온(나이트) 테마와 같은 색 · lib/themes.js dopa.dark */
-:root { --bg:#121314; --panel:#1B1C1E; --panel2:#222326; --border:#2A2C2F; --border2:#3A3D41; --text:#F2F2F0; --muted:#9A9DA2; --accent:#F0185E; --glow:rgba(240,24,94,.25); --point:#D9FF3F; color-scheme:dark; }
+/* 도구함 첫 화면 — 편집 화면(shell.css)과 같은 나이트/라이트 색 · 고른 모드는 도구끼리 같이 기억한다 */
+:root, [data-mode="night"] {
+  --bg:#121314; --panel:#1B1C1E; --panel2:#222326; --border:#2A2C2F; --border2:#3A3D41; --text:#F2F2F0; --muted:#9A9DA2;
+  --accent:#F0185E; --glow:rgba(240,24,94,.25); --point:#D9FF3F; --grid:rgba(255,255,255,.035); --hero1:rgba(240,24,94,.20); --hero2:rgba(139,0,255,.14); color-scheme:dark;
+}
+[data-mode="light"] {
+  --bg:#F7F7F8; --panel:#FFFFFF; --panel2:#F3F3F5; --border:#E4E4E7; --border2:#C9C9CF; --text:#121314; --muted:#5F6368;
+  --accent:#E0004F; --glow:rgba(224,0,79,.16); --point:#2647C7; --grid:rgba(18,19,20,.05); --hero1:rgba(224,0,79,.12); --hero2:rgba(38,71,199,.10); color-scheme:light;
+}
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
+[hidden] { display:none !important; }
+html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; transition:background-color .2s, color .2s; }
+body { background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size:40px 40px; }
 a { color:inherit; text-decoration:none; }
-.wrap { max-width:1080px; margin:0 auto; padding:max(28px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); display:flex; flex-direction:column; gap:28px; }
-header { display:flex; flex-direction:column; gap:14px; }
-.brand { display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600; letter-spacing:.14em; color:var(--muted); }
-.brand img { width:28px; height:28px; border-radius:8px; }
-h1 { margin:0; font-size:clamp(1.7rem, 5vw, 2.4rem); font-weight:800; letter-spacing:-.03em; line-height:1.25; text-wrap:balance; word-break:keep-all; }
+button { font-family:inherit; color:inherit; }
+.mono { font-family:'IBM Plex Mono',ui-monospace,monospace; }
+
+.wrap { max-width:1180px; margin:0 auto; padding:0 max(20px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+.top { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.01em; }
+.brand img { width:30px; height:30px; border-radius:9px; }
+.brand span { font-size:.72rem; font-weight:600; letter-spacing:.18em; color:var(--muted); }
+.top-r { display:flex; align-items:center; gap:8px; }
+.icon-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 14px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-weight:700; font-size:.82rem; cursor:pointer; }
+.icon-btn svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.icon-btn:hover { border-color:var(--text); }
+
+.hero { position:relative; padding:56px 0 40px; display:flex; flex-direction:column; align-items:flex-start; gap:18px; }
+.hero::before { content:""; position:absolute; z-index:-1; inset:-40px -20vw 0; background:radial-gradient(40% 70% at 22% 40%, var(--hero1), transparent 70%), radial-gradient(35% 60% at 78% 20%, var(--hero2), transparent 70%); pointer-events:none; }
+.kicker { display:inline-flex; align-items:center; gap:8px; font-size:.72rem; font-weight:600; letter-spacing:.2em; color:var(--accent); }
+.kicker i { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+h1 { margin:0; font-size:clamp(2rem, 5.4vw, 3.6rem); line-height:1.12; font-weight:900; letter-spacing:-.035em; text-wrap:balance; word-break:keep-all; }
 h1 em { font-style:normal; color:var(--accent); }
-.lead { margin:0; color:var(--muted); font-size:1rem; line-height:1.65; word-break:keep-all; }
+.lead { margin:0; max-width:560px; color:var(--muted); font-size:1.05rem; line-height:1.7; word-break:keep-all; }
 .chips { display:flex; flex-wrap:wrap; gap:8px; }
-.chip { font-size:.78rem; font-weight:700; padding:6px 11px; border-radius:999px; border:1px solid var(--border2); color:var(--text); background:var(--panel); }
-.chip b { color:var(--point); font-weight:800; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap:16px; }
-.card { display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--border); border-radius:18px; overflow:hidden; transition:border-color .15s, transform .15s; min-width:0; }
-.card:hover { border-color:var(--accent); transform:translateY(-2px); }
-.thumb { position:relative; aspect-ratio:16/9; background:var(--panel2); overflow:hidden; }
-.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-.tag { position:absolute; left:10px; top:10px; font-size:.74rem; font-weight:800; padding:4px 10px; border-radius:8px; background:var(--accent); color:#fff; }
-.new { position:absolute; right:10px; top:10px; font-family:'IBM Plex Mono',monospace; font-size:.7rem; font-weight:600; letter-spacing:.08em; padding:3px 8px; border-radius:6px; background:var(--point); color:#121314; }
-.body { padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px; }
-.title { font-size:1.12rem; font-weight:800; letter-spacing:-.02em; display:flex; align-items:center; gap:6px; }
-.title svg { width:15px; height:15px; color:var(--muted); flex:none; }
-.desc { color:var(--muted); font-size:.92rem; line-height:1.6; word-break:keep-all; }
-.cta { display:flex; flex-direction:column; gap:14px; align-items:flex-start; padding:24px 22px; border-radius:18px; background:linear-gradient(135deg, rgba(240,24,94,.16), rgba(139,0,255,.10)); border:1px solid rgba(240,24,94,.35); }
-.cta p { margin:0; line-height:1.65; word-break:keep-all; }
-.cta .k { font-family:'IBM Plex Mono',monospace; font-size:.74rem; font-weight:600; letter-spacing:.12em; color:var(--accent); }
-.cta .h { font-size:1.18rem; font-weight:800; letter-spacing:-.02em; }
-.cta .s { color:var(--muted); font-size:.92rem; }
-.btn { display:inline-flex; align-items:center; gap:8px; padding:13px 20px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:.98rem; box-shadow:0 6px 22px var(--glow); }
-footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; color:var(--muted); font-size:.82rem; line-height:1.6; }
+.chip { display:inline-flex; align-items:center; gap:6px; padding:7px 13px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-size:.8rem; font-weight:700; }
+.chip b { color:var(--accent); }
+
+.sec-h { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:8px 0 16px; }
+.sec-h h2 { margin:0; font-size:1.25rem; font-weight:800; letter-spacing:-.02em; }
+.sec-h span { color:var(--muted); font-size:.82rem; }
+.grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; }
+.card { position:relative; display:flex; flex-direction:column; border-radius:20px; overflow:hidden; background:var(--panel); border:1px solid var(--border); transition:transform .18s, border-color .18s, box-shadow .18s; }
+.card:hover { transform:translateY(-3px); border-color:var(--accent); box-shadow:0 18px 40px -18px var(--glow); }
+.thumb { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--panel2); }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s; }
+.card:hover .thumb img { transform:scale(1.03); }
+.badges { position:absolute; left:12px; top:12px; display:flex; gap:6px; }
+.badge { font-size:.72rem; font-weight:800; padding:4px 10px; border-radius:8px; background:var(--accent); color:#fff; }
+.badge.new { background:var(--point); color:#121314; font-family:'IBM Plex Mono',monospace; letter-spacing:.08em; }
+[data-mode="light"] .badge.new { color:#fff; }
+.body { padding:18px 20px 20px; display:flex; flex-direction:column; gap:10px; }
+.title { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:1.18rem; font-weight:800; letter-spacing:-.02em; }
+.title svg { width:20px; height:20px; flex:none; fill:none; stroke:var(--muted); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:transform .18s, stroke .18s; }
+.card:hover .title svg { transform:translateX(3px); stroke:var(--accent); }
+.desc { color:var(--muted); font-size:.92rem; line-height:1.6; word-break:keep-all; margin:0; }
+.meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
+.meta span { font-size:.72rem; font-weight:700; padding:4px 9px; border-radius:7px; background:var(--panel2); color:var(--muted); border:1px solid var(--border); }
+.meta span.mode { color:var(--text); }
+
+.how { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin:48px 0 20px; }
+.step { padding:18px 18px 20px; border-radius:16px; border:1px solid var(--border); background:var(--panel); display:flex; flex-direction:column; gap:8px; }
+.step b { font-size:.72rem; letter-spacing:.16em; color:var(--accent); }
+.step strong { font-size:1rem; }
+.step p { margin:0; color:var(--muted); font-size:.86rem; line-height:1.6; word-break:keep-all; }
+
+.cta { position:relative; overflow:hidden; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-top:28px; padding:28px; border-radius:22px; border:1px solid color-mix(in srgb, var(--accent) 45%, transparent); background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--panel)), var(--panel) 60%); }
+.cta div { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.cta .k { font-size:.72rem; letter-spacing:.16em; color:var(--accent); font-weight:600; }
+.cta strong { font-size:1.25rem; letter-spacing:-.02em; word-break:keep-all; }
+.cta p { margin:0; color:var(--muted); font-size:.9rem; word-break:keep-all; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:14px 22px; border-radius:14px; background:var(--accent); color:#fff; font-weight:800; box-shadow:0 8px 24px var(--glow); white-space:nowrap; }
+footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; margin-top:36px; padding-top:20px; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem; line-height:1.6; }
 footer a { color:var(--text); font-weight:700; }
+
+@media (max-width: 760px) {
+  .hero { padding:32px 0 28px; }
+  .grid, .how { grid-template-columns:minmax(0, 1fr); }
+  .top .x-link span { display:none; }
+  .cta { padding:22px; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="brand"><img src="/logo.svg" alt="">DOPA · TOOLS</div>
-    <h1>캐릭터 이미지만 넣으면 끝,<br><em>도삐의 무료 도구함</em></h1>
-    <p class="lead">페어틀을 클릭 몇 번으로 만들어요. 가입 없이 바로 쓰고, PNG·GIF로 저장할 수 있어요.</p>
-    <div class="chips"><span class="chip">가입 <b>X</b></span><span class="chip">무료</span><span class="chip">새 틀 계속 추가</span></div>
+  <header class="top">
+    <a class="brand" href="/"><img src="/logo.svg" alt="">DOPA <span class="mono">TOOLS</span></a>
+    <div class="top-r">
+      <a class="icon-btn x-link" href="https://x.com/DOPA_studio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg><span>새 틀 소식</span></a>
+      <button class="icon-btn" id="mode" type="button" aria-label="나이트·라이트 바꾸기"><svg viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></svg><span id="modeLab">라이트</span></button>
+    </div>
   </header>
 
+  <section class="hero">
+    <span class="kicker mono"><i></i>FREE PAIR-FRAME TOOLS</span>
+    <h1>캐릭터 이미지만 넣으면 끝,<br><em>도삐의 무료 도구함</em></h1>
+    <p class="lead">사진과 대사를 넣고 끌어서 맞추면 완성이에요. 가입 없이 바로 쓰고, 움직이는 GIF·MP4로도 저장할 수 있어요.</p>
+    <div class="chips"><span class="chip">가입 <b>없음</b></span><span class="chip">전부 <b>무료</b></span><span class="chip">PNG · GIF · MP4</span><span class="chip">사진은 내 기기에서만</span></div>
+  </section>
+
+  <div class="sec-h"><h2>페어틀</h2><span id="count"></span></div>
   <main class="grid" id="grid" aria-live="polite"></main>
 
+  <section class="how">
+    <div class="step"><b class="mono">STEP 01</b><strong>틀 고르기</strong><p>마음에 드는 틀을 누르면 바로 편집 화면이 열려요.</p></div>
+    <div class="step"><b class="mono">STEP 02</b><strong>사진·글 넣기</strong><p>사진 탭에 넣고 그림 위에서 끌어 맞춰요. 움짤(GIF)도 넣을 수 있어요.</p></div>
+    <div class="step"><b class="mono">STEP 03</b><strong>저장해서 자랑하기</strong><p>오른쪽 아래 다운로드에서 PNG·GIF·MP4 중에 골라요.</p></div>
+  </section>
+
   <section class="cta">
-    <span class="k">DOPA · AI INTERACTIVE STORY</span>
-    <p class="h">이 캐릭터로 이야기까지 이어 가고 싶다면</p>
-    <p class="s">설정을 잊지 않는 AI 인터랙티브 스토리 〈도파〉 · 11/5 텀블벅 펀딩 오픈</p>
+    <div><span class="k mono">DOPA · AI INTERACTIVE STORY</span><strong>이 캐릭터로 이야기까지 이어 가고 싶다면</strong><p>설정을 잊지 않는 AI 인터랙티브 스토리 〈도파〉 · 11/5 텀블벅 펀딩 오픈</p></div>
     <a class="btn tb" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">텀블벅 알림 신청하기</a>
   </section>
 
   <footer>
-    <span>만든 곳 · 도파 스튜디오</span>
+    <span>만든 곳 · 도파 스튜디오 · 결과물은 자유롭게 자랑해 주세요, 틀 자체의 재배포는 삼가 주세요</span>
     <span>새 틀 소식은 <a href="https://x.com/DOPA_studio" target="_blank" rel="noopener">X @DOPA_studio</a></span>
   </footer>
 </div>
@@ -90,6 +151,13 @@ const FALLBACK = [
 // 옛 개별 사이트 주소 → 이 사이트 안의 주소
 const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
 const HIDE = ["dopa-card.vercel.app"];   // 10/23 자기야: 세션카드 메이커는 도구함에서 뺀다 (앱 탐색 바로가기는 시트 그대로)
+// 도구별 저장 형식 · 모드 · NEW (시트에 없는 정보)
+const EXTRA = {
+  "/diary/": { fmt: ["PNG", "GIF"] },
+  "/viewfinder/": { fmt: ["PNG", "GIF", "MP4"] },
+  "/override/": { fmt: ["PNG", "GIF", "MP4"], modes: "해킹 움짤 · 클래식", isNew: true },
+  "/board/": { fmt: ["PNG", "GIF", "MP4"], modes: "사건 파일 · 클래식", isNew: true },
+};
 const hidden = (u) => { try { return HIDE.includes(new URL(u, location.href).host); } catch (e) { return false; } };
 const local = (u) => { try { const x = new URL(u, location.href); if (MOVED[x.host]) return MOVED[x.host]; if (x.host === location.host) return x.pathname; return x.href; } catch (e) { return u; } };
 
@@ -106,30 +174,35 @@ function csv(text) {
   if (cell || row.length) { row.push(cell); rows.push(row); }
   return rows;
 }
-
 const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const ARROW = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 
 function render(list) {
-  const shown = [...list].sort((a, b) => a.o - b.o);   // 시트 '순서' 대로 (앱 탐색 바로가기와 같은 줄)
-  const top = shown[0] && shown[0].o;                    // 맨 앞 틀에 NEW · 새 틀은 시트에서 순서 1로 올리면 된다
+  const shown = [...list].sort((a, b) => a.o - b.o);
+  document.getElementById("count").textContent = `${shown.length}개 · 계속 늘어나요`;
   document.getElementById("grid").innerHTML = shown.map((x) => {
-    const href = local(x.l), out = /^https?:/.test(href);
+    const href = local(x.l), out = /^https?:/.test(href), ex = EXTRA[href] || {};
     return `<a class="card" href="${esc(href)}"${out ? ' target="_blank" rel="noopener"' : ""} data-tool="${esc(x.t)}">
-      <div class="thumb"><img src="${esc(x.i)}" alt="${esc(x.t)} 미리보기" loading="lazy">${x.g ? `<span class="tag">${esc(x.g)}</span>` : ""}${x.o === top && list.length > 1 ? '<span class="new">NEW</span>' : ""}</div>
-      <div class="body"><div class="title">${esc(x.t)}${ARROW}</div><div class="desc">${esc(x.d)}</div></div>
+      <div class="thumb"><img src="${esc(x.i)}" alt="${esc(x.t)} 미리보기" loading="lazy"><div class="badges">${x.g ? `<span class="badge">${esc(x.g)}</span>` : ""}${ex.isNew ? '<span class="badge new">NEW</span>' : ""}</div></div>
+      <div class="body"><div class="title">${esc(x.t)}${ARROW}</div><p class="desc">${esc(x.d)}</p>
+        <div class="meta">${ex.modes ? `<span class="mode">모드 · ${esc(ex.modes)}</span>` : ""}${(ex.fmt || []).map((f) => `<span class="mono">${f}</span>`).join("")}</div></div>
     </a>`;
   }).join("");
 }
 
 render(FALLBACK);
-fetch(SHEET).then((r) => r.ok ? r.text() : Promise.reject(r.status)).then((t) => {
+fetch(SHEET).then((r) => (r.ok ? r.text() : Promise.reject(r.status))).then((t) => {
   const [head, ...rows] = csv(t); const ix = (k) => head.findIndex((h) => h.trim() === k);
   const [on, ti, de, im, li, ta, or] = ["공개여부", "제목", "설명", "이미지", "링크", "태그", "순서"].map(ix);
   const list = rows.filter((r) => String(r[on]).trim().toUpperCase() === "TRUE" && r[ti] && r[li] && !hidden(r[li].trim()))
     .map((r) => ({ t: r[ti].trim(), d: (r[de] || "").trim(), i: (r[im] || "").trim(), l: r[li].trim(), g: (r[ta] || "").trim(), o: Number(r[or]) || 0 }));
   if (list.length) render(list);
 }).catch(() => {});
+
+// 나이트 / 라이트 (도구 편집 화면과 같이 기억)
+function setMode(m) { document.documentElement.dataset.mode = m; document.getElementById("modeLab").textContent = m === "night" ? "라이트" : "나이트"; document.querySelector('meta[name="theme-color"]').setAttribute("content", m === "night" ? "#121314" : "#F7F7F8"); try { localStorage.setItem("dopa_tools_mode", m); } catch (e) {} }
+setMode(document.documentElement.dataset.mode || "night");
+document.getElementById("mode").addEventListener("click", () => setMode(document.documentElement.dataset.mode === "night" ? "light" : "night"));
 
 document.addEventListener("click", (e) => {
   const a = e.target.closest("a"); if (!a) return;

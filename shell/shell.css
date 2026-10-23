@@ -201,3 +201,9 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 .sh-cpk-code input.bad { border-color:var(--danger); }
 /* 한국어 줄나눔: 낱말 중간에서 끊지 않는다 (10/23 '함/께') */
 .sh-panel, .sh-card, .sh-tip, .sh-title p { word-break:keep-all; overflow-wrap:break-word; }
+/* 왼쪽 목록이 숨는 크기(1100px 이하)에서도 '도구함으로' 버튼을 보인다 (10/23 자기야: 뒤로가기가 없어 불편) */
+@media (max-width: 1100px) and (min-width: 761px) {
+  .sh-center { position:relative; }
+  .sh-title .sh-mback { display:inline-flex; position:absolute; left:20px; top:18px; gap:6px; padding:8px 12px 8px 8px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-weight:700; font-size:.84rem; }
+  .sh-title .sh-mback::after { content:"도구함"; }
+}
