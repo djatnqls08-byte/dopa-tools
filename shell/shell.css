@@ -150,14 +150,14 @@ body.sh { padding:0 !important; min-height:0 !important; }
 .sh-result:not(.hidden) { display:flex; }
 @media (max-width: 760px) { .sh-title { position:relative; justify-content:center; } .sh-title .sh-mback { position:absolute; left:0; top:50%; transform:translateY(-50%); margin:0; } }
 /* 편집 패널 접기 (PC) — 접으면 미리보기가 넓어진다 */
-.sh-app.panel-off { grid-template-columns:220px minmax(0,1fr) 0 84px; }
+.sh-app.panel-off { grid-template-columns:220px minmax(0,1fr) 84px; }   /* 패널이 빠지면 칸도 하나 줄인다 (0px 칸에 버튼 줄이 끼어 세로선이 생겼다) */
 .sh-app.panel-off .sh-panel { display:none; }
 .sh-rail button.on .ic { border-color:var(--accent); color:var(--accent); }
 .sh-fold { position:absolute; right:8px; top:8px; width:30px; height:30px; border-radius:8px; border:0; background:none; color:var(--muted); cursor:pointer; display:grid; place-items:center; }
 .sh-fold:hover { background:var(--panel2); color:var(--text); }
 .sh-panel { position:relative; }
 .sh-tabs { padding-right:40px; }
-@media (max-width: 1100px) { .sh-app.panel-off { grid-template-columns:minmax(0,1fr) 0 80px; } }
+@media (max-width: 1100px) { .sh-app.panel-off { grid-template-columns:minmax(0,1fr) 80px; } }
 @media (max-width: 760px) { .sh-rail .m-hide, .sh-fold { display:none; } .sh-tabs { padding-right:0; } .sh-app.panel-off .sh-panel { display:flex; } }
 .sh-seg3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
 .sh-seg3 .sh-btn { padding:9px 4px; }
@@ -207,3 +207,6 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
   .sh-title .sh-mback { display:inline-flex; position:absolute; left:20px; top:18px; gap:6px; padding:8px 12px 8px 8px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-weight:700; font-size:.84rem; }
   .sh-title .sh-mback::after { content:"도구함"; }
 }
+/* 구역 사이 구분선이 위 버튼에 딱 붙던 것 (10/23 '회색 라인') → 구분선 위아래로 같은 여백 */
+.sh-pane { display:flex; flex-direction:column; }
+.sh-sec + .sh-sec { margin-top:20px; }
