@@ -98,20 +98,50 @@
     addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.classList.contains("sh-zoomed")) zoom(false); });
   }
 
-  // 색 고르기 옆에 색 코드 칸 (#F0185E 처럼 직접 입력 · 10/23 자기야)
-  const hexOk = (v) => /^#?[0-9a-f]{6}$/i.test(v.trim()) || /^#?[0-9a-f]{3}$/i.test(v.trim());
+  // 색판: 브라우저 기본 색판(RGB만 보임) 대신 우리 색판 — 색 면 · 색상 막대 · 색 코드 칸 (10/23 자기야 "색판에 코드 입력")
+  const h2r = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const r2h = (r, g, b) => "#" + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("").toUpperCase();
+  const hsv2rgb = (h, s, v) => { const f = (n) => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return [f(5) * 255, f(3) * 255, f(1) * 255]; };
+  const rgb2hsv = (r, g, b) => { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0; if (d) { h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; } return [h, mx ? d / mx : 0, mx]; };
+  const hexOk = (v) => /^#?([0-9a-f]{6}|[0-9a-f]{3})$/i.test(v.trim());
   const norm = (v) => { let h = v.trim().replace(/^#/, ""); if (h.length === 3) h = h.split("").map((c) => c + c).join(""); return "#" + h.toUpperCase(); };
-  const hexFields = [];
-  $$('.sh-color input[type="color"]').forEach((cp) => {
-    const f = document.createElement("input"); f.type = "text"; f.className = "sh-hex"; f.maxLength = 7; f.spellcheck = false; f.setAttribute("aria-label", "색 코드"); f.value = cp.value.toUpperCase();
-    f.addEventListener("click", (e) => e.preventDefault());   // 라벨 안이라 누르면 색판이 열리지 않게
-    f.addEventListener("input", () => { f.classList.toggle("bad", !hexOk(f.value)); if (hexOk(f.value)) { cp.value = norm(f.value); cp.dispatchEvent(new Event("input", { bubbles: true })); cp.dispatchEvent(new Event("change", { bubbles: true })); } });
-    f.addEventListener("blur", () => { f.value = cp.value.toUpperCase(); f.classList.remove("bad"); });
-    cp.addEventListener("input", () => { if (document.activeElement !== f) f.value = cp.value.toUpperCase(); });
-    cp.closest(".sh-color").appendChild(f); hexFields.push([f, cp]);
-  });
-  // 미리 정해 둔 색 버튼을 눌러도 코드 칸이 따라오게
-  document.addEventListener("click", () => setTimeout(() => hexFields.forEach(([f, cp]) => { if (document.activeElement !== f) f.value = cp.value.toUpperCase(); }), 0));
+  let pk = null;
+  function picker() {
+    if (pk) return pk;
+    const el = document.createElement("div"); el.className = "sh-cpk"; el.hidden = true;
+    el.innerHTML = `<div class="sh-cpk-sv"><div class="sh-cpk-dot"></div></div><input type="range" class="sh-cpk-hue" min="0" max="360" step="1" aria-label="색상">
+      <div class="sh-cpk-row"><span class="sh-cpk-sw"></span><label class="sh-cpk-code">색 코드<input type="text" maxlength="7" spellcheck="false"></label><button type="button" class="sh-btn sm main sh-cpk-ok">확인</button></div>`;
+    document.body.appendChild(el);
+    const sv = el.querySelector(".sh-cpk-sv"), dot = el.querySelector(".sh-cpk-dot"), hue = el.querySelector(".sh-cpk-hue"), code = el.querySelector("input[type=text]"), sw = el.querySelector(".sh-cpk-sw");
+    pk = { el, target: null, h: 0, s: 1, v: 1 };
+    const paint = (fromCode) => {
+      const hex = r2h(...hsv2rgb(pk.h, pk.s, pk.v));
+      sv.style.background = `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(${pk.h},100%,50%))`;
+      dot.style.left = pk.s * 100 + "%"; dot.style.top = (1 - pk.v) * 100 + "%"; hue.value = pk.h; sw.style.background = hex;
+      if (!fromCode) code.value = hex; code.classList.remove("bad");
+      if (pk.target && pk.target.value.toUpperCase() !== hex) { pk.target.value = hex; pk.target.dispatchEvent(new Event("input", { bubbles: true })); pk.target.dispatchEvent(new Event("change", { bubbles: true })); }
+    };
+    pk.load = (hex) => { [pk.h, pk.s, pk.v] = rgb2hsv(...h2r(norm(hex))); paint(); };
+    const svAt = (e) => { const r = sv.getBoundingClientRect(); pk.s = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); pk.v = 1 - Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)); paint(); };
+    sv.addEventListener("pointerdown", (e) => { sv.setPointerCapture(e.pointerId); svAt(e); sv.onpointermove = svAt; });
+    sv.addEventListener("pointerup", () => (sv.onpointermove = null));
+    hue.addEventListener("input", () => { pk.h = Number(hue.value); paint(); });
+    code.addEventListener("input", () => { if (hexOk(code.value)) { [pk.h, pk.s, pk.v] = rgb2hsv(...h2r(norm(code.value))); paint(true); } else code.classList.add("bad"); });
+    code.addEventListener("keydown", (e) => { if (e.key === "Enter") hidePk(); });
+    el.querySelector(".sh-cpk-ok").onclick = hidePk;
+    document.addEventListener("pointerdown", (e) => { if (!el.hidden && !el.contains(e.target) && e.target !== pk.target) hidePk(); }, true);
+    addEventListener("keydown", (e) => { if (e.key === "Escape" && !el.hidden) hidePk(); });
+    return pk;
+  }
+  function hidePk() { if (pk) { pk.el.hidden = true; pk.target = null; } }
+  function showPk(cp) {
+    const p = picker(); p.target = null; p.load(cp.value || "#F0185E"); p.target = cp; p.el.hidden = false;
+    const r = cp.getBoundingClientRect(), w = p.el.offsetWidth, h = p.el.offsetHeight;
+    if (innerWidth <= 760) { p.el.classList.add("sheet"); p.el.style.left = ""; p.el.style.top = ""; }
+    else { p.el.classList.remove("sheet"); p.el.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left - w + r.width)) + "px"; p.el.style.top = (r.bottom + 8 + h > innerHeight ? Math.max(8, r.top - h - 8) : r.bottom + 8) + "px"; }
+    setTimeout(() => { const c = p.el.querySelector("input[type=text]"); if (innerWidth > 760) c.select(); }, 30);
+  }
+  document.addEventListener("click", (e) => { const cp = e.target.closest && e.target.closest('input[type="color"]'); if (!cp) return; e.preventDefault(); showPk(cp); }, true);
 
   window.SH = { toast, open, close, setMode, zoom };
 })();

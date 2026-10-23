@@ -187,12 +187,18 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 .sh-check2 { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:11px 12px; border-radius:10px; border:1px solid var(--border2); background:var(--panel2); font-weight:700; font-size:.86rem; cursor:pointer; }
 .sh-check2 input { width:20px; height:20px; accent-color:var(--accent); flex:none; }
 @media (max-width: 760px) { .sh-title { flex-wrap:wrap; } .sh-modes { order:3; } .sh-modes a { padding:5px 12px; font-size:.74rem; } }
-/* 색 코드 칸 */
-.sh-color { flex-wrap:nowrap; }
-.sh-color div { flex:1; }
-.sh-hex { width:92px; flex:none; padding:8px 10px; border-radius:8px; border:1px solid var(--border2); background:var(--field); color:var(--text); font:600 13px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing:.04em; outline:none; text-transform:uppercase; }
-.sh-hex:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
-.sh-hex.bad { border-color:var(--danger); }
-#hexDisplay { display:none; }
+/* 우리 색판 */
+.sh-cpk { position:fixed; z-index:95; width:260px; padding:14px; border-radius:16px; background:var(--panel); border:1px solid var(--border2); box-shadow:0 20px 60px rgba(0,0,0,.45); display:flex; flex-direction:column; gap:12px; color:var(--text); font-family:inherit; }
+.sh-cpk.sheet { left:8px !important; right:8px; bottom:calc(8px + env(safe-area-inset-bottom, 0px)); top:auto !important; width:auto; }
+.sh-cpk-sv { position:relative; height:150px; border-radius:10px; cursor:crosshair; touch-action:none; }
+.sh-cpk-dot { position:absolute; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.4); pointer-events:none; }
+.sh .sh-cpk-hue { flex:none; -webkit-appearance:none; appearance:none; width:100%; height:14px; border-radius:7px; background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00) !important; }
+.sh .sh-cpk-hue::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#fff; border:2px solid rgba(0,0,0,.35); box-shadow:0 1px 4px rgba(0,0,0,.4); cursor:pointer; }
+.sh-cpk-row { display:flex; align-items:flex-end; gap:10px; }
+.sh-cpk-sw { width:38px; height:38px; border-radius:10px; border:1px solid var(--border2); flex:none; }
+.sh-cpk-code { flex:1; display:flex; flex-direction:column; gap:4px; font-size:.72rem; font-weight:700; color:var(--muted); min-width:0; }
+.sh-cpk-code input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border2); background:var(--field); color:var(--text); font:600 14px 'IBM Plex Mono', ui-monospace, monospace; letter-spacing:.04em; text-transform:uppercase; outline:none; }
+.sh-cpk-code input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
+.sh-cpk-code input.bad { border-color:var(--danger); }
 /* 한국어 줄나눔: 낱말 중간에서 끊지 않는다 (10/23 '함/께') */
 .sh-panel, .sh-card, .sh-tip, .sh-title p { word-break:keep-all; overflow-wrap:break-word; }
