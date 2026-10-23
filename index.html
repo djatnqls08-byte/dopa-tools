@@ -44,6 +44,7 @@ button { font-family:inherit; color:inherit; }
 .icon-btn { display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 14px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-weight:700; font-size:.82rem; cursor:pointer; }
 .icon-btn svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .icon-btn:hover { border-color:var(--text); }
+.icon-btn svg.xlogo { width:15px; height:15px; fill:currentColor; stroke:none; }
 
 .hero { position:relative; padding:56px 0 40px; display:grid; grid-template-columns:minmax(0,1fr) 340px; align-items:center; gap:32px; }
 .hero-l { display:flex; flex-direction:column; align-items:flex-start; gap:18px; min-width:0; }
@@ -120,7 +121,7 @@ footer a { color:var(--text); font-weight:700; }
   <header class="top">
     <a class="brand" href="/"><img src="/logo.svg" alt="">DOPA <span class="mono">TOOLS</span></a>
     <div class="top-r">
-      <a class="icon-btn x-link" href="https://x.com/DOPA_studio" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20"/></svg><span>새 틀 소식</span></a>
+      <a class="icon-btn x-link" href="https://x.com/DOPA_studio" target="_blank" rel="noopener" aria-label="X에서 새 틀 소식 보기"><svg class="xlogo" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>@DOPA_studio</span></a>
       <button class="icon-btn" id="mode" type="button" aria-label="나이트·라이트 바꾸기"><svg viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></svg><span id="modeLab">라이트</span></button>
     </div>
   </header>
