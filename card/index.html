@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SECARD 세션카드 메이커</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Cinzel:wght@700&family=Cute+Font&family=Do+Hyeon&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@400;700;900&family=Jua&family=Nanum+Brush+Script&family=Nanum+Myeongjo:wght@700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;700;900&family=Share+Tech+Mono&family=Single+Day&family=Song+Myung&family=Yeon+Sung&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Noto Sans KR', sans-serif; background: #050505; color: #fff; touch-action: manipulation; padding-bottom: 80px; }
+    ::-webkit-scrollbar { display: none; }
+    button { font-family: inherit; }
+
+    header { padding: 14px 16px; border-bottom: 1px solid #27272a; position: sticky; top: 0; background: rgba(5,5,5,.92); backdrop-filter: blur(8px); z-index: 60; height: 49px; }
+    header b { font-weight: 900; letter-spacing: .15em; font-size: 17px; }
+    header small { font-size: 10px; color: #71717a; font-family: 'Share Tech Mono', monospace; margin-left: 6px; }
+
+    /* 미리보기는 위에 고정 → 아래에서 설정 바꾸면서 바로 확인 */
+    .stage { position: sticky; top: 49px; z-index: 50; background: #050505; padding: 8px 12px 10px; max-width: 640px; margin: 0 auto; }
+    .stage-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
+    .stage-top b { font-size: 13px; color: #d4d4d8; }
+    .stage-top span { font-size: 10px; color: #71717a; font-family: 'Share Tech Mono', monospace; }
+    .canvas-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #27272a; box-shadow: 0 0 20px rgba(0,0,0,.5); }
+    #previewCanvas { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+
+    main { max-width: 640px; margin: 0 auto; padding: 4px 12px; display: grid; gap: 12px; }
+    .panel { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 14px; }
+    .panel h2 { margin: 0 0 4px; font-size: 14px; color: #d4d4d8; }
+    .sub { margin: 0 0 8px; font-size: 11px; color: #71717a; line-height: 1.5; }
+
+    .tag-category { font-size: 11px; color: #71717a; margin: 12px 0 6px; font-weight: bold; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag-btn, .wbtn { padding: 6px 12px; border-radius: 6px; border: 1px solid #27272a; background: #111; color: #a1a1aa; font-size: 12px; cursor: pointer; white-space: nowrap; transition: .15s; }
+    .tag-btn.active, .wbtn.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
+    .wbtn { padding: 8px 12px; }
+    .wbtn.add { border-style: dashed; }
+
+    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #0b0b0d; padding: 4px; border-radius: 10px; margin-bottom: 12px; }
+    .tab { padding: 9px 0; border: 0; border-radius: 7px; background: transparent; color: #a1a1aa; font-size: 13px; font-weight: bold; cursor: pointer; }
+    .tab.active { background: #fff; color: #000; }
+    .pane.hidden { display: none; }
+    .tpl { display: block; width: 100%; text-align: left; background: #111; border: 1px solid #27272a; color: #fff; border-radius: 10px; padding: 10px 12px; margin-top: 6px; cursor: pointer; font-family: inherit; }
+    .tpl b { font-size: 13px; } .tpl small { display: block; color: #71717a; font-size: 11px; margin-top: 2px; }
+    .tpl.active { border-color: #fff; background: #1c1c20; }
+
+    .blank { border: 1px dashed #3f3f46; border-radius: 10px; padding: 16px; text-align: center; font-size: 12px; color: #71717a; line-height: 1.6; }
+    details { margin-top: 12px; }
+    summary { font-size: 12px; color: #a1a1aa; cursor: pointer; padding: 6px 0; }
+
+    .card { background: #111; border: 1px solid #27272a; border-radius: 10px; padding: 12px; margin-top: 10px; }
+    .card.sel { border-color: #fff; }
+    .card h3 { margin: 0 0 8px; font-size: 12px; color: #e4e4e7; }
+    .fld { display: block; margin-top: 8px; }
+    .fl { display: flex; justify-content: space-between; font-size: 11px; color: #a1a1aa; font-weight: bold; }
+    .rv { color: #fff; font-family: 'Share Tech Mono', monospace; }
+    .input-box { width: 100%; background: #09090b; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-size: 13px; outline: none; margin-top: 4px; font-family: inherit; }
+    .input-box:focus { border-color: #fff; }
+    textarea.input-box { resize: vertical; }
+    input[type=range] { width: 100%; margin-top: 6px; accent-color: #fff; }
+    input[type=color] { width: 100%; height: 40px; border: 1px solid #333; border-radius: 8px; background: #09090b; padding: 2px; margin-top: 4px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn { background: #27272a; color: #fff; border: 1px solid #3f3f46; border-radius: 8px; padding: 11px; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+    .btn:hover { background: #3f3f46; }
+    .btn.go { background: linear-gradient(90deg, #10b981, #14b8a6); border: 0; padding: 15px 0; border-radius: 12px; }
+    .btn:active { transform: scale(.97); }
+    #loadingBar { height: 8px; background: #27272a; border-radius: 99px; overflow: hidden; margin-top: 10px; }
+    #loadingBar.hidden, #resultArea.hidden { display: none; }
+    #progressFill { height: 100%; width: 0; background: #10b981; transition: width .2s; }
+    #resultArea { text-align: center; font-size: 12px; color: #34d399; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<header><b>SECARD</b><small>SESSION CARD MAKER</small></header>
+
+<div class="stage">
+  <div class="stage-top"><b>PREVIEW</b><span id="statusMsg">위젯이나 빈 곳(템플릿)을 눌러 선택하세요</span></div>
+  <div class="canvas-wrapper"><canvas id="previewCanvas" width="960" height="540"></canvas></div>
+</div>
+
+<main>
+  <!-- ② 탭 -->
+  <section class="panel">
+    <h2>① 위젯 고르기 · 꾸미기</h2>
+    <div class="tabs">
+      <button class="tab active" data-tab="tabTemplate">템플릿</button>
+      <button class="tab" data-tab="tabWidget">위젯</button>
+      <button class="tab" data-tab="tabDetail">상세 설정</button>
+      <button class="tab" data-tab="tabColor">색상</button>
+    </div>
+
+    <!-- 위젯 탭 -->
+    <div id="tabTemplate" class="pane">
+      <p class="sub">누르면 배경틀·색·위젯 배치가 통째로 세팅돼요. 고른 뒤에 [위젯]·[상세 설정]·[색상]에서 마음대로 바꾸세요. (배경 일러스트는 [상세 설정]에서 올려요)</p>
+      <div id="templateList"></div>
+      <div class="grid2" style="margin-top:12px">
+        <button class="btn" id="btnTlReset">템플릿 위치 처음으로</button>
+        <button class="btn" id="btnNoBackdrop">템플릿 배경틀만 끄기</button>
+      </div>
+    </div>
+
+    <div id="tabWidget" class="pane hidden">
+      <input type="text" id="wSearch" class="input-box" placeholder="🔍 이름으로 찾기 (예: 채팅, 바코드, 주사위)" style="margin:0 0 8px">
+      <p class="sub">버튼을 누르면 캔버스에 나타나고, 한 번 더 누르면 사라져요. (흰색 = 켜짐)</p>
+      <div id="widgetList"></div>
+      <div class="grid2" style="margin-top:14px">
+        <button class="btn" id="btnAllOff">모두 끄기</button>
+        <button class="btn" id="btnReset">🔄 위치 처음으로</button>
+      </div>
+    </div>
+
+    <!-- 상세 설정 탭 -->
+    <div id="tabDetail" class="pane hidden">
+      <div class="card" style="margin-top:0">
+        <h3>🧩 기본 정보</h3>
+        <div class="grid2">
+          <label class="fld"><span class="fl">시나리오 제목</span><input type="text" id="valTitle" class="input-box"></label>
+          <label class="fld"><span class="fl">제목 폰트</span>
+            <select id="valTitleFont" class="input-box">
+              <option value="auto">자동 (태그 분위기)</option>
+              <option value="Single Day">싱글 데이 (귀여운 다꾸)</option>
+              <option value="Black Han Sans">블랙 한 산스 (두꺼운 제목)</option>
+              <option value="Noto Sans KR">노토 산스 (깔끔 고딕)</option>
+              <option value="Do Hyeon">도현 (레트로)</option>
+              <option value="Jua">주아 (동글 고딕)</option>
+              <option value="Nanum Myeongjo">나눔 명조</option>
+              <option value="Gowun Batang">고운 바탕 (감성)</option>
+              <option value="Hahmlet">함초롬 (세련된 고전)</option>
+              <option value="Song Myung">송명 (공포/스릴러)</option>
+              <option value="Yeon Sung">연성 (무협/동양풍)</option>
+              <option value="Nanum Pen Script">나눔 펜 (펜글씨)</option>
+              <option value="Nanum Brush Script">나눔 붓 (붓글씨)</option>
+              <option value="Cute Font">큐트 폰트</option>
+              <option value="Share Tech Mono">Share Tech (사이버)</option>
+              <option value="Cinzel">Cinzel (로판 영문)</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid2">
+          <label class="fld"><span class="fl">캐릭터 A</span><input type="text" id="valNameA" class="input-box"></label>
+          <label class="fld"><span class="fl">캐릭터 B</span><input type="text" id="valNameB" class="input-box"></label>
+        </div>
+        <label class="fld"><span class="fl">대사 / 캐치프레이즈</span><input type="text" id="valQuote" class="input-box"></label>
+        <div class="grid2" style="margin-top:10px">
+          <label class="btn">🖼️ 배경 이미지/GIF<input type="file" id="bgInput" accept="image/*" hidden></label>
+          <button class="btn" id="btnClearBg">배경 지우기</button>
+        </div>
+      </div>
+      <div id="widgetCards"></div>
+    </div>
+
+    <!-- 색상 탭 -->
+    <div id="tabColor" class="pane hidden">
+      <div class="fl" style="margin-bottom:6px">분위기 (배경·색을 한 번에 바꿔요)</div>
+      <div id="themeChips" class="chips" style="margin-bottom:12px"></div>
+      <div class="grid2">
+        <label class="fld"><span class="fl">포인트 색 1</span><input type="color" id="colAccent"></label>
+        <label class="fld"><span class="fl">포인트 색 2</span><input type="color" id="colAccent2"></label>
+        <label class="fld"><span class="fl">포인트 색 3</span><input type="color" id="colAccent3"></label>
+        <label class="fld"><span class="fl">글자 색</span><input type="color" id="colText"></label>
+        <label class="fld"><span class="fl">배경 색</span><input type="color" id="colBg"></label>
+        <label class="fld"><span class="fl">배경 사진 어둡게 <span class="rv" id="dimVal">0%</span></span><input type="range" id="valDim" min="0" max="85" value="0"></label>
+      </div>
+      <div style="margin-top:14px"><button class="btn" id="btnResetColor" style="width:100%">🎨 색상 처음으로 (태그 기본색)</button></div>
+    </div>
+  </section>
+
+  <!-- ③ 저장 -->
+  <section class="panel">
+    <h2>② 저장하기</h2>
+    <div class="grid2" style="margin-top:8px">
+      <button id="btnExportMP4" class="btn go">✨ 영상 저장</button>
+      <button id="btnExportGIF" class="btn">🎬 움짤 GIF 저장</button>
+    </div>
+    <button id="btnExportPNG" class="btn" style="width:100%; margin-top:8px">🖼️ 지금 화면 PNG 저장</button>
+    <input type="file" id="quickPick" accept="image/*" hidden>
+    <div id="loadingBar" class="hidden"><div id="progressFill"></div></div>
+    <div id="resultArea" class="hidden">저장 완료!</div>
+  </section>
+</main>
+
+<script>
+// =====================================================
+// 0. 기본 설정
+// =====================================================
+const W_ = 960, H_ = 540;
+const canvas = document.getElementById('previewCanvas');
+const ctx = canvas.getContext('2d');
+const UI   = '"Noto Sans KR", sans-serif';
+const MONO = '"Share Tech Mono", "Noto Sans KR", monospace';
+const F = n => `"${n}", "Noto Sans KR", sans-serif`;
+const pad2 = n => String(n).padStart(2, '0');
+
+function rgba(hex, a) {
+  let h = String(hex).replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function luminance(hex) {
+  let h = String(hex).replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+}
+function rr(c, x, y, w, h, r) { c.beginPath(); c.roundRect(x, y, w, h, r); }
+function wrap(c, text, maxW) {
+  const out = [];
+  for (const para of String(text).split('\n')) {
+    let line = '';
+    for (const ch of para) {
+      if (c.measureText(line + ch).width > maxW && line) { out.push(line); line = ch.trim() === '' ? '' : ch; }
+      else line += ch;
+    }
+    out.push(line);
+  }
+  return out;
+}
+function fitText(c, text, weight, size, family, maxW) {
+  let s = size;
+  for (; s > 8; s--) { c.font = `${weight} ${s}px ${family}`; if (c.measureText(text).width <= maxW) break; }
+  return s;
+}
+// 사진 그리기 도우미: 칸을 꽉 채우도록 가운데 기준으로 잘라서 그려요
+function drawCover(c, img, x, y, w, h, r = 0) {
+  c.save(); c.beginPath(); if (r > 0) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h); c.clip();
+  const sc = Math.max(w / img.width, h / img.height), dw = img.width * sc, dh = img.height * sc;
+  c.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh); c.restore();
+}
+function drawCircleImg(c, img, cx, cy, r) {
+  c.save(); c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.clip();
+  const sc = Math.max(2 * r / img.width, 2 * r / img.height), dw = img.width * sc, dh = img.height * sc;
+  c.drawImage(img, cx - dw / 2, cy - dh / 2, dw, dh); c.restore();
+}
+function tri(c, x, y, s, dir) { // 작은 삼각형 (재생 버튼용)
+  c.beginPath(); c.moveTo(x, y - s); c.lineTo(x + dir * s * 1.4, y); c.lineTo(x, y + s); c.closePath(); c.fill();
+}
+
+// =====================================================
+// 1. 테마(분위기) 정의 — 태그에 따라 자동 선택
+// =====================================================
+const THEMES = {
+  default: { bg:'#0d0d12', accent:'#ffffff', accent2:'#a1a1aa', accent3:'#52525b', text:'#ffffff', grid:'rgba(255,255,255,.05)', step:40, font:F('Noto Sans KR'), titleFont:'Noto Sans KR' },
+  cyber:   { bg:'#050b17', accent:'#00e5ff', accent2:'#ff1744', accent3:'#2a4bff', text:'#ffffff', grid:'rgba(0,229,255,.08)', step:40, scan:true, glow:'rgba(0,120,255,.25)', font:F('Share Tech Mono'), titleFont:'Share Tech Mono' },
+  cam:     { bg:'#15110e', accent:'#ff9f1c', accent2:'#ffffff', accent3:'#ffd166', text:'#ffffff', grid:null, glow:'rgba(255,159,28,.18)', font:F('Noto Sans KR'), titleFont:'Noto Sans KR' },
+  ruin:    { bg:'#0a0203', accent:'#ff3b3b', accent2:'#8b0000', accent3:'#ff9a9a', text:'#ffe0e0', grid:'rgba(255,60,60,.06)', step:40, overlay:'rgba(60,0,0,.35)', font:F('Noto Sans KR'), titleFont:'Song Myung' },
+  diary:   { bg:'#fff0f5', accent:'#ff8fb1', accent2:'#fde047', accent3:'#a78bfa', text:'#333333', grid:'rgba(255,182,193,.5)', step:30, font:F('Single Day'), titleFont:'Single Day' },
+  pastel:  { bg:'#e8e4ff', accent:'#7c83e8', accent2:'#ff8fc7', accent3:'#7fd6e8', text:'#2b2d5b', grid:'rgba(124,131,232,.14)', step:30, font:F('Jua'), titleFont:'Jua' },
+  ink:     { bg:'#ecebe6', accent:'#9b1c1c', accent2:'#2b2b2b', accent3:'#8d8d86', text:'#16130f', grid:null, font:F('Nanum Myeongjo'), titleFont:'Nanum Brush Script' },
+  joseon:  { bg:'#efe3ca', accent:'#b3402a', accent2:'#2f7a73', accent3:'#d4a63c', text:'#2b2118', grid:'rgba(120,90,50,.07)', step:30, font:F('Gowun Batang'), titleFont:'Gowun Batang' },
+  gyeongseong: { bg:'#12202b', accent:'#e0b44c', accent2:'#c4512f', accent3:'#4a8f8a', text:'#f3e9d2', grid:null, glow:'rgba(224,180,76,.12)', font:F('Hahmlet'), titleFont:'Do Hyeon' },
+  modern:  { bg:'#e8dfcc', accent:'#b5472f', accent2:'#1f3d3a', accent3:'#c9a45a', text:'#1c2b2a', grid:null, font:F('Hahmlet'), titleFont:'Hahmlet' },
+  hanji:   { bg:'#f1ece0', accent:'#3b3a36', accent2:'#a3281f', accent3:'#b9b2a0', text:'#1b1a17', grid:null, font:F('Gowun Batang'), titleFont:'Nanum Myeongjo' },
+  wuxia:   { bg:'#0b0906', accent:'#d4af37', accent2:'#8b0000', accent3:'#f5e9c8', text:'#f5e9c8', grid:'rgba(212,175,55,.06)', step:40, overlay:'rgba(5,0,10,.35)', font:F('Nanum Myeongjo'), titleFont:'Yeon Sung' }
+};
+const THEME_PRIORITY = ['cam', 'cyber', 'wuxia', 'ruin', 'diary', 'pastel']; // 앞에 있을수록 우선
+
+// =====================================================
+// 2. 태그 → 위젯 연결표  (여기만 고치면 태그 동작이 바뀜!)
+//    [id, 화면에 보일 이름, 켜지는 위젯들, 테마]
+// =====================================================
+const THEME_LABELS = { default:'기본', cyber:'사이버', cam:'디카', ruin:'피폐', diary:'다꾸', pastel:'파스텔', wuxia:'무협(금)', ink:'수묵', joseon:'조선', gyeongseong:'경성', modern:'경성 모던', hanji:'여백(한지)' };
+
+// =====================================================
+// 2. 위젯 분류 (버튼 목록 순서) — 위젯 이름으로 바로 고르기
+// =====================================================
+const WIDGET_GROUPS = [
+  ['세션카드 기본', ['title','rule','credits','quote']],
+  ['사이버 HUD', ['nameL','nameR','terminal','barcode','sysWarn','stripeFrame','warnBox','loading']],
+  ['디카 HUD', ['camFrame','focusBox','subtitlePill','chatWin','musicPlayer','toast']],
+  ['사진 · 다이어리 · 다꾸', ['photo','polaroid','tape1','tape2','sparkle','filmStrip','hashtags']],
+  ['페어틀 · 카드', ['popWindow','playlist','vinyl','ticket','idCard']],
+  ['TRPG · 게임', ['hpBar','dice','dday','seal','speech']],
+  ['동양풍 · 무협 · 조선 · 경성', ['wuxiaFrame','wuxiaText','plaque','scroll','vertTitle','lantern','cloud']]
+];
+
+// =====================================================
+// 3. 위젯 정의 — 각 위젯은 "자기 왼쪽 위 모서리가 (0,0)" 기준으로 그림
+//    fields = [상세 설정 탭에 생기는 입력칸들]
+// =====================================================
+const DEFS = {
+  // ---------- 공통 ----------
+  title: { label:'시나리오 제목', icon:'🔤', base:true, x:40, y:84, w:400, h:80, fields:[],
+    draw(c, it, P) {
+      c.textBaseline = 'top'; c.textAlign = 'left';
+      let size = 64; const fam = `"${state.tf}", "Noto Sans KR", sans-serif`;
+      for (; size > 20; size -= 2) { c.font = `bold ${size}px ${fam}`; if (c.measureText(state.title).width <= 900) break; }
+      it.w = Math.max(40, c.measureText(state.title).width); it.h = size * 1.25;
+      if (P.light) { c.shadowColor = 'rgba(0,0,0,.12)'; c.shadowBlur = 4; c.shadowOffsetY = 2; } else { c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 10; c.shadowOffsetX = 3; c.shadowOffsetY = 3; }
+      c.fillStyle = P.text; c.fillText(state.title, 0, 0);
+    }},
+  rule: { label:'룰 이름 · 작성자', icon:'🎲', base:true, x:40, y:20, w:300, h:26, fields:[
+      { k:'rule', l:'룰 이름 (예: CoC 7th)', d:'룰 이름' }, { k:'writer', l:'작성자 (w.)', d:'이름' } ],
+    draw(c, it, P) {
+      const t = `${it.v.rule}   w. ${it.v.writer}`; c.font = `15px ${MONO}`;
+      it.w = c.measureText(t).width; it.h = 24; c.textBaseline = 'top';
+      c.shadowColor = P.light ? 'transparent' : 'rgba(0,0,0,.8)'; c.shadowBlur = 6;
+      c.fillStyle = P.text; c.fillText(t, 0, 2);
+    }},
+  credits: { label:'GM · PL 명단', icon:'👥', base:true, x:330, y:496, w:300, h:30, fields:[
+      { k:'gm', l:'GM 이름', d:'이름' }, { k:'pl', l:'PL 이름들 (쉼표로 구분)', d:'이름, 이름, 이름' } ],
+    draw(c, it, P) {
+      const t = `GM. ${it.v.gm}    PL. ${it.v.pl}`; c.font = `15px ${MONO}`;
+      it.w = c.measureText(t).width; it.h = 24; c.textBaseline = 'top';
+      c.shadowColor = P.light ? 'transparent' : 'rgba(0,0,0,.8)'; c.shadowBlur = 6;
+      c.fillStyle = P.text; c.fillText(t, 0, 2);
+    }},
+  quote: { label:'대사 박스', icon:'💬', base:true, x:40, y:176, w:300, h:52, fields:[],
+    draw(c, it, P) {
+      const t = `"${state.quote}"`; c.font = `24px ${P.font}`;
+      it.w = c.measureText(t).width + 44; it.h = 52;
+      c.fillStyle = P.light ? 'rgba(255,255,255,.85)' : 'rgba(0,0,0,.55)'; rr(c, 0, 0, it.w, it.h, 8); c.fill();
+      c.fillStyle = P.accent; c.fillRect(0, 8, 4, it.h - 16);
+      c.fillStyle = P.text; c.textBaseline = 'middle'; c.fillText(t, 22, it.h / 2 + 1);
+    }},
+
+  // ---------- 사이버 HUD (템플릿 ①) ----------
+  nameL: { label:'L 이름 배지', icon:'🟦', x:40, y:300, w:230, h:84, fields:[
+      { k:'photo', l:'프로필 사진', t:'image' }, { k:'tag', l:'작은 라벨', d:'PLAYER A' }, { k:'name', l:'이름', d:'참가자 A' }, { k:'danger', l:'게이지(%)', t:'range', min:0, max:100, d:60 } ],
+    draw(c, it, P) { badge(c, it, P.accent); }},
+  nameR: { label:'R 이름 배지', icon:'🟥', x:690, y:40, w:230, h:84, fields:[
+      { k:'photo', l:'프로필 사진', t:'image' }, { k:'tag', l:'작은 라벨', d:'PLAYER B' }, { k:'name', l:'이름', d:'참가자 B' }, { k:'danger', l:'게이지(%)', t:'range', min:0, max:100, d:40 } ],
+    draw(c, it, P) { badge(c, it, P.accent2); }},
+  terminal: { label:'로그 창', icon:'💻', x:270, y:380, w:400, h:120, fields:[
+      { k:'cmd', l:'맨 윗줄 제목', d:'세션 로그' }, { k:'l1', l:'로그 1줄', d:'세션이 시작되었습니다.' },
+      { k:'l2', l:'로그 2줄', d:'참가자가 입장했습니다.' }, { k:'l3', l:'로그 3줄 (깜빡이는 커서)', d:'다음 장면을 불러오는 중' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it;
+      c.fillStyle = 'rgba(8,12,24,.86)'; rr(c, 0, 0, w, h, 10); c.fill();
+      c.fillStyle = P.accent; rr(c, 0, 0, 6, h, 3); c.fill();
+      c.textBaseline = 'middle'; c.textAlign = 'left';
+      fitText(c, v.cmd, 'bold', 12, MONO, w - 40); c.fillStyle = P.accent; c.fillText(v.cmd, 22, 18);
+      c.fillStyle = rgba(P.accent, .3); c.fillRect(18, 34, w - 30, 1);
+      let endX = 44, endY = 54;
+      [v.l1, v.l2, v.l3].forEach((ln, i) => {
+        const y = 54 + i * 26;
+        c.font = `12px ${MONO}`; c.fillStyle = rgba(P.accent, .6); c.fillText(String(i + 1).padStart(2, '0'), 20, y);
+        c.font = `14px ${UI}`; c.fillStyle = '#e5e7eb'; c.fillText(ln, 44, y);
+        endX = 44 + c.measureText(ln).width + 4; endY = y;
+      });
+      if (Math.sin(prog * Math.PI * 12) > 0) { c.fillStyle = P.accent; c.fillRect(endX, endY - 8, 8, 16); }
+    }},
+  barcode: { label:'바코드 태그', icon:'▮▯', x:40, y:432, w:170, h:64, fields:[ { k:'code', l:'코드 문구', d:'SC-0001' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it;
+      c.fillStyle = 'rgba(0,0,0,.82)'; rr(c, 0, 0, w, h, 8); c.fill();
+      const pat = [2,1,3,1,2,4,1,2,1,3,2,1,4,2,1,3,1,1,2,3,1,2,4,1,2,1,3,2,1,2,4,1,3]; let x = 12, i = 0; c.fillStyle = '#fff';
+      while (x < w - 12) { const bw = pat[i % pat.length] * 1.5; if (i % 2 === 0) c.fillRect(x, 10, Math.min(bw, w - 12 - x), h - 32); x += bw; i++; }
+      const sy = 10 + (Math.sin(prog * Math.PI * 4) * .5 + .5) * (h - 32); c.fillStyle = P.accent2; c.fillRect(6, sy, w - 12, 2);
+      c.fillStyle = P.accent; c.textAlign = 'center'; c.textBaseline = 'middle'; fitText(c, v.code, 'bold', 11, MONO, w - 16); c.fillText(v.code, w / 2, h - 11);
+    }},
+  sysWarn: { label:'공지 배너', icon:'📢', x:700, y:456, w:230, h:56, fields:[ { k:'head', l:'작은 제목', d:'NOTICE' }, { k:'text', l:'공지 문구', d:'세션이 곧 시작됩니다.' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it, sk = 14;
+      c.globalAlpha = .88 + .12 * Math.sin(prog * Math.PI * 6);
+      c.fillStyle = P.accent3; c.beginPath(); c.moveTo(sk, 0); c.lineTo(w, 0); c.lineTo(w - sk, h); c.lineTo(0, h); c.closePath(); c.fill(); c.globalAlpha = 1;
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = 'rgba(255,255,255,.75)'; c.font = `bold 11px ${MONO}`; c.fillText(v.head, 24, 16);
+      fitText(c, v.text, 'bold', 16, UI, w - 50); c.fillStyle = '#fff'; c.fillText(v.text, 24, 37);
+    }},
+  stripeFrame: { label:'점선 테두리', icon:'⬚', fixed:true, x:0, y:0, w:W_, h:H_, fields:[],
+    draw(c, it, P, prog) {
+      c.strokeStyle = P.accent3; c.lineWidth = 3; c.setLineDash([14, 10]); c.lineDashOffset = -prog * 48;
+      rr(c, 16, 16, W_ - 32, H_ - 32, 18); c.stroke(); c.setLineDash([]);
+      c.strokeStyle = rgba(P.accent3, .4); c.lineWidth = 1.5; rr(c, 28, 28, W_ - 56, H_ - 56, 12); c.stroke();
+      c.fillStyle = P.accent3; [[16, 16], [W_ - 16, 16], [16, H_ - 16], [W_ - 16, H_ - 16]].forEach(([x, y]) => { c.beginPath(); c.arc(x, y, 7, 0, Math.PI * 2); c.fill(); });
+    }},
+  // ---------- 피폐/경고 ----------
+  warnBox: { label:'경고창 (피폐물)', icon:'🚨', x:310, y:200, w:340, h:72, fields:[ { k:'text', l:'경고창 문구', d:'※ 본 작품은 피폐 요소를 포함하고 있습니다.' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it; const blink = Math.sin(prog * Math.PI * 8) > 0;
+      c.fillStyle = blink ? '#ef4444' : 'rgba(20,0,0,.92)'; c.fillRect(0, 0, w, h);
+      c.strokeStyle = '#ef4444'; c.lineWidth = 2; c.strokeRect(1, 1, w - 2, h - 2);
+      c.textBaseline = 'middle'; c.textAlign = 'left';
+      c.fillStyle = blink ? '#fff' : '#ef4444'; c.font = `bold 16px ${MONO}`; c.fillText('! WARNING', 16, 22);
+      fitText(c, v.text, 'normal', 15, UI, w - 32); c.fillStyle = '#fff'; c.fillText(v.text, 16, 49);
+    }},
+
+  // ---------- 사진 ----------
+  photo: { label:'사진 액자', icon:'🖼️', x:380, y:120, w:240, h:300, fields:[
+      { k:'photo', l:'사진', t:'image' }, { k:'round', l:'모서리 둥글기', t:'range', min:0, max:100, d:12 }, { k:'border', l:'테두리 두께', t:'range', min:0, max:20, d:8 } ],
+    draw(c, it, P) {
+      const { w, h, v } = it, r = Math.min(w, h) / 2 * v.round / 100, b = Number(v.border);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.35)'; c.shadowBlur = 14; c.shadowOffsetY = 5; c.fillStyle = '#fff'; rr(c, 0, 0, w, h, r); c.fill(); c.restore();
+      const ir = Math.max(0, r - b);
+      if (it.imgs.photo) drawCover(c, it.imgs.photo, b, b, w - 2 * b, h - 2 * b, ir);
+      else {
+        const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, rgba(P.accent, .35)); g.addColorStop(1, rgba(P.accent3, .35));
+        c.fillStyle = g; rr(c, b, b, w - 2 * b, h - 2 * b, ir); c.fill();
+        c.fillStyle = 'rgba(0,0,0,.35)'; c.font = `bold 15px ${UI}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('두 번 탭해서', w / 2, h / 2 - 12); c.fillText('사진 넣기', w / 2, h / 2 + 12);
+      }
+    }},
+
+  // ---------- 다이어리/다꾸 ----------
+  polaroid: { label:'폴라로이드', icon:'📷', x:600, y:70, w:250, h:320, fields:[ { k:'photo', l:'사진', t:'image' }, { k:'caption', l:'아래 글씨 (비우면 이름 자동)', d:'' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.translate(w / 2, h / 2); c.rotate(5 * Math.PI / 180);
+      c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 15; c.shadowOffsetY = 5;
+      c.fillStyle = '#f8fafc'; c.fillRect(-w / 2, -h / 2, w, h);
+      c.shadowBlur = 0; c.shadowOffsetY = 0;
+      const px = -w / 2 + 15, py = -h / 2 + 15, pw = w - 30, ph = h - 80;
+      if (it.imgs.photo) drawCover(c, it.imgs.photo, px, py, pw, ph);
+      else {
+        const g = c.createLinearGradient(px, py, px + pw, py + ph);
+        g.addColorStop(0, rgba(P.accent, .4)); g.addColorStop(1, rgba(P.accent3, .4));
+        c.fillStyle = g; c.fillRect(px, py, pw, ph);
+        c.fillStyle = 'rgba(0,0,0,.3)'; c.font = `bold 14px ${UI}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('두 번 탭해서 사진 넣기', 0, py + ph / 2);
+      }
+      c.fillStyle = '#333'; c.font = 'bold 26px "Nanum Pen Script", cursive';
+      c.fillText(v.caption || `♥ ${state.nameA} & ${state.nameB}`, 0, h / 2 - 30);
+    }},
+  tape1: { label:'마스킹 테이프 1', icon:'🩹', x:580, y:56, w:100, h:30, rot:-10, fields:[], draw(c, it, P) { tape(c, it, P); }},
+  tape2: { label:'마스킹 테이프 2', icon:'🩹', x:720, y:360, w:120, h:35, rot:15, fields:[], draw(c, it, P) { tape(c, it, P); }},
+
+  // ---------- 디카 HUD (템플릿 ②) ----------
+  camFrame: { label:'뷰파인더 화면', icon:'🎥', fixed:true, x:0, y:0, w:W_, h:H_, fields:[
+      { k:'mode', l:'아래 가운데 모드', d:'AUTO' }, { k:'date', l:'왼쪽 아래 날짜/시간', d:'2026.01.01  12:00' }, { k:'zoom', l:'오른쪽 아래 배율', d:'x1.0' } ],
+    draw(c, it, P, prog) {
+      const v = it.v, m = 36, l = 34, r = 14;
+      c.strokeStyle = '#fff'; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath();
+      [[m, m, 1, 1], [W_ - m, m, -1, 1], [m, H_ - m, 1, -1], [W_ - m, H_ - m, -1, -1]].forEach(([x, y, dx, dy]) => {
+        c.moveTo(x + dx * l, y); c.lineTo(x + dx * r, y); c.quadraticCurveTo(x, y, x, y + dy * r); c.lineTo(x, y + dy * l);
+      });
+      c.stroke(); c.lineCap = 'butt';
+      c.fillStyle = 'rgba(0,0,0,.45)'; rr(c, m + 14, m + 12, 84, 28, 14); c.fill();
+      if (Math.sin(prog * Math.PI * 8) > -.3) { c.fillStyle = '#ff3b3b'; c.beginPath(); c.arc(m + 32, m + 26, 6, 0, Math.PI * 2); c.fill(); }
+      c.shadowColor = 'rgba(0,0,0,.8)'; c.shadowBlur = 4; c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = '#fff';
+      c.font = `bold 14px ${MONO}`; c.fillText('REC', m + 46, m + 27);
+      c.textAlign = 'center'; c.font = `16px ${MONO}`; c.fillText(`00:00:${pad2(Math.floor(prog * 59))}`, W_ / 2, m + 26);
+      const bx = W_ - m - 62, by = m + 18; c.strokeStyle = '#fff'; c.lineWidth = 2; c.strokeRect(bx, by, 34, 16); c.fillStyle = '#fff'; c.fillRect(bx + 34, by + 4, 3, 8);
+      for (let i = 0; i < 3; i++) c.fillRect(bx + 3 + i * 10, by + 3, 8, 10);
+      c.textAlign = 'left'; c.font = `15px ${MONO}`; c.fillText(v.date, m + 20, H_ - m - 24);
+      c.textAlign = 'right'; c.fillText(v.zoom, W_ - m - 20, H_ - m - 24);
+      c.shadowBlur = 0; c.font = `bold 13px ${MONO}`; const mw = c.measureText(v.mode).width + 28;
+      c.fillStyle = 'rgba(255,255,255,.2)'; rr(c, W_ / 2 - mw / 2, H_ - m - 38, mw, 28, 14); c.fill();
+      c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText(v.mode, W_ / 2, H_ - m - 23);
+    }},
+  focusBox: { label:'초점 원', icon:'◎', x:430, y:200, w:100, h:100, fields:[],
+    draw(c, it, P, prog) {
+      const r = it.w / 2; c.translate(r, r); c.globalAlpha = .7 + .3 * Math.sin(prog * Math.PI * 4);
+      c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r - 6, 0, Math.PI * 2); c.stroke();
+      c.beginPath(); [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => { c.moveTo(dx * (r - 6), dy * (r - 6)); c.lineTo(dx * (r - 18), dy * (r - 18)); });
+      c.moveTo(-5, 0); c.lineTo(5, 0); c.moveTo(0, -5); c.lineTo(0, 5); c.stroke();
+    }},
+  subtitlePill: { label:'자막 바', icon:'🗨️', x:80, y:290, w:300, h:40, fields:[ { k:'text', l:'자막 문구', d:'안녕하세요, 오늘도 잘 부탁드려요.' } ],
+    draw(c, it, P) {
+      c.font = `17px ${UI}`; it.w = c.measureText(it.v.text).width + 40; it.h = 40;
+      c.fillStyle = 'rgba(0,0,0,.66)'; rr(c, 0, 0, it.w, it.h, 6); c.fill();
+      c.fillStyle = P.accent; c.fillRect(12, it.h - 7, it.w - 24, 3);
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = '#fff'; c.fillText(it.v.text, 20, 18);
+    }},
+  chatWin: { label:'대화창', icon:'💬', x:660, y:150, w:250, h:190, fields:[
+      { k:'photo', l:'프로필 사진', t:'image' }, { k:'name', l:'상대 이름', d:'친구' }, { k:'m1', l:'받은 메시지', d:'오늘 세션 준비됐어?' }, { k:'m2', l:'보낸 메시지', d:'응, 거의 다 됐어!' } ],
+    draw(c, it, P) {
+      const { w, v } = it; c.textBaseline = 'middle';
+      if (it.imgs.photo) drawCircleImg(c, it.imgs.photo, 18, 18, 16);
+      else { c.fillStyle = P.accent3; c.beginPath(); c.arc(18, 18, 16, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#fff'; c.font = `bold 14px ${UI}`; c.textAlign = 'center'; c.fillText([...String(v.name)][0] || '?', 18, 19); }
+      c.textAlign = 'left'; fitText(c, v.name, 'bold', 13, UI, w - 70); c.save(); c.shadowColor = 'rgba(0,0,0,.7)'; c.shadowBlur = 4; c.fillStyle = '#fff'; c.fillText(v.name, 44, 18); c.restore();
+      c.font = `14px ${UI}`; let y = 46;
+      let lines = wrap(c, v.m1, w - 80), bw = Math.max(...lines.map(s => c.measureText(s).width)) + 24, bh = lines.length * 19 + 14;
+      c.fillStyle = '#f4f4f5'; rr(c, 0, y, bw, bh, 14); c.fill();
+      c.beginPath(); c.moveTo(8, y + bh - 6); c.lineTo(-3, y + bh + 6); c.lineTo(22, y + bh - 2); c.fill();
+      c.fillStyle = '#222'; lines.forEach((s, i) => c.fillText(s, 12, y + 7 + 9.5 + i * 19)); y += bh + 18;
+      lines = wrap(c, v.m2, w - 80); bw = Math.max(...lines.map(s => c.measureText(s).width)) + 24; bh = lines.length * 19 + 14;
+      c.fillStyle = P.accent; rr(c, w - bw, y, bw, bh, 14); c.fill();
+      c.beginPath(); c.moveTo(w - 8, y + bh - 6); c.lineTo(w + 3, y + bh + 6); c.lineTo(w - 22, y + bh - 2); c.fill();
+      c.fillStyle = luminance(P.accent) > .6 ? '#222' : '#fff'; lines.forEach((s, i) => c.fillText(s, w - bw + 12, y + 7 + 9.5 + i * 19));
+    }},
+  musicPlayer: { label:'뮤직 바', icon:'🎵', x:560, y:430, w:250, h:68, fields:[
+      { k:'photo', l:'앨범 사진', t:'image' }, { k:'song', l:'곡 제목', d:'곡 제목' }, { k:'artist', l:'가수', d:'아티스트' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it, R = h / 2 - 6;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.4)'; c.shadowBlur = 12; c.fillStyle = 'rgba(18,18,24,.92)'; rr(c, 0, 0, w, h, h / 2); c.fill(); c.restore();
+      c.save(); c.translate(h / 2, h / 2); c.rotate(prog * Math.PI * 2);
+      c.fillStyle = '#111'; c.beginPath(); c.arc(0, 0, R, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,.12)'; c.lineWidth = 1; c.beginPath(); c.arc(0, 0, R * .75, 0, Math.PI * 2); c.stroke();
+      if (it.imgs.photo) drawCircleImg(c, it.imgs.photo, 0, 0, R * .66); else { c.fillStyle = P.accent; c.beginPath(); c.arc(0, 0, R * .42, 0, Math.PI * 2); c.fill(); c.fillStyle = '#111'; c.beginPath(); c.arc(0, 0, 3, 0, Math.PI * 2); c.fill(); }
+      c.restore();
+      c.textBaseline = 'middle'; c.textAlign = 'left';
+      fitText(c, v.song, 'bold', 15, UI, w - h - 66); c.fillStyle = '#fff'; c.fillText(v.song, h + 4, h / 2 - 9);
+      fitText(c, v.artist, 'normal', 12, UI, w - h - 66); c.fillStyle = '#a1a1aa'; c.fillText(v.artist, h + 4, h / 2 + 11);
+      c.fillStyle = P.accent; for (let i = 0; i < 5; i++) { const bh = 6 + 18 * Math.abs(Math.sin(prog * Math.PI * 6 + i * 1.3)); rr(c, w - 52 + i * 8, h / 2 - bh / 2, 4, bh, 2); c.fill(); }
+    }},
+  // ---------- 페어틀 감성 (팝업창/플레이리스트) ----------
+  popWindow: { label:'메모 카드', icon:'📝', x:540, y:60, w:290, h:190, fields:[
+      { k:'wtitle', l:'제목', d:'MEMO' }, { k:'text', l:'내용', t:'area', d:'오늘의 한 줄\n작은 약속 하나\n내일 또 만나요' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it; c.translate(w / 2, h / 2); c.rotate(-2 * Math.PI / 180); c.translate(-w / 2, -h / 2);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.28)'; c.shadowBlur = 14; c.shadowOffsetY = 5; c.fillStyle = '#fffbea';
+      c.beginPath(); c.moveTo(0, 0); c.lineTo(w - 28, 0); c.lineTo(w, 28); c.lineTo(w, h); c.lineTo(0, h); c.closePath(); c.fill(); c.restore();
+      c.fillStyle = '#e6dfc0'; c.beginPath(); c.moveTo(w - 28, 0); c.lineTo(w - 28, 28); c.lineTo(w, 28); c.closePath(); c.fill();
+      c.strokeStyle = rgba(P.accent, .35); c.lineWidth = 1; c.beginPath(); for (let y = 76; y < h - 10; y += 26) { c.moveTo(14, y); c.lineTo(w - 14, y); } c.stroke();
+      c.fillStyle = rgba(P.accent2, .75); c.fillRect(w / 2 - 40, -10, 80, 22);
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = P.accent; fitText(c, v.wtitle, 'bold', 13, MONO, w - 100); c.fillText(v.wtitle, 18, 34);
+      c.font = `16px ${P.font}`; c.fillStyle = '#333'; wrap(c, v.text, w - 36).slice(0, Math.floor((h - 60) / 26)).forEach((ln, i) => c.fillText(ln, 18, 63 + i * 26));
+    }},
+  playlist: { label:'트랙 리스트', icon:'📃', x:60, y:250, w:250, h:180, fields:[
+      { k:'t1', l:'곡 1 (제목 | 가수)', d:'첫 번째 곡 | 아티스트' }, { k:'t2', l:'곡 2', d:'두 번째 곡 | 아티스트' }, { k:'t3', l:'곡 3', d:'세 번째 곡 | 아티스트' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.2)'; c.shadowBlur = 12; c.fillStyle = P.light ? 'rgba(255,255,255,.88)' : 'rgba(20,20,30,.88)'; rr(c, 0, 0, w, h, 14); c.fill(); c.restore();
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = P.accent; c.font = `bold 12px ${MONO}`; c.fillText('TRACKS', 18, 20);
+      [0, 1, 2].forEach(i => {
+        const y = 40 + i * 46, [t, a] = String(v['t' + (i + 1)]).split('|').map(s => s.trim());
+        c.fillStyle = P.accent; c.font = `bold 24px ${MONO}`; c.fillText(String(i + 1).padStart(2, '0'), 18, y + 22);
+        fitText(c, t || '', 'bold', 14, P.font, w - 90); c.fillStyle = P.text; c.fillText(t || '', 66, y + 14);
+        fitText(c, a || '', 'normal', 11, P.font, w - 90); c.globalAlpha = .6; c.fillText(a || '', 66, y + 32); c.globalAlpha = 1;
+        c.fillStyle = rgba(P.text, .12); c.fillRect(18, y + 42, w - 36, 1);
+      });
+    }},
+  // ---------- 추가 위젯 ----------
+  loading: { label:'로딩 바', icon:'⏳', x:330, y:300, w:300, h:50, fields:[ { k:'text', l:'문구', d:'LOADING' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it;
+      c.fillStyle = 'rgba(0,0,0,.65)'; c.fillRect(0, 0, w, h); c.strokeStyle = P.accent; c.lineWidth = 1.5; c.strokeRect(.75, .75, w - 1.5, h - 1.5);
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = P.accent; c.font = `bold 13px ${MONO}`; c.fillText(v.text, 12, 15);
+      c.textAlign = 'right'; c.fillText(Math.round(prog * 100) + '%', w - 12, 15);
+      c.fillStyle = rgba(P.accent, .2); c.fillRect(12, 30, w - 24, 8); c.fillStyle = P.accent; c.fillRect(12, 30, (w - 24) * prog, 8);
+    }},
+  toast: { label:'알림 팝업', icon:'🔔', x:640, y:60, w:280, h:64, fields:[ { k:'title', l:'알림 제목', d:'새 메시지' }, { k:'msg', l:'알림 내용', d:'세션이 곧 시작됩니다.' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.4)'; c.shadowBlur = 12; c.fillStyle = 'rgba(25,25,30,.94)'; rr(c, 0, 0, w, h, 16); c.fill(); c.restore();
+      c.fillStyle = P.accent; rr(c, 12, 14, 36, 36, 10); c.fill();
+      c.fillStyle = luminance(P.accent) > .6 ? '#222' : '#fff'; c.font = `bold 18px ${UI}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('!', 30, 33);
+      c.textAlign = 'left'; fitText(c, v.title, 'bold', 14, UI, w - 80); c.fillStyle = '#fff'; c.fillText(v.title, 60, 24);
+      fitText(c, v.msg, 'normal', 12, UI, w - 80); c.fillStyle = '#a1a1aa'; c.fillText(v.msg, 60, 44);
+    }},
+  sparkle: { label:'반짝이 스티커', icon:'✦', x:520, y:40, w:90, h:90, fields:[],
+    draw(c, it, P, prog) {
+      const { w, h } = it, k = .85 + .15 * Math.sin(prog * Math.PI * 4);
+      c.translate(w / 2, h / 2); c.scale(k, k); c.fillStyle = P.accent;
+      const r = w / 2; c.beginPath(); c.moveTo(0, -r);
+      c.quadraticCurveTo(0, 0, r, 0); c.quadraticCurveTo(0, 0, 0, r); c.quadraticCurveTo(0, 0, -r, 0); c.quadraticCurveTo(0, 0, 0, -r); c.fill();
+    }},
+  filmStrip: { label:'필름 컷', icon:'🎞️', x:330, y:420, w:300, h:90, fields:[ { k:'p1', l:'사진 1', t:'image' }, { k:'p2', l:'사진 2', t:'image' }, { k:'p3', l:'사진 3', t:'image' } ],
+    draw(c, it, P) {
+      const { w, h } = it; c.fillStyle = '#111'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#fff'; for (let x = 8; x < w - 8; x += 18) { rr(c, x, 6, 10, 8, 2); c.fill(); rr(c, x, h - 14, 10, 8, 2); c.fill(); }
+      const cols = [P.accent, P.accent2, P.accent3];
+      for (let i = 0; i < 3; i++) { if (it.imgs['p' + (i + 1)]) { drawCover(c, it.imgs['p' + (i + 1)], 10 + i * 96, 20, 88, h - 40); continue; } const g = c.createLinearGradient(0, 20, 0, h - 20); g.addColorStop(0, rgba(cols[i], .85)); g.addColorStop(1, rgba(cols[i], .35)); c.fillStyle = g; c.fillRect(10 + i * 96, 20, 88, h - 40); }
+    }},
+  hashtags: { label:'해시태그 줄', icon:'#️⃣', x:40, y:230, w:300, h:30, fields:[ { k:'text', l:'태그들 (띄어쓰기로 구분)', d:'#TRPG #시나리오 #CoC' } ],
+    draw(c, it, P) {
+      c.font = `14px ${P.font}`; c.textBaseline = 'middle'; c.textAlign = 'left'; let x = 0;
+      String(it.v.text).split(/\s+/).filter(Boolean).forEach(t => {
+        const tw = c.measureText(t).width + 20;
+        c.fillStyle = rgba(P.accent, .18); rr(c, x, 0, tw, 28, 14); c.fill(); c.strokeStyle = P.accent; c.lineWidth = 1.5; c.stroke();
+        c.fillStyle = P.text; c.fillText(t, x + 10, 15); x += tw + 8;
+      });
+      it.w = Math.max(40, x); it.h = 28;
+    }},
+  vinyl: { label:'LP판 (회전)', icon:'💿', x:620, y:300, w:150, h:150, fields:[ { k:'photo', l:'가운데 라벨 사진', t:'image' } ],
+    draw(c, it, P, prog) {
+      const r = it.w / 2; c.translate(r, r); c.rotate(prog * Math.PI * 2);
+      c.fillStyle = '#0c0c0c'; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,.08)'; c.lineWidth = 1; for (let g = r * .4; g < r - 3; g += 5) { c.beginPath(); c.arc(0, 0, g, 0, Math.PI * 2); c.stroke(); }
+      if (it.imgs.photo) drawCircleImg(c, it.imgs.photo, 0, 0, r * .34); else { c.fillStyle = P.accent; c.beginPath(); c.arc(0, 0, r * .3, 0, Math.PI * 2); c.fill(); }
+      c.fillStyle = 'rgba(255,255,255,.35)'; c.beginPath(); c.arc(r * .12, -r * .12, r * .05, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#000'; c.beginPath(); c.arc(0, 0, r * .05, 0, Math.PI * 2); c.fill();
+    }},
+  ticket: { label:'티켓', icon:'🎫', x:300, y:380, w:280, h:110, fields:[ { k:'head', l:'위 작은 글씨', d:'ADMIT ONE' }, { k:'main', l:'큰 글씨', d:'세션 입장권' }, { k:'no', l:'번호', d:'No.0001' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it, sx = w - 80;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 10; c.fillStyle = P.accent; rr(c, 0, 0, w, h, 10); c.fill(); c.restore();
+      const fg = luminance(P.accent) > .6 ? '#222' : '#fff';
+      c.fillStyle = fg; c.textBaseline = 'middle'; c.textAlign = 'left'; c.font = `bold 11px ${MONO}`; c.fillText(v.head, 16, 20);
+      fitText(c, v.main, 'bold', 26, UI, sx - 30); c.fillText(v.main, 16, h / 2 + 6);
+      c.setLineDash([5, 4]); c.strokeStyle = fg; c.lineWidth = 1.5; c.beginPath(); c.moveTo(sx, 8); c.lineTo(sx, h - 8); c.stroke(); c.setLineDash([]);
+      c.save(); c.translate(sx + 40, h / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.font = `bold 16px ${MONO}`; c.fillText(v.no, 0, 0); c.restore();
+      c.fillStyle = P.bg; [0, h].forEach(y => { c.beginPath(); c.arc(sx, y, 8, 0, Math.PI * 2); c.fill(); });
+    }},
+  idCard: { label:'캐릭터 시트 카드', icon:'🪪', x:60, y:230, w:250, h:150, fields:[ { k:'photo', l:'프로필 사진', t:'image' }, { k:'name', l:'이름', d:'이름' }, { k:'age', l:'나이', d:'24세' }, { k:'job', l:'직업', d:'탐정' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 12; c.fillStyle = P.light ? '#fff' : 'rgba(20,20,28,.92)'; rr(c, 0, 0, w, h, 12); c.fill(); c.restore();
+      c.save(); rr(c, 0, 0, w, h, 12); c.clip(); c.fillStyle = P.accent; c.fillRect(0, 0, w, 26); c.restore();
+      c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = luminance(P.accent) > .6 ? '#222' : '#fff'; c.font = `bold 12px ${MONO}`; c.fillText('CHARACTER SHEET', 12, 14);
+      if (it.imgs.photo) drawCover(c, it.imgs.photo, 12, 40, 76, 96, 8);
+      else { c.fillStyle = rgba(P.accent3, .5); rr(c, 12, 40, 76, 96, 8); c.fill(); c.fillStyle = 'rgba(0,0,0,.3)'; c.textAlign = 'center'; c.font = `bold 12px ${UI}`; c.fillText('사진', 50, 88); }
+      [['NAME', v.name], ['AGE', v.age], ['JOB', v.job]].forEach(([k, val], i) => {
+        const y = 52 + i * 34; c.textAlign = 'left'; c.fillStyle = P.accent; c.font = `bold 10px ${MONO}`; c.fillText(k, 102, y);
+        fitText(c, val, 'bold', 17, UI, w - 116); c.fillStyle = P.text; c.fillText(val, 102, y + 15);
+      });
+    }},
+  hpBar: { label:'능력치 바 (HP/MP/SAN)', icon:'❤️', x:40, y:300, w:260, h:110, fields:[
+      { k:'hp', l:'HP', t:'range', min:0, max:100, d:80 }, { k:'mp', l:'MP', t:'range', min:0, max:100, d:55 }, { k:'san', l:'SAN', t:'range', min:0, max:100, d:35 } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.fillStyle = 'rgba(0,0,0,.7)'; rr(c, 0, 0, w, h, 10); c.fill();
+      [['HP', v.hp, '#ef4444'], ['MP', v.mp, P.accent3], ['SAN', v.san, P.accent]].forEach(([k, val, col], i) => {
+        const y = 14 + i * 32; c.textBaseline = 'middle'; c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = `bold 12px ${MONO}`; c.fillText(k, 14, y + 8);
+        c.fillStyle = rgba(col, .25); rr(c, 52, y, w - 100, 16, 8); c.fill();
+        c.fillStyle = col; rr(c, 52, y, Math.max(8, (w - 100) * val / 100), 16, 8); c.fill();
+        c.textAlign = 'right'; c.fillStyle = '#fff'; c.fillText(String(val), w - 12, y + 8);
+      });
+    }},
+  dice: { label:'주사위 (D20)', icon:'🎲', x:430, y:300, w:100, h:100, fields:[ { k:'num', l:'나온 숫자', t:'range', min:1, max:20, d:20 }, { k:'label', l:'주사위 종류', d:'D20' } ],
+    draw(c, it, P, prog) {
+      const { w, h, v } = it; c.translate(w / 2, h / 2 + Math.sin(prog * Math.PI * 2) * 3); c.rotate(10 * Math.PI / 180);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.4)'; c.shadowBlur = 12; c.shadowOffsetY = 4; c.fillStyle = '#f8fafc'; rr(c, -w / 2, -h / 2, w, h, 16); c.fill(); c.restore();
+      c.strokeStyle = P.accent; c.lineWidth = 4; rr(c, -w / 2 + 6, -h / 2 + 6, w - 12, h - 12, 12); c.stroke();
+      c.fillStyle = '#222'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `bold 44px ${MONO}`; c.fillText(String(v.num), 0, 4);
+      c.font = `bold 11px ${MONO}`; c.fillStyle = P.accent2; c.fillText(v.label, 0, -h / 2 + 17);
+    }},
+  dday: { label:'D-day 카드', icon:'📅', x:40, y:300, w:150, h:80, fields:[ { k:'label', l:'위 글씨', d:'SESSION' }, { k:'value', l:'큰 글씨', d:'D-7' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it; c.fillStyle = P.accent; rr(c, 0, 0, w, h, 14); c.fill();
+      const fg = luminance(P.accent) > .6 ? '#222' : '#fff'; c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.font = `bold 12px ${MONO}`; c.fillText(v.label, w / 2, 18); fitText(c, v.value, 'bold', 38, MONO, w - 24); c.fillText(v.value, w / 2, 50);
+    }},
+  seal: { label:'도장', icon:'🔴', x:700, y:400, w:90, h:90, fields:[ { k:'text', l:'도장 글씨 (엔터로 줄바꿈)', t:'area', d:'비밀\n엄수' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it; c.translate(w / 2, h / 2); c.rotate(-12 * Math.PI / 180); c.globalAlpha = .92;
+      c.strokeStyle = P.accent2; c.lineWidth = 5; c.beginPath(); c.arc(0, 0, w / 2 - 4, 0, Math.PI * 2); c.stroke();
+      c.lineWidth = 1.5; c.beginPath(); c.arc(0, 0, w / 2 - 12, 0, Math.PI * 2); c.stroke();
+      const lines = String(v.text).split('\n'); c.fillStyle = P.accent2; c.textAlign = 'center'; c.textBaseline = 'middle';
+      fitText(c, lines.reduce((a, b) => a.length > b.length ? a : b, ''), 'bold', 26, UI, w - 36); const lh = parseInt(c.font.match(/(\d+)px/)[1]) * 1.15;
+      lines.forEach((ln, i) => c.fillText(ln, 0, (i - (lines.length - 1) / 2) * lh));
+    }},
+  speech: { label:'만화 말풍선', icon:'🗯️', x:520, y:250, w:240, h:100, fields:[ { k:'text', l:'말풍선 내용', t:'area', d:'오늘은 어떤 이야기가\n펼쳐질까?' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it, bh = h - 18;
+      c.fillStyle = '#fff'; c.strokeStyle = '#111'; c.lineWidth = 3; rr(c, 2, 2, w - 4, bh, 30); c.fill(); c.stroke();
+      c.beginPath(); c.moveTo(40, bh); c.lineTo(28, h); c.lineTo(66, bh); c.closePath(); c.fillStyle = '#fff'; c.fill(); c.stroke();
+      c.fillStyle = '#fff'; c.fillRect(33, bh - 4, 30, 6);
+      c.fillStyle = '#111'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `bold 17px ${P.font}`;
+      const lines = wrap(c, v.text, w - 40); lines.forEach((ln, i) => c.fillText(ln, w / 2, bh / 2 + (i - (lines.length - 1) / 2) * 22));
+    }},
+
+
+  // ---------- 동양풍 (무협 · 조선 · 경성) ----------
+  plaque: { label:'현판 (편액)', icon:'🏯', x:330, y:40, w:300, h:90, fields:[ { k:'text', l:'현판 글씨', d:'연화당' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.4)'; c.shadowBlur = 10; c.shadowOffsetY = 4; c.fillStyle = '#2a1a10'; rr(c, 0, 0, w, h, 6); c.fill(); c.restore();
+      c.strokeStyle = '#d4a63c'; c.lineWidth = 3; rr(c, 6, 6, w - 12, h - 12, 3); c.stroke();
+      c.strokeStyle = 'rgba(212,166,60,.5)'; c.lineWidth = 1; rr(c, 12, 12, w - 24, h - 24, 2); c.stroke();
+      c.fillStyle = '#d4a63c'; [[10, 10], [w - 10, 10], [10, h - 10], [w - 10, h - 10]].forEach(([x, y]) => { c.beginPath(); c.arc(x, y, 3, 0, Math.PI * 2); c.fill(); });
+      c.fillStyle = '#f0d98a'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      fitText(c, v.text, 'bold', 48, '"Yeon Sung","Gowun Batang",serif', w - 50); c.fillText(v.text, w / 2, h / 2 + 2);
+    }},
+  scroll: { label:'두루마리', icon:'📜', x:290, y:200, w:380, h:120, fields:[ { k:'text', l:'큰 글씨', d:'그날의 이야기' }, { k:'sub', l:'작은 글씨', d:'— 세션 카드 —' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.save(); c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 10; c.shadowOffsetY = 4;
+      const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#f6ebcf'); g.addColorStop(1, '#e8d8b0'); c.fillStyle = g; c.fillRect(22, 10, w - 44, h - 20); c.restore();
+      c.strokeStyle = 'rgba(120,90,50,.35)'; c.lineWidth = 1; c.strokeRect(34, 20, w - 68, h - 40);
+      [0, w - 26].forEach(x => { c.fillStyle = '#5a3a1e'; rr(c, x, 0, 26, h, 13); c.fill(); c.fillStyle = '#d4a63c'; rr(c, x + 3, 0, 20, 8, 4); c.fill(); rr(c, x + 3, h - 8, 20, 8, 4); c.fill(); });
+      c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#2b2118';
+      fitText(c, v.text, 'bold', 40, '"Gowun Batang","Noto Sans KR",serif', w - 120); c.fillText(v.text, w / 2, h / 2 - 6);
+      fitText(c, v.sub, 'normal', 14, '"Gowun Batang",serif', w - 120); c.fillStyle = '#7a5a36'; c.fillText(v.sub, w / 2, h / 2 + 30);
+    }},
+  vertTitle: { label:'세로 제목 + 낙관', icon:'🈶', x:90, y:60, w:90, h:240, fields:[ { k:'text', l:'세로 글씨 (짧게)', d:'야행' }, { k:'seal', l:'낙관 글자', d:'연' } ],
+    draw(c, it, P) {
+      const { v } = it, chars = [...String(v.text)], fs = 56;
+      c.font = `bold ${fs}px "${P.titleFont}","Noto Sans KR",serif`; it.w = fs + 30; it.h = chars.length * (fs + 8) + 52;
+      c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = P.text;
+      chars.forEach((ch, i) => c.fillText(ch, it.w / 2, fs / 2 + i * (fs + 8)));
+      const sy = chars.length * (fs + 8) + 6; c.fillStyle = P.accent; c.fillRect(it.w / 2 - 16, sy, 32, 32);
+      c.fillStyle = '#fff'; c.font = `bold 18px "Nanum Myeongjo",serif`; c.fillText(v.seal, it.w / 2, sy + 17);
+    }},
+  lantern: { label:'청사초롱', icon:'🏮', x:60, y:40, w:90, h:150, fields:[],
+    draw(c, it, P, prog) {
+      const { w, h } = it; c.translate(w / 2, 0); c.rotate(Math.sin(prog * Math.PI * 2) * .05); c.translate(-w / 2, 0);
+      c.strokeStyle = '#5a3a1e'; c.lineWidth = 3; c.beginPath(); c.moveTo(w / 2, 0); c.lineTo(w / 2, 18); c.stroke();
+      c.fillStyle = '#2a1a10'; rr(c, w / 2 - 22, 16, 44, 10, 3); c.fill();
+      const top = 26, bh = h - 26 - 44, cy = top + bh / 2;
+      c.save(); c.shadowColor = rgba(P.accent3, .8); c.shadowBlur = 18; c.fillStyle = P.accent; c.beginPath(); c.ellipse(w / 2, cy, w / 2 - 4, bh / 2, 0, 0, Math.PI * 2); c.fill(); c.restore();
+      c.strokeStyle = 'rgba(0,0,0,.22)'; c.lineWidth = 1.5; [.35, .7].forEach(k => { c.beginPath(); c.ellipse(w / 2, cy, (w / 2 - 4) * k, bh / 2, 0, 0, Math.PI * 2); c.stroke(); });
+      c.fillStyle = P.accent3; c.fillRect(w / 2 - (w / 2 - 8), cy - 3, w - 16, 6);
+      c.fillStyle = '#2a1a10'; rr(c, w / 2 - 22, top + bh - 2, 44, 10, 3); c.fill();
+      c.strokeStyle = P.accent3; c.lineWidth = 2; for (let i = -1; i <= 1; i++) { c.beginPath(); c.moveTo(w / 2 + i * 8, top + bh + 8); c.lineTo(w / 2 + i * 8 + Math.sin(prog * Math.PI * 4 + i) * 3, h - 4); c.stroke(); }
+    }},
+  cloud: { label:'구름 장식', icon:'☁️', x:60, y:300, w:160, h:80, fields:[],
+    draw(c, it, P) {
+      const g = c.createLinearGradient(0, 0, 0, it.h); g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(1, rgba(P.accent3, .75));
+      c.fillStyle = g; [[35, 52, 24], [75, 36, 32], [118, 48, 27], [58, 58, 26], [98, 60, 24]].forEach(([x, y, r]) => { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); });
+      c.fillRect(35, 54, 85, 28);
+      c.strokeStyle = rgba(P.accent3, .9); c.lineWidth = 3; c.beginPath(); c.arc(76, 40, 12, 0, Math.PI * 1.5); c.stroke();
+    }},
+
+  // ---------- 동양풍(금빛 테두리·세로 이름) ----------
+  wuxiaFrame: { label:'금빛 테두리', icon:'🏮', fixed:true, x:0, y:0, w:W_, h:H_, fields:[],
+    draw(c, it, P) {
+      c.strokeStyle = rgba(P.accent, .85); c.lineWidth = 2;
+      c.strokeRect(40, 40, W_ - 80, H_ - 80); c.strokeRect(50, 50, W_ - 100, H_ - 100);
+      c.fillStyle = P.accent; const k = 24;
+      c.fillRect(40, 40, k, k); c.fillRect(W_ - 40 - k, 40, k, k); c.fillRect(40, H_ - 40 - k, k, k); c.fillRect(W_ - 40 - k, H_ - 40 - k, k, k);
+    }},
+  wuxiaText: { label:'세로 이름 + 낙관', icon:'🖋️', x:800, y:80, w:90, h:360, fields:[ { k:'seal', l:'낙관(도장) 글자', d:'연' } ],
+    draw(c, it, P) {
+      const { w, h, v } = it;
+      c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(0, 0, w, h);
+      c.fillStyle = P.text; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `bold 26px "Gowun Batang", serif`;
+      [[state.nameA, w * .68], [state.nameB, w * .3]].forEach(([name, x]) => {
+        const chars = [...name], gap = Math.min(34, (h - 80) / Math.max(1, chars.length));
+        chars.forEach((ch, i) => c.fillText(ch, x, 24 + i * gap));
+      });
+      c.fillStyle = P.accent2; c.fillRect(w / 2 - 15, h - 42, 30, 30);
+      c.fillStyle = '#fff'; c.font = `bold 16px "Nanum Myeongjo", serif`; c.fillText(v.seal, w / 2, h - 26);
+    }}
+};
+
+// 이름 배지 공통 그리기 (둥근 알약 + 동그란 아바타 + 칸 게이지)
+function badge(c, it, col) {
+  const { w, h, v } = it, g = Math.max(0, Math.min(100, Number(v.danger) || 0));
+  c.fillStyle = 'rgba(10,12,20,.8)'; rr(c, 0, 0, w, h, 22); c.fill();
+  c.strokeStyle = col; c.lineWidth = 2; rr(c, 1, 1, w - 2, h - 2, 21); c.stroke();
+  if (it.imgs.photo) { drawCircleImg(c, it.imgs.photo, 40, h / 2, 24); c.strokeStyle = col; c.lineWidth = 2; c.beginPath(); c.arc(40, h / 2, 24, 0, Math.PI * 2); c.stroke(); }
+  else { c.fillStyle = col; c.beginPath(); c.arc(40, h / 2, 24, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#0a0c14'; c.font = `bold 22px ${UI}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText([...String(v.name)][0] || '?', 40, h / 2 + 1); }
+  c.textBaseline = 'middle';
+  c.textAlign = 'left'; c.fillStyle = col; c.font = `bold 11px ${MONO}`; c.fillText(v.tag, 80, 20);
+  c.textAlign = 'right'; c.fillText(Math.round(g) + '%', w - 16, 20);
+  c.textAlign = 'left'; fitText(c, v.name, 'bold', 22, UI, w - 100); c.fillStyle = '#fff'; c.fillText(v.name, 80, 42);
+  const n = 10, gap = 3, bw = (w - 100 - gap * (n - 1)) / n;
+  for (let i = 0; i < n; i++) { c.fillStyle = i < Math.round(g / 10) ? col : rgba(col, .2); rr(c, 80 + i * (bw + gap), h - 26, bw, 8, 3); c.fill(); }
+}
+// 마스킹 테이프 공통 그리기
+function tape(c, it, P) {
+  const { w, h } = it;
+  c.translate(w / 2, h / 2); c.rotate((it.rot || 0) * Math.PI / 180);
+  c.fillStyle = rgba(P.accent2, .8); c.fillRect(-w / 2, -h / 2, w, h);
+  c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 1;
+  for (let i = -w / 2; i < w / 2; i += 10) { c.beginPath(); c.moveTo(i, -h / 2); c.lineTo(i, h / 2); c.stroke(); }
+}
+
+
+// =====================================================
+// 3-2. 배경틀(백드롭) — 위젯과 별개로 화면 전체에 깔리는 디자인
+// =====================================================
+function octPath(c, x, y, w, h, k) {
+  c.moveTo(x + k, y); c.lineTo(x + w - k, y); c.lineTo(x + w, y + k); c.lineTo(x + w, y + h - k);
+  c.lineTo(x + w - k, y + h); c.lineTo(x + k, y + h); c.lineTo(x, y + h - k); c.lineTo(x, y + k); c.closePath();
+}
+const BACKDROPS = {
+  // 세션카드: 얇은 이중 테두리
+  frameThin(c, P) {
+    c.strokeStyle = rgba(P.text, .85); c.lineWidth = 4; c.strokeRect(14, 14, W_ - 28, H_ - 28);
+    c.lineWidth = 1.5; c.strokeRect(24, 24, W_ - 48, H_ - 48);
+  },
+  // 세션카드: 둥근 이중 테두리 + 모서리 마름모 장식
+  cornerFrame(c, P) {
+    c.strokeStyle = P.accent2; c.lineWidth = 4; rr(c, 18, 18, W_ - 36, H_ - 36, 30); c.stroke();
+    c.strokeStyle = rgba(P.text, .45); c.lineWidth = 1.5; rr(c, 32, 32, W_ - 64, H_ - 64, 22); c.stroke();
+    c.fillStyle = P.accent2;
+    [[18, 18], [W_ - 18, 18], [18, H_ - 18], [W_ - 18, H_ - 18]].forEach(([x, y]) => { c.save(); c.translate(x, y); c.rotate(Math.PI / 4); c.fillRect(-9, -9, 18, 18); c.restore(); });
+  },
+  // 세션카드: 화면을 가로지르는 컬러 띠
+  colorBand(c, P) {
+    c.fillStyle = 'rgba(255,255,255,.9)'; c.fillRect(0, 170, W_, 160);
+    c.fillStyle = P.accent; c.fillRect(0, 170, W_, 6); c.fillRect(0, 324, W_, 6);
+    c.fillStyle = P.accent2; [0, 1, 2].forEach(i => { c.beginPath(); c.arc(40 + i * 22, 250, 6, 0, Math.PI * 2); c.fill(); c.beginPath(); c.arc(W_ - 40 - i * 22, 250, 6, 0, Math.PI * 2); c.fill(); });
+  },
+  // 페어틀: 구멍 뚫린 점무늬 바인더 한 장
+  binder(c, P) {
+    c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 16; c.fillStyle = 'rgba(255,255,255,.74)'; rr(c, 40, 26, W_ - 80, H_ - 52, 22); c.fill(); c.restore();
+    c.fillStyle = rgba(P.accent, .4);
+    for (let gx = 110; gx < W_ - 60; gx += 24) for (let gy = 50; gy < H_ - 40; gy += 24) { c.beginPath(); c.arc(gx, gy, 1.8, 0, Math.PI * 2); c.fill(); }
+    c.strokeStyle = P.accent; c.lineWidth = 4; rr(c, 40, 26, W_ - 80, H_ - 52, 22); c.stroke();
+    c.fillStyle = P.bg; c.strokeStyle = '#9ca3af'; c.lineWidth = 3;
+    [.2, .5, .8].forEach(f => { c.beginPath(); c.arc(70, H_ * f, 10, 0, Math.PI * 2); c.fill(); c.stroke(); });
+  },
+  // 페어틀: 아래 크레딧 바 (이름 × 이름 + 대사)
+  creditBar(c, P) {
+    c.fillStyle = 'rgba(8,8,12,.88)'; c.fillRect(0, H_ - 100, W_, 100); c.fillStyle = P.accent; c.fillRect(0, H_ - 100, W_, 4);
+    c.textAlign = 'left'; c.textBaseline = 'middle';
+    const t = `${state.nameA}  ×  ${state.nameB}`; fitText(c, t, 'bold', 28, UI, 640); c.fillStyle = '#fff'; c.fillText(t, 40, H_ - 62);
+    fitText(c, state.quote, 'normal', 15, UI, 640); c.fillStyle = '#a1a1aa'; c.fillText(state.quote, 40, H_ - 30);
+    c.fillStyle = P.accent; rr(c, W_ - 190, H_ - 72, 150, 44, 22); c.fill();
+    c.fillStyle = luminance(P.accent) > .6 ? '#111' : '#fff'; c.textAlign = 'center'; c.font = `bold 14px ${MONO}`; c.fillText('SESSION CARD', W_ - 115, H_ - 50);
+  },
+  // 페어틀: 오른쪽 유리 패널 (이름 + 대사)
+  glassPanel(c, P) {
+    c.save(); c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 20; c.fillStyle = 'rgba(255,255,255,.16)'; rr(c, 600, 36, 324, H_ - 72, 30); c.fill(); c.restore();
+    c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 2; rr(c, 600, 36, 324, H_ - 72, 30); c.stroke();
+    c.textAlign = 'left'; c.textBaseline = 'middle'; c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 6;
+    c.fillStyle = P.accent; c.beginPath(); c.arc(640, 90, 8, 0, Math.PI * 2); c.fill();
+    fitText(c, state.nameA, 'bold', 32, UI, 250); c.fillStyle = '#fff'; c.fillText(state.nameA, 636, 140);
+    fitText(c, state.nameB, 'normal', 18, UI, 250); c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(state.nameB, 636, 178);
+    c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(636, 202, 250, 1.5);
+    c.font = `16px ${UI}`; c.fillStyle = '#fff'; wrap(c, state.quote, 250).slice(0, 4).forEach((ln, i) => c.fillText(ln, 636, 232 + i * 26));
+  },
+// 동양풍: 수묵 산수 (붉은 해 + 겹겹이 먹빛 산 + 안개)
+  inkWash(c, P) {
+    c.fillStyle = rgba(P.accent, .85); c.beginPath(); c.arc(W_ * .76, H_ * .3, 46, 0, Math.PI * 2); c.fill();
+    const ridge = (base, amp, seed, a) => {
+      c.beginPath(); c.moveTo(0, H_);
+      for (let x = 0; x <= W_; x += 20) c.lineTo(x, base - amp * (Math.sin(x * .008 + seed) * .6 + Math.sin(x * .021 + seed * 2) * .4));
+      c.lineTo(W_, H_); c.closePath(); c.fillStyle = rgba(P.accent2, a); c.fill();
+    };
+    ridge(H_ * .62, 70, .5, .18); ridge(H_ * .72, 60, 2.1, .28);
+    const fg = c.createLinearGradient(0, H_ * .6, 0, H_ * .8); fg.addColorStop(0, rgba(P.bg, 0)); fg.addColorStop(.5, rgba(P.bg, .75)); fg.addColorStop(1, rgba(P.bg, 0));
+    c.fillStyle = fg; c.fillRect(0, H_ * .6, W_, H_ * .2);
+    ridge(H_ * .84, 45, 4.2, .55);
+    c.strokeStyle = rgba(P.text, .6); c.lineWidth = 2; c.strokeRect(26, 26, W_ - 52, H_ - 52);
+  },
+  // 동양풍: 금빛 구름 물결 (위아래 가장자리)
+  cloudBorder(c, P) {
+    [[6, 0], [H_ - 6, 1]].forEach(([y, up]) => {
+      [[26, .6, 2.5], [15, .35, 1.5]].forEach(([r, a, lw]) => {
+        c.strokeStyle = rgba(P.accent, a); c.lineWidth = lw; c.beginPath();
+        for (let x = 20; x < W_ - 40; x += 52) { c.moveTo(x, y); c.arc(x + 26, y, r === 26 ? 26 : r, up ? Math.PI : 0, up ? 0 : Math.PI, false); }
+        c.stroke();
+      });
+    });
+  },
+  // 동양풍: 한옥 문살 + 한지 판
+  latticeWindow(c, P) {
+    c.strokeStyle = 'rgba(107,74,43,.4)'; c.lineWidth = 3; c.beginPath();
+    for (let x = 0; x <= W_; x += 80) { c.moveTo(x, 0); c.lineTo(x, H_); }
+    for (let y = 0; y <= H_; y += 80) { c.moveTo(0, y); c.lineTo(W_, y); }
+    c.stroke();
+    c.fillStyle = 'rgba(255,250,235,.8)'; rr(c, 110, 90, W_ - 220, H_ - 180, 16); c.fill();
+    c.strokeStyle = 'rgba(107,74,43,.5)'; c.lineWidth = 2; rr(c, 110, 90, W_ - 220, H_ - 180, 16); c.stroke();
+    c.strokeStyle = '#6b4a2b'; c.lineWidth = 18; c.strokeRect(9, 9, W_ - 18, H_ - 18);
+    c.strokeStyle = P.accent3; c.lineWidth = 2; c.strokeRect(20, 20, W_ - 40, H_ - 40);
+  },
+  // 동양풍: 단청 무늬 띠 (위아래)
+  dancheong(c, P) {
+    const bh = 40;
+    [0, H_ - bh].forEach(y => {
+      c.fillStyle = P.accent2; c.fillRect(0, y, W_, bh);
+      for (let x = 0; x < W_; x += 40) {
+        c.fillStyle = P.accent; c.beginPath(); c.moveTo(x + 20, y + 3); c.lineTo(x + 37, y + 20); c.lineTo(x + 20, y + 37); c.lineTo(x + 3, y + 20); c.closePath(); c.fill();
+        c.fillStyle = P.accent3; c.beginPath(); c.moveTo(x + 20, y + 11); c.lineTo(x + 29, y + 20); c.lineTo(x + 20, y + 29); c.lineTo(x + 11, y + 20); c.closePath(); c.fill();
+        c.fillStyle = '#f6efe0'; c.beginPath(); c.arc(x + 20, y + 20, 3, 0, Math.PI * 2); c.fill();
+      }
+      c.fillStyle = P.accent3; c.fillRect(0, y === 0 ? bh : y - 4, W_, 4);
+    });
+  },
+  // 경성: 아르데코 (금빛 부채살 + 모서리 깎은 이중 테두리)
+  artDeco(c, P) {
+    const ox = W_ / 2, oy = H_ + 30;
+    c.strokeStyle = rgba(P.accent, .16); c.lineWidth = 2; c.beginPath();
+    for (let i = -12; i <= 12; i++) { const a = (-90 + i * 7) * Math.PI / 180; c.moveTo(ox + Math.cos(a) * 60, oy + Math.sin(a) * 60); c.lineTo(ox + Math.cos(a) * 560, oy + Math.sin(a) * 560); }
+    c.stroke();
+    [120, 170, 220].forEach(r => { c.beginPath(); c.arc(ox, oy, r, Math.PI, Math.PI * 2); c.strokeStyle = rgba(P.accent, .2); c.stroke(); });
+    c.strokeStyle = P.accent; c.lineWidth = 3; c.beginPath(); octPath(c, 20, 20, W_ - 40, H_ - 40, 26); c.stroke();
+    c.lineWidth = 1; c.strokeStyle = rgba(P.accent, .6); c.beginPath(); octPath(c, 32, 32, W_ - 64, H_ - 64, 20); c.stroke();
+    c.fillStyle = P.accent; c.beginPath(); c.moveTo(ox, 12); c.lineTo(ox + 14, 28); c.lineTo(ox, 44); c.lineTo(ox - 14, 28); c.closePath(); c.fill();
+    c.fillRect(ox - 150, 27, 120, 2); c.fillRect(ox + 30, 27, 120, 2);
+  },
+// 경성 모던 포스터: 크림 종이 · 줄무늬 해 · 세로 눈금자 · 가는 선
+  gyeongPoster(c, P) {
+    c.strokeStyle = rgba(P.text, .5); c.lineWidth = 1.2; c.strokeRect(26, 26, W_ - 52, H_ - 52);
+    c.fillStyle = P.accent2; c.beginPath(); c.arc(716, 266, 176, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = P.accent3; c.lineWidth = 1.5; c.beginPath(); c.arc(716, 266, 194, 0, Math.PI * 2); c.stroke();
+    c.strokeStyle = rgba(P.accent3, .45); c.beginPath(); c.arc(716, 266, 212, 0, Math.PI * 2); c.stroke();
+    c.save(); c.beginPath(); c.arc(716, 266, 176, 0, Math.PI * 2); c.clip(); c.fillStyle = P.bg;
+    for (let i = 0; i < 6; i++) c.fillRect(530, 292 + i * 24, 400, 3 + i * 1.6);
+    c.restore();
+    c.fillStyle = P.accent; c.beginPath(); c.arc(574, 134, 26, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = rgba(P.text, .75); c.lineWidth = 1.2; c.beginPath(); c.moveTo(66, 60); c.lineTo(66, H_ - 60);
+    for (let y = 60; y <= H_ - 60; y += 20) { c.moveTo(66, y); c.lineTo(66 + ((y - 60) % 100 === 0 ? 14 : 7), y); }
+    c.moveTo(100, H_ - 74); c.lineTo(W_ - 60, H_ - 74); c.stroke();
+    c.letterSpacing = '5px'; c.font = `11px ${MONO}`; c.fillStyle = rgba(P.text, .75); c.textBaseline = 'middle';
+    c.textAlign = 'left'; c.fillText('SESSION CARD  —  NO. 01', 100, H_ - 54);
+    c.textAlign = 'right'; c.fillText('SEOUL · 1930', W_ - 60, H_ - 54); c.letterSpacing = '0px';
+  },
+  // 여백 · 먹과 한지: 한지 결 · 붓으로 그린 먹 원상 · 가는 선
+  ensoVoid(c, P) {
+    let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    c.strokeStyle = 'rgba(110,90,60,.08)'; c.lineWidth = 1; c.beginPath();
+    for (let i = 0; i < 320; i++) { const x = rnd() * W_, y = rnd() * H_, a = rnd() * Math.PI, l = 6 + rnd() * 22; c.moveTo(x, y); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); }
+    c.stroke();
+    const cx = 700, cy = 262, r = 148, a0 = -Math.PI * .82, sweep = Math.PI * 1.82, N = 120;
+    c.lineCap = 'round';
+    for (let i = 0; i < N; i++) {
+      const t = i / N; c.beginPath(); c.arc(cx, cy, r + Math.sin(t * 9) * 2.5, a0 + sweep * t, a0 + sweep * (t + 1 / N + .012));
+      c.lineWidth = 22 * (1 - t * .86) + 1.5; c.strokeStyle = rgba(P.accent, .9 - .28 * t); c.stroke();
+    }
+    c.lineWidth = 1; for (let i = 0; i < 9; i++) { const t0 = rnd() * .6, off = (rnd() - .5) * 18; c.beginPath(); c.arc(cx, cy, r + off, a0 + sweep * t0, a0 + sweep * (t0 + .25 + rnd() * .2)); c.strokeStyle = rgba(P.accent, .16); c.stroke(); }
+    c.lineCap = 'butt';
+    c.strokeStyle = rgba(P.text, .55); c.lineWidth = 1.4; c.beginPath(); c.moveTo(88, 64); c.lineTo(88, H_ - 64); c.moveTo(88, H_ - 64); c.lineTo(W_ - 88, H_ - 64); c.stroke();
+  }
+};
+
+// =====================================================
+// 3-3. 템플릿 — 배경틀 + 분위기 + 위젯 배치 + 문구를 한 번에 세팅
+//   widgets: { 위젯id: { x, y, s(크기), center(가로 가운데), v:{입력칸 값} } }
+// =====================================================
+const TEMPLATES = {
+  sessionClassic: { group:'세션카드', name:'클래식 프레임', desc:'회색 바탕 · 얇은 이중 테두리 · 제목 가운데',
+    theme:'default', colors:{ bg:'#d9d9d9', text:'#222222', accent:'#555555', accent2:'#888888' }, backdrop:'frameThin',
+    widgets:{ rule:{ center:true, y:120 }, title:{ center:true, y:176 }, credits:{ center:true, y:420 } } },
+  sessionCorner: { group:'세션카드', name:'모서리 장식 프레임', desc:'어두운 갈색 바탕 · 둥근 테두리 · 마름모 장식',
+    theme:'ruin', colors:{ bg:'#2a1e1a', text:'#fff3e8', accent2:'#c2813a' }, backdrop:'cornerFrame',
+    widgets:{ rule:{ center:true, y:120 }, title:{ center:true, y:176 }, credits:{ center:true, y:420 } } },
+  sessionBand: { group:'세션카드', name:'컬러 띠', desc:'분홍 바탕 · 가로 흰 띠 속 제목 · 반짝이',
+    theme:'pastel', colors:{ bg:'#ff9cc6', text:'#4a2a3a', accent:'#ff4f93', accent2:'#ffe14d', accent3:'#7fd6ff' }, backdrop:'colorBand',
+    widgets:{ rule:{ center:true, y:120 }, title:{ center:true, y:200 }, credits:{ center:true, y:420 },
+      sparkle:{ x:90, y:70, s:.8 }, hashtags:{ center:true, y:350 } } },
+  sessionGold: { group:'세션카드', name:'금빛 테두리', desc:'검은 바탕 · 금빛 이중 테두리',
+    theme:'wuxia', colors:{}, backdrop:null,
+    widgets:{ wuxiaFrame:{}, rule:{ center:true, y:100 }, title:{ center:true, y:190 }, credits:{ center:true, y:410 } } },
+  sessionDots: { group:'세션카드', name:'점선 테두리 + 로딩', desc:'네이비 바탕 · 움직이는 점선 · 로딩 바',
+    theme:'cyber', colors:{}, backdrop:null,
+    widgets:{ stripeFrame:{}, rule:{ center:true, y:90 }, title:{ center:true, y:160 }, loading:{ center:true, y:300, v:{ text:'LOADING' } }, credits:{ center:true, y:440 } } },
+
+  pairNeon: { group:'페어틀', name:'네온 콘솔', desc:'이름 배지 2개 · 로그 창 · 바코드 태그 · 공지 배너',
+    theme:'cyber', colors:{}, backdrop:null,
+    widgets:{ stripeFrame:{}, nameL:{ x:44, y:290 }, nameR:{ x:686, y:44 }, terminal:{ x:290, y:376 }, barcode:{ x:44, y:420 }, sysWarn:{ x:700, y:440 } } },
+  pairViewfinder: { group:'페어틀', name:'뷰파인더', desc:'둥근 모서리 촬영 화면 · 대화창 · 뮤직 바 · 자막',
+    theme:'cam', colors:{}, backdrop:null,
+    widgets:{ camFrame:{}, focusBox:{}, subtitlePill:{ x:90, y:300 }, chatWin:{ x:660, y:130 }, musicPlayer:{ x:600, y:380 } } },
+  pairLP: { group:'페어틀', name:'LP + 트랙 리스트', desc:'하늘색 바탕 · 큰 LP판 · 번호 트랙 목록',
+    theme:'pastel', colors:{ bg:'#dbe8f8', accent:'#5f87d6', accent2:'#8fb3ea', accent3:'#b7d0f2', text:'#24365e' }, backdrop:null,
+    widgets:{ title:{ x:70, y:50 }, vinyl:{ x:560, y:60, s:2.6 }, playlist:{ x:70, y:190, s:1.35 }, musicPlayer:{ x:80, y:450, s:.9 } } },
+  pairMemo: { group:'페어틀', name:'메모 보드', desc:'분홍 바탕 · 삐딱한 메모 카드 · 트랙 리스트 · 알림',
+    theme:'pastel', colors:{ bg:'#f3c6d9', accent:'#d9668f', accent2:'#8a74e0', accent3:'#ffb3cf', text:'#4a2a3a' }, backdrop:null,
+    widgets:{ popWindow:{ x:520, y:60, s:1.25 }, playlist:{ x:80, y:130, s:1.3 }, loading:{ x:520, y:340, s:1 }, toast:{ x:80, y:410, s:1 } } },
+  pairBinder: { group:'페어틀', name:'바인더 보드', desc:'점무늬 종이 한 장 · 구멍 · 폴라로이드 · 해시태그',
+    theme:'diary', colors:{}, backdrop:'binder',
+    widgets:{ polaroid:{ x:170, y:80, s:.95 }, tape1:{ x:160, y:68 }, tape2:{ x:370, y:350 }, title:{ x:560, y:60, s:.7 }, hashtags:{ x:560, y:160 }, sparkle:{ x:840, y:40, s:.7 }, quote:{ x:560, y:220 } } },
+  pairCredit: { group:'페어틀', name:'하단 크레딧 바', desc:'일러스트 + 아래 검은 바(이름 × 이름 · 대사)',
+    theme:'default', colors:{ bg:'#1a1d2e', accent:'#7dd3fc' }, backdrop:'creditBar',
+    widgets:{ rule:{ x:40, y:310 }, title:{ x:40, y:340, s:.9 } } },
+  pairGlass: { group:'페어틀', name:'유리 패널', desc:'일러스트 + 오른쪽 반투명 패널(이름·대사) + 뮤직 바',
+    theme:'default', colors:{ bg:'#2b2f4a', accent:'#9ab0ff' }, backdrop:'glassPanel',
+    widgets:{ musicPlayer:{ x:632, y:410, s:.95 }, hashtags:{ x:632, y:350, s:.8 } } },
+  eastInk: { group:'동양풍', name:'무협 · 수묵 산수', desc:'한지색 바탕 · 먹빛 산 · 붉은 해 · 세로 제목',
+    theme:'ink', colors:{}, backdrop:'inkWash',
+    widgets:{ vertTitle:{ x:90, y:60, s:1.1, v:{ text:'강호', seal:'연' } }, rule:{ x:210, y:70 }, title:{ x:210, y:112, s:.9 }, credits:{ x:210, y:200 }, seal:{ x:760, y:350, s:.8, v:{ text:'無\n名' } } } },
+  eastGold: { group:'동양풍', name:'무협 · 금빛 구름', desc:'검은 바탕 · 금빛 테두리 · 구름 물결 · 도장',
+    theme:'wuxia', colors:{}, backdrop:'cloudBorder',
+    widgets:{ wuxiaFrame:{}, rule:{ center:true, y:110 }, title:{ center:true, y:190 }, credits:{ center:true, y:410 }, seal:{ x:780, y:370, s:.8 } } },
+  eastJoseonDoor: { group:'동양풍', name:'조선 · 한옥 문살', desc:'한지 바탕 · 나무 문살 · 한지 판 · 청사초롱',
+    theme:'joseon', colors:{}, backdrop:'latticeWindow',
+    widgets:{ rule:{ center:true, y:112 }, title:{ center:true, y:170 }, credits:{ center:true, y:392 }, lantern:{ x:36, y:30, s:.8 }, seal:{ x:760, y:330, s:.75 } } },
+  eastJoseonBand: { group:'동양풍', name:'조선 · 단청 띠', desc:'한지 바탕 · 위아래 단청 무늬 띠 · 두루마리 제목',
+    theme:'joseon', colors:{}, backdrop:'dancheong',
+    widgets:{ rule:{ center:true, y:80 }, scroll:{ center:true, y:140, s:1.4, v:{ text:'시나리오 제목', sub:'— 세션 카드 —' } }, credits:{ center:true, y:420 }, cloud:{ x:50, y:300 } } },
+  eastPlaque: { group:'동양풍', name:'조선 · 현판 + 등롱', desc:'한지 바탕 · 큰 현판 제목 · 청사초롱 · 구름',
+    theme:'joseon', colors:{}, backdrop:'latticeWindow',
+    widgets:{ rule:{ center:true, y:112 }, plaque:{ center:true, y:150, s:1.5, v:{ text:'시나리오' } }, credits:{ center:true, y:392 }, lantern:{ x:36, y:30, s:.8 }, cloud:{ x:720, y:330, s:.8 } } },
+  eastGyeong: { group:'동양풍', name:'경성 · 아르데코', desc:'짙은 청록 바탕 · 금빛 부채살 · 모던 레트로',
+    theme:'gyeongseong', colors:{}, backdrop:'artDeco',
+    widgets:{ rule:{ center:true, y:90 }, title:{ center:true, y:150 }, hashtags:{ center:true, y:270 }, credits:{ center:true, y:400 } } },
+  eastGyeongPair: { group:'동양풍', name:'경성 · 두 사람 카드', desc:'아르데코 + 이름 배지 2개 · 뮤직 바',
+    theme:'gyeongseong', colors:{}, backdrop:'artDeco',
+    widgets:{ title:{ center:true, y:80, s:.85 }, nameL:{ x:100, y:300 }, nameR:{ x:630, y:300 }, musicPlayer:{ center:true, y:420, s:.9 } } },
+  eastPoster: { group:'동양풍', name:'경성 · 모던 포스터', desc:'크림 종이 · 줄무늬 해 · 세로 눈금자 · 가는 선',
+    theme:'modern', colors:{}, backdrop:'gyeongPoster',
+    widgets:{ rule:{ x:112, y:70 }, title:{ x:112, y:150, s:1.1 }, hashtags:{ x:112, y:250, s:.9 }, credits:{ x:112, y:420 } } },
+  eastVoid: { group:'동양풍', name:'여백 · 먹과 한지', desc:'한지 바탕 · 붓으로 그린 먹 원상 · 붉은 낙관 하나',
+    theme:'hanji', colors:{}, backdrop:'ensoVoid',
+    widgets:{ rule:{ x:116, y:70 }, title:{ x:116, y:150, s:1.1 }, credits:{ x:116, y:420 }, seal:{ x:672, y:232, s:.66, v:{ text:'세\n션' } } } }
+};
+
+// =====================================================
+// 4. 상태 (state)
+// =====================================================
+const state = {
+  theme: 'default',                                  // 분위기(색 세트)
+  tl: { x: 0, y: 0, s: 1, ang: 0},                   // 템플릿 틀(배경틀+고정 틀 위젯) 위치/크기/회전
+  backdrop: null, template: null,                    // 템플릿 배경틀 / 지금 고른 템플릿
+  visible: new Set(['title', 'rule', 'credits']),    // 지금 켜져 있는 위젯
+  colors: {},                 // 사용자가 바꾼 색 (비어있으면 테마 기본색)
+  dim: 0,
+  title: '시나리오 제목', titleFont: 'auto', tf: 'Noto Sans KR',
+  nameA: '이름 A', nameB: '이름 B', quote: '오늘도 완벽한 하루네!',
+  bgMedia: null
+};
+const W = {};                 // 위젯 위치/크기/값
+let renderOrder = Object.keys(DEFS);
+let selected = null, dragging = null, dragOff = { x: 0, y: 0 }, guideV = false, guideH = false;
+let animProgress = 0, isExporting = false;
+
+function initW() {
+  for (const [id, d] of Object.entries(DEFS)) {
+    W[id] = { x: d.x, y: d.y, w: d.w, h: d.h, s: 1, ang: 0, rot: d.rot || 0, imgs: {}, v: Object.fromEntries((d.fields || []).filter(f => f.t !== 'image').map(f => [f.k, f.d])) };
+  }
+}
+initW();
+
+function themeKey() { return state.theme; }
+function palette() {
+  const P = { ...THEMES[themeKey()], ...state.colors };
+  P.light = luminance(P.bg) > .6;
+  return P;
+}
+function availableIds() { return Object.keys(DEFS); }
+function visibleSet() { return new Set(state.visible); }
+function visibleOrder() {
+  const v = visibleSet(), arr = renderOrder.filter(id => v.has(id));
+  return [...arr.filter(i => DEFS[i].fixed), ...arr.filter(i => !DEFS[i].fixed)];
+}
+
+// =====================================================
+// 5. 그리기
+// =====================================================
+function bgSrc(prog) {
+  const m = state.bgMedia; if (!m) return null;
+  return m.isGif ? m.frames[Math.floor(prog * m.frames.length * 2) % m.frames.length] : m.img;
+}
+
+function tlTransform(c) {
+  c.translate(W_ / 2 + state.tl.x, H_ / 2 + state.tl.y); c.rotate(state.tl.ang * Math.PI / 180); c.scale(state.tl.s, state.tl.s); c.translate(-W_ / 2, -H_ / 2);
+}
+function hasLayer() { return !!state.backdrop || [...state.visible].some(id => DEFS[id] && DEFS[id].fixed); }
+function tlGeo() { const sw = W_ * state.tl.s, sh = H_ * state.tl.s; return { sw, sh, a: state.tl.ang * Math.PI / 180, cx: W_ / 2 + state.tl.x, cy: H_ / 2 + state.tl.y }; }
+function draw(prog) {
+  const P = palette();
+  state.tf = state.titleFont === 'auto' ? P.titleFont : state.titleFont;
+  ctx.setLineDash([]); ctx.globalAlpha = 1; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+  ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W_, H_);
+
+  const src = bgSrc(prog);
+  if (src) {
+    const sc = Math.max(W_ / src.width, H_ / src.height), w = src.width * sc, h = src.height * sc;
+    ctx.drawImage(src, (W_ - w) / 2, (H_ - h) / 2, w, h);
+    if (state.dim > 0) { ctx.fillStyle = `rgba(0,0,0,${state.dim})`; ctx.fillRect(0, 0, W_, H_); }
+  } else {
+    if (P.glow) { const g = ctx.createRadialGradient(W_ / 2, H_ * .4, 20, W_ / 2, H_ * .4, W_ * .7); g.addColorStop(0, P.glow); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W_, H_); }
+    if (P.grid) {
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1; ctx.beginPath();
+      for (let x = 0; x < W_; x += P.step) { ctx.moveTo(x, 0); ctx.lineTo(x, H_); }
+      for (let y = 0; y < H_; y += P.step) { ctx.moveTo(0, y); ctx.lineTo(W_, y); }
+      ctx.stroke();
+    }
+  }
+  if (P.scan) { ctx.fillStyle = 'rgba(0,0,0,.16)'; for (let y = 0; y < H_; y += 4) ctx.fillRect(0, y, W_, 1); }
+  if (P.overlay) { ctx.fillStyle = P.overlay; ctx.fillRect(0, 0, W_, H_); }
+
+  if (state.backdrop && BACKDROPS[state.backdrop]) { ctx.save(); tlTransform(ctx); ctx.textAlign = 'left'; BACKDROPS[state.backdrop](ctx, P, prog); ctx.restore(); }
+
+  const order = visibleOrder();
+  for (const id of order) {
+    const d = DEFS[id], it = W[id];
+    ctx.save();
+    if (d.fixed) tlTransform(ctx);
+    else {
+      ctx.translate(it.x + it.w * it.s / 2, it.y + it.h * it.s / 2); ctx.rotate((it.ang || 0) * Math.PI / 180);
+      ctx.translate(-it.w * it.s / 2, -it.h * it.s / 2); ctx.scale(it.s, it.s);
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    d.draw(ctx, it, P, prog);
+    ctx.restore();
+    if (it.center && !d.fixed) it.x = Math.round((W_ - it.w * it.s) / 2);
+  }
+
+  if (!isExporting) {
+    if (dragging) {
+      ctx.save(); ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 1;
+      if (guideV) { ctx.beginPath(); ctx.moveTo(W_ / 2, 0); ctx.lineTo(W_ / 2, H_); ctx.stroke(); }
+      if (guideH) { ctx.beginPath(); ctx.moveTo(0, H_ / 2); ctx.lineTo(W_, H_ / 2); ctx.stroke(); }
+      ctx.restore();
+    }
+    if (selected === '__tl' && hasLayer()) {
+      const g = tlGeo();
+      ctx.save(); ctx.translate(g.cx, g.cy); ctx.rotate(g.a);
+      ctx.setLineDash([8, 6]); ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 4;
+      ctx.strokeRect(-g.sw / 2 + 4, -g.sh / 2 + 4, g.sw - 8, g.sh - 8); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -90); ctx.moveTo(0, 0); ctx.lineTo(90, 0); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, -90, 15, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillRect(76, -14, 28, 28); ctx.strokeRect(76, -14, 28, 28);
+      ctx.fillStyle = '#111'; ctx.font = 'bold 17px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('↻', 0, -90); ctx.fillText('⤡', 90, 0);
+      ctx.restore();
+    }
+    if (selected && order.includes(selected) && !DEFS[selected].fixed) {
+      const g = geo(W[selected]);
+      ctx.save(); ctx.translate(g.cx, g.cy); ctx.rotate(g.a);
+      ctx.setLineDash([6, 4]); ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 4;
+      ctx.strokeRect(-g.sw / 2 - 3, -g.sh / 2 - 3, g.sw + 6, g.sh + 6); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(0, -g.sh / 2 - 3); ctx.lineTo(0, -g.sh / 2 - 34); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#111'; ctx.lineWidth = 3; ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(0, -g.sh / 2 - 34, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();           // ○ 회전 손잡이
+      ctx.fillRect(g.sw / 2 - 9, g.sh / 2 - 9, 24, 24); ctx.strokeRect(g.sw / 2 - 9, g.sh / 2 - 9, 24, 24); // ◢ 크기 손잡이
+      ctx.fillStyle = '#111'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('↻', 0, -g.sh / 2 - 34); ctx.fillText('⤡', g.sw / 2 + 3, g.sh / 2 + 3);
+      ctx.restore();
+    }
+  }
+}
+
+// =====================================================
+// 6. 드래그 (손가락/마우스) + 가운데 자석
+// =====================================================
+function coords(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * (W_ / r.width), y: (e.clientY - r.top) * (H_ / r.height) };
+}
+const HANDLE_HIT = 38;
+let dragMode = null, g0 = null, lastTap = null, movedFar = false, quickTarget = null;
+const imageField = id => (DEFS[id].fields || []).find(f => f.t === 'image');
+function openPicker(id) { const f = imageField(id); if (!f) return; quickTarget = { id, k: f.k }; document.getElementById('quickPick').click(); }
+document.getElementById('quickPick').addEventListener('change', e => {
+  const fl = e.target.files[0]; e.target.value = ''; if (!fl || !quickTarget) return;
+  const { id, k } = quickTarget; loadImg(fl, img => { W[id].imgs[k] = img; buildDetailCards(); status('사진을 넣었어요!'); });
+});
+function geo(it) { const sw = it.w * it.s, sh = it.h * it.s; return { sw, sh, a: (it.ang || 0) * Math.PI / 180, cx: it.x + sw / 2, cy: it.y + sh / 2 }; }
+function rotPt(g, lx, ly) { return { x: g.cx + lx * Math.cos(g.a) - ly * Math.sin(g.a), y: g.cy + lx * Math.sin(g.a) + ly * Math.cos(g.a) }; }
+function toLocal(g, p) { const dx = p.x - g.cx, dy = p.y - g.cy; return { x: dx * Math.cos(-g.a) - dy * Math.sin(-g.a), y: dx * Math.sin(-g.a) + dy * Math.cos(-g.a) }; }
+const status = t => { $('statusMsg').textContent = t; };
+
+function startTL(mode, pos, e) {
+  const g = tlGeo();
+  dragging = '__tl'; dragMode = mode; movedFar = false;
+  g0 = { cx: g.cx, cy: g.cy, s: state.tl.s, dist: Math.hypot(pos.x - g.cx, pos.y - g.cy) || 1, sx: pos.x, sy: pos.y, tx: state.tl.x, ty: state.tl.y };
+  canvas.setPointerCapture(e.pointerId); e.preventDefault();
+}
+let tlWasSelected = false;
+function startMode(mode, id, pos, e) {
+  const it = W[id], g = geo(it);
+  dragging = id; dragMode = mode; it.center = false;
+  g0 = { cx: g.cx, cy: g.cy, s: it.s, dist: Math.hypot(pos.x - g.cx, pos.y - g.cy) || 1, sx: pos.x, sy: pos.y }; movedFar = false;
+  dragOff = { x: pos.x - it.x, y: pos.y - it.y };
+  canvas.setPointerCapture(e.pointerId); e.preventDefault();
+}
+canvas.addEventListener('pointerdown', e => {
+  if (isExporting) return;
+  const pos = coords(e), order = visibleOrder();
+  // 0) 템플릿 틀이 선택돼 있으면 그 손잡이부터
+  if (selected === '__tl' && hasLayer()) {
+    const g = tlGeo(), rh = rotPt(g, 0, -90), sh = rotPt(g, 90, 0);
+    if (Math.hypot(pos.x - sh.x, pos.y - sh.y) < HANDLE_HIT) { startTL('tlscale', pos, e); status('템플릿 크기 조절 중'); return; }
+    if (Math.hypot(pos.x - rh.x, pos.y - rh.y) < HANDLE_HIT) { startTL('tlrot', pos, e); status('템플릿 회전 중 — 45° 단위로 붙어요'); return; }
+  }
+  // 1) 선택된 위젯의 손잡이부터 확인 (○ 회전 / ◢ 크기)
+  if (selected && order.includes(selected) && !DEFS[selected].fixed) {
+    const g = geo(W[selected]), rh = rotPt(g, 0, -g.sh / 2 - 34), sh = rotPt(g, g.sw / 2 + 3, g.sh / 2 + 3);
+    if (Math.hypot(pos.x - sh.x, pos.y - sh.y) < HANDLE_HIT) { startMode('scale', selected, pos, e); status('크기 조절 중 — 손잡이를 끌어보세요'); return; }
+    if (Math.hypot(pos.x - rh.x, pos.y - rh.y) < HANDLE_HIT) { startMode('rotate', selected, pos, e); status('회전 중 — 45° 단위로 자석처럼 붙어요'); return; }
+  }
+  // 2) 위젯 몸통 (회전돼 있어도 정확히 판정)
+  for (let i = order.length - 1; i >= 0; i--) {
+    const id = order[i], d = DEFS[id]; if (d.fixed) continue;
+    const g = geo(W[id]), l = toLocal(g, pos);
+    if (Math.abs(l.x) <= g.sw / 2 && Math.abs(l.y) <= g.sh / 2) {
+      selected = id; startMode('move', id, pos, e);
+      renderOrder = renderOrder.filter(k => k !== id); renderOrder.push(id);
+      markCard(id); status(`${d.label} · 끌어서 이동 / ◢ 크기 / ○ 회전` + (imageField(id) ? ' / 두 번 탭=사진 넣기' : ''));
+      return;
+    }
+  }
+  // 3) 빈 곳: 템플릿 틀이 있으면 그걸 선택해서 이동 (이미 선택돼 있고 안 움직이면 선택 해제)
+  if (hasLayer()) {
+    tlWasSelected = selected === '__tl'; selected = '__tl'; markCard('__tl');
+    startTL('tlmove', pos, e); status('템플릿 선택됨 · 끌면 이동 / ⤡ 크기 / ↻ 회전 (한 번 더 탭하면 해제)'); return;
+  }
+  selected = null; markCard(null); status('위젯을 눌러 선택하세요');
+});
+canvas.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const pos = coords(e);
+  if (dragMode && dragMode.startsWith('tl')) {
+    if (Math.hypot(pos.x - g0.sx, pos.y - g0.sy) > 10) movedFar = true;
+    if (dragMode === 'tlmove') { state.tl.x = Math.round(Math.max(-W_, Math.min(W_, g0.tx + pos.x - g0.sx))); state.tl.y = Math.round(Math.max(-H_, Math.min(H_, g0.ty + pos.y - g0.sy))); }
+    else if (dragMode === 'tlscale') state.tl.s = Math.max(.3, Math.min(3, g0.s * Math.hypot(pos.x - g0.cx, pos.y - g0.cy) / g0.dist));
+    else {
+      let a = Math.atan2(pos.y - g0.cy, pos.x - g0.cx) * 180 / Math.PI + 90; a = ((a + 540) % 360) - 180;
+      const snap = Math.round(a / 45) * 45; if (Math.abs(a - snap) < 4) a = snap; state.tl.ang = Math.round(a);
+    }
+    e.preventDefault(); return;
+  }
+  const it = W[dragging];
+  if (Math.hypot(pos.x - g0.sx, pos.y - g0.sy) > 10) movedFar = true;
+  if (dragMode === 'move') {
+    const sw = it.w * it.s, sh = it.h * it.s;
+    let x = Math.round(pos.x - dragOff.x), y = Math.round(pos.y - dragOff.y);
+    guideV = Math.abs(x + sw / 2 - W_ / 2) < 15; guideH = Math.abs(y + sh / 2 - H_ / 2) < 15;
+    if (guideV) x = Math.round(W_ / 2 - sw / 2);
+    if (guideH) y = Math.round(H_ / 2 - sh / 2);
+    it.x = Math.max(-sw + 40, Math.min(W_ - 40, x)); it.y = Math.max(-sh + 40, Math.min(H_ - 40, y));
+  } else if (dragMode === 'scale') {
+    const s = Math.max(.25, Math.min(5, g0.s * Math.hypot(pos.x - g0.cx, pos.y - g0.cy) / g0.dist));
+    it.s = s; it.x = Math.round(g0.cx - it.w * s / 2); it.y = Math.round(g0.cy - it.h * s / 2);   // 가운데 고정
+  } else if (dragMode === 'rotate') {
+    let a = Math.atan2(pos.y - g0.cy, pos.x - g0.cx) * 180 / Math.PI + 90;
+    a = ((a + 540) % 360) - 180;
+    const snap = Math.round(a / 45) * 45; if (Math.abs(a - snap) < 4) a = snap;
+    it.ang = Math.round(a);
+  }
+  e.preventDefault();
+});
+const endDrag = () => {
+  const was = dragMode, tid = dragging;
+  if (was === 'tlmove' && !movedFar && tlWasSelected) { selected = null; markCard(null); status('위젯을 눌러 선택하세요'); }
+  if (was && was.startsWith('tl')) { dragging = null; dragMode = null; lastTap = null; if (was !== 'tlmove' || movedFar) buildDetailCards(); return; }
+  if (was === 'move' && !movedFar && tid && imageField(tid)) {
+    const now = performance.now();
+    if (lastTap && lastTap.id === tid && now - lastTap.t < 450) { lastTap = null; openPicker(tid); }
+    else lastTap = { id: tid, t: now };
+  } else lastTap = null;
+  dragging = null; dragMode = null; guideV = guideH = false;
+  if (was === 'scale' || was === 'rotate') buildDetailCards();   // 상세 설정 슬라이더 값 맞추기
+};
+canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+
+// =====================================================
+// 7. 화면(UI) 만들기
+// =====================================================
+function el(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v;
+    else if (k === 'value') n.value = v; else n.setAttribute(k, v);
+  }
+  kids.flat().forEach(x => n.append(x)); return n;
+}
+const $ = id => document.getElementById(id);
+
+// --- [위젯] 탭: 36종을 이름으로 바로 고르기
+function buildWidgetTab() {
+  const q = ($('wSearch').value || '').trim().toLowerCase();
+  const box = $('widgetList'); box.innerHTML = '';
+  WIDGET_GROUPS.forEach(([name, ids]) => {
+    const list = ids.filter(id => !q || (DEFS[id].label + ' ' + name).toLowerCase().includes(q));
+    if (!list.length) return;
+    box.append(el('div', { class: 'tag-category', text: name }));
+    const chips = el('div', { class: 'chips' });
+    list.forEach(id => {
+      const b = el('button', { class: 'wbtn' + (state.visible.has(id) ? ' active' : ''), text: `${DEFS[id].icon} ${DEFS[id].label}` });
+      b.addEventListener('click', () => {
+        if (state.visible.has(id)) { state.visible.delete(id); if (selected === id) selected = null; }
+        else { state.visible.add(id); renderOrder = renderOrder.filter(k => k !== id); renderOrder.push(id); warmFonts(); }
+        buildWidgetTab(); buildDetailCards();
+      });
+      chips.append(b);
+    });
+    box.append(chips);
+  });
+  if (!box.children.length) box.append(el('div', { class: 'blank', text: '찾는 위젯이 없어요 😢' }));
+}
+$('wSearch').addEventListener('input', buildWidgetTab);
+$('btnAllOff').addEventListener('click', () => { state.visible.clear(); selected = null; buildWidgetTab(); buildDetailCards(); });
+
+
+// --- [템플릿] 탭
+function resetLayout() {
+  for (const [id, d] of Object.entries(DEFS)) Object.assign(W[id], { x: d.x, y: d.y, s: 1, ang: 0, center: false });
+  renderOrder = Object.keys(DEFS); state.tl = { x: 0, y: 0, s: 1, ang: 0 };
+}
+function applyTemplate(key) {
+  const T = TEMPLATES[key]; if (!T) return;
+  state.template = key; state.theme = T.theme; state.colors = { ...T.colors }; state.backdrop = T.backdrop;
+  state.visible = new Set(Object.keys(T.widgets)); selected = null;
+  resetLayout();
+  for (const [id, o] of Object.entries(T.widgets)) {
+    const { v, ...pos } = o; Object.assign(W[id], pos); if (v) Object.assign(W[id].v, v);
+    renderOrder = renderOrder.filter(k => k !== id); renderOrder.push(id);
+  }
+  buildTemplateTab(); buildWidgetTab(); buildDetailCards(); buildThemeChips(); refreshColorInputs(); warmFonts();
+  $('statusMsg').textContent = `템플릿 적용: ${T.name}`;
+}
+function buildTemplateTab() {
+  const box = $('templateList'); box.innerHTML = '';
+  ['세션카드', '페어틀', '동양풍'].forEach(g => {
+    box.append(el('div', { class: 'tag-category', text: g + ' 템플릿' }));
+    Object.entries(TEMPLATES).filter(([, T]) => T.group === g).forEach(([key, T]) => {
+      const b = el('button', { class: 'tpl' + (state.template === key ? ' active' : '') }, el('b', { text: T.name }), el('small', { text: T.desc }));
+      b.addEventListener('click', () => applyTemplate(key));
+      box.append(b);
+    });
+  });
+}
+$('btnNoBackdrop').addEventListener('click', () => { state.backdrop = null; state.template = null; buildTemplateTab(); buildDetailCards(); });
+$('btnTlReset').addEventListener('click', () => { state.tl = { x: 0, y: 0, s: 1, ang: 0 }; buildDetailCards(); });
+
+// --- [색상] 탭: 분위기 버튼
+function buildThemeChips() {
+  const box = $('themeChips'); box.innerHTML = '';
+  Object.entries(THEME_LABELS).forEach(([k, label]) => {
+    const b = el('button', { class: 'wbtn' + (state.theme === k ? ' active' : ''), text: label });
+    b.addEventListener('click', () => { state.theme = k; state.colors = {}; state.template = null; buildTemplateTab(); refreshColorInputs(); buildThemeChips(); warmFonts(); });
+    box.append(b);
+  });
+}
+
+// --- [상세 설정] 탭의 위젯별 입력칸
+function loadImg(file, cb) { const img = new Image(); img.onload = () => cb(img); img.src = URL.createObjectURL(file); }
+function fieldInput(it, f) {
+  if (f.t === 'image') {
+    const st = el('span', { class: 'rv', text: it.imgs[f.k] ? '넣음 ✓' : '없음' });
+    const file = el('input', { type: 'file', accept: 'image/*', hidden: '' });
+    file.addEventListener('change', () => { const fl = file.files[0]; if (fl) loadImg(fl, img => { it.imgs[f.k] = img; st.textContent = '넣음 ✓'; }); });
+    const pick = el('button', { class: 'btn', type: 'button', text: '🖼️ 사진 고르기' }); pick.addEventListener('click', () => file.click());
+    const clr = el('button', { class: 'btn', type: 'button', text: '지우기' }); clr.addEventListener('click', () => { delete it.imgs[f.k]; st.textContent = '없음'; });
+    return el('div', { class: 'fld' }, el('span', { class: 'fl' }, f.l, st), el('div', { class: 'grid2', style: 'margin-top:4px' }, pick, clr), file);
+  }
+  if (f.t === 'range') {
+    const out = el('span', { class: 'rv', text: it.v[f.k] });
+    const inp = el('input', { type: 'range', min: f.min, max: f.max, value: it.v[f.k] });
+    inp.addEventListener('input', () => { it.v[f.k] = Number(inp.value); out.textContent = inp.value; });
+    return el('label', { class: 'fld' }, el('span', { class: 'fl' }, f.l, out), inp);
+  }
+  const inp = f.t === 'area' ? el('textarea', { class: 'input-box', rows: 3 }) : el('input', { type: 'text', class: 'input-box' });
+  inp.value = it.v[f.k];
+  inp.addEventListener('input', () => { it.v[f.k] = inp.value; warmFontsSoon(); });
+  return el('label', { class: 'fld' }, el('span', { class: 'fl', text: f.l }), inp);
+}
+function sliderRow(label, min, max, val, unit, onInput) {
+  const out = el('span', { class: 'rv', text: val + unit }), sl = el('input', { type: 'range', min, max, value: val });
+  sl.addEventListener('input', () => { onInput(Number(sl.value)); out.textContent = sl.value + unit; });
+  return el('label', { class: 'fld' }, el('span', { class: 'fl' }, label, out), sl);
+}
+function buildDetailCards() {
+  const box = $('widgetCards'); box.innerHTML = '';
+  if (hasLayer()) {
+    const tl = state.tl, card = el('div', { class: 'card' + (selected === '__tl' ? ' sel' : ''), 'data-w': '__tl' }, el('h3', { text: '🎴 템플릿 틀 (배경틀·고정 틀 전체)' }));
+    card.append(sliderRow('크기', 30, 300, Math.round(tl.s * 100), '%', v => { tl.s = v / 100; }));
+    card.append(sliderRow('회전', -180, 180, Math.round(tl.ang), '°', v => { tl.ang = v; }));
+    card.append(sliderRow('가로 위치', -480, 480, Math.round(tl.x), '', v => { tl.x = v; }));
+    card.append(sliderRow('세로 위치', -270, 270, Math.round(tl.y), '', v => { tl.y = v; }));
+    card.addEventListener('click', () => { selected = '__tl'; markCard('__tl'); });
+    box.append(card);
+  }
+  const vis = visibleSet();
+  availableIds().filter(id => vis.has(id) && !(DEFS[id].fixed && !DEFS[id].fields.length)).forEach(id => {
+    const d = DEFS[id], it = W[id];
+    const card = el('div', { class: 'card' + (selected === id ? ' sel' : ''), 'data-w': id }, el('h3', { text: `${d.icon} ${d.label}` }));
+    (d.fields || []).forEach(f => card.append(fieldInput(it, f)));
+    if (!d.fixed) {
+      const out = el('span', { class: 'rv', text: Math.round(it.s * 100) + '%' });
+      const sl = el('input', { type: 'range', min: 40, max: 250, value: Math.round(it.s * 100) });
+      sl.addEventListener('input', () => { it.s = Number(sl.value) / 100; it.center = false; out.textContent = sl.value + '%'; });
+      card.append(el('label', { class: 'fld' }, el('span', { class: 'fl' }, '크기', out), sl));
+      const out2 = el('span', { class: 'rv', text: Math.round(it.ang || 0) + '°' });
+      const sl2 = el('input', { type: 'range', min: -180, max: 180, value: Math.round(it.ang || 0) });
+      sl2.addEventListener('input', () => { it.ang = Number(sl2.value); out2.textContent = sl2.value + '°'; });
+      card.append(el('label', { class: 'fld' }, el('span', { class: 'fl' }, '회전', out2), sl2));
+    }
+    card.addEventListener('click', () => { selected = id; markCard(id); });
+    box.append(card);
+  });
+}
+function markCard(id) {
+  document.querySelectorAll('#widgetCards .card').forEach(c => c.classList.toggle('sel', c.dataset.w === id));
+}
+
+// --- [색상] 탭
+const COLOR_INPUTS = { colAccent: 'accent', colAccent2: 'accent2', colAccent3: 'accent3', colText: 'text', colBg: 'bg' };
+function refreshColorInputs() {
+  const P = palette();
+  for (const [id, k] of Object.entries(COLOR_INPUTS)) $(id).value = P[k];
+}
+for (const [id, k] of Object.entries(COLOR_INPUTS)) $(id).addEventListener('input', e => { state.colors[k] = e.target.value; });
+$('valDim').addEventListener('input', e => { state.dim = e.target.value / 100; $('dimVal').textContent = e.target.value + '%'; });
+$('btnResetColor').addEventListener('click', () => { state.colors = {}; refreshColorInputs(); });
+
+// --- 탭 전환
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('hidden', p.id !== t.dataset.tab));
+}));
+
+// --- 기본 정보 입력칸
+[['valTitle', 'title'], ['valNameA', 'nameA'], ['valNameB', 'nameB'], ['valQuote', 'quote']].forEach(([id, key]) => {
+  $(id).value = state[key];
+  $(id).addEventListener('input', e => { state[key] = e.target.value; warmFontsSoon(); });
+});
+$('valTitleFont').addEventListener('change', e => { state.titleFont = e.target.value; warmFonts(); });
+$('btnReset').addEventListener('click', () => { resetLayout(); buildDetailCards(); });
+
+// =====================================================
+// 8. 배경 이미지 / GIF
+// =====================================================
+$('btnClearBg').addEventListener('click', () => { state.bgMedia = null; $('statusMsg').textContent = '배경을 지웠어요'; });
+$('bgInput').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return;
+  $('statusMsg').textContent = '미디어 분석 중...';
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+      const Reader = (window.omggif && window.omggif.GifReader) || window.GifReader;
+      const reader = new Reader(bytes), n = reader.numFrames();
+      if (n > 1) {
+        const w = reader.width, h = reader.height, frames = [], px = new Uint8ClampedArray(w * h * 4);
+        for (let i = 0; i < n; i++) {
+          reader.decodeAndBlitFrameRGBA(i, px);
+          const fc = document.createElement('canvas'); fc.width = w; fc.height = h;
+          const fx = fc.getContext('2d'), id = fx.createImageData(w, h); id.data.set(px); fx.putImageData(id, 0, 0); frames.push(fc);
+        }
+        state.bgMedia = { isGif: true, frames, width: w, height: h };
+        $('statusMsg').textContent = 'GIF 배경 적용 완료!'; return;
+      }
+    }
+  } catch (err) { /* GIF가 아니면 아래 일반 이미지로 처리 */ }
+  const img = new Image();
+  img.onload = () => { state.bgMedia = { isGif: false, img, width: img.width, height: img.height }; $('statusMsg').textContent = '이미지 배경 적용 완료!'; };
+  img.src = URL.createObjectURL(file);
+});
+
+// =====================================================
+// 9. 폰트 미리 불러오기 (한글 글자 깨짐 방지)
+// =====================================================
+let warmTimer = null;
+function warmFontsSoon() { clearTimeout(warmTimer); warmTimer = setTimeout(warmFonts, 300); }
+function warmFonts() {
+  const P = palette();
+  const text = [state.title, state.nameA, state.nameB, state.quote, '가나다라마바사아자차카타파하ABCabc0123456789',
+    ...Object.values(W).flatMap(it => Object.values(it.v).map(String))].join('');
+  const fams = new Set([state.titleFont === 'auto' ? P.titleFont : state.titleFont, 'Noto Sans KR', 'Share Tech Mono', 'Nanum Pen Script', 'Gowun Batang', 'Nanum Myeongjo']);
+  const first = /"([^"]+)"/.exec(P.font); if (first) fams.add(first[1]);
+  fams.forEach(f => document.fonts.load(`16px "${f}"`, text).catch(() => {}));
+  document.fonts.load(`bold 16px "Noto Sans KR"`, text).catch(() => {});
+}
+
+// =====================================================
+// 10. 저장 (영상 / GIF / PNG)
+// =====================================================
+const bar = $('loadingBar'), fill = $('progressFill'), resultArea = $('resultArea');
+function download(url, name) { const a = document.createElement('a'); a.href = url; a.download = name; a.click(); }
+function startExport() { isExporting = true; bar.classList.remove('hidden'); resultArea.classList.add('hidden'); fill.style.width = '0'; }
+function endExport(msg) { isExporting = false; bar.classList.add('hidden'); resultArea.textContent = msg; resultArea.classList.remove('hidden'); }
+
+$('btnExportPNG').addEventListener('click', () => {
+  const was = isExporting; isExporting = true; draw(animProgress);
+  canvas.toBlob(b => { download(URL.createObjectURL(b), `SECARD_${Date.now()}.png`); isExporting = was; });
+});
+
+$('btnExportMP4').addEventListener('click', () => {
+  if (isExporting) return;
+  startExport(); draw(0);
+  const stream = canvas.captureStream(30);
+  let mime = 'video/mp4';
+  if (!MediaRecorder.isTypeSupported(mime)) mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+  let rec; try { rec = new MediaRecorder(stream, { mimeType: mime }); } catch (e) { rec = new MediaRecorder(stream); }
+  const chunks = [];
+  rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  rec.onstop = () => {
+    const type = rec.mimeType || mime, ext = type.includes('mp4') ? 'mp4' : 'webm';
+    download(URL.createObjectURL(new Blob(chunks, { type })), `SECARD_${Date.now()}.${ext}`);
+    endExport(ext === 'mp4' ? '저장 완료!' : '저장 완료! (이 브라우저는 webm 영상으로 저장돼요)');
+  };
+  rec.start();
+  let f = 0; const total = 180;
+  const timer = setInterval(() => {
+    draw(f / total); f++; fill.style.width = `${Math.min(100, f / total * 100)}%`;
+    if (f >= total) { clearInterval(timer); rec.stop(); }
+  }, 33);
+});
+
+$('btnExportGIF').addEventListener('click', () => {
+  if (isExporting) return;
+  if (!window.gifshot) { alert('GIF 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침 해주세요.'); return; }
+  startExport();
+  const frames = [], n = 20;
+  for (let i = 0; i < n; i++) { draw(i / n); frames.push(canvas.toDataURL('image/png')); }
+  fill.style.width = '50%';
+  gifshot.createGIF({ images: frames, gifWidth: 960, gifHeight: 540, interval: .25, numWorkers: 2 }, obj => {
+    if (obj.error) { endExport('GIF 만들기에 실패했어요 😢'); return; }
+    download(obj.image, `SECARD_${Date.now()}.gif`); endExport('저장 완료!');
+  });
+});
+
+// =====================================================
+// 11. 시작!
+// =====================================================
+applyTemplate('sessionClassic');
+setInterval(() => { if (!isExporting) { animProgress = (animProgress + .007) % 1; draw(animProgress); } }, 33);
+</script>
+</body>
+</html>

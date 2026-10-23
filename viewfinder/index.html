@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>16:9 도파 페어틀</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- gifshot (GIF 내보내기 인코더) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
+  <!-- omggif (검증된 고성능 GIF 프레임 디코더) -->
+  <script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.js"></script>
+  <script>
+    if (!window.omggif && !window.GifReader) {
+      document.write('<script src="https://unpkg.com/omggif@1.0.10/omggif.js"><\/script>');
+    }
+  </script>
+  <!-- Pretendard 폰트 -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    body { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
+    #previewCanvas { touch-action: none; cursor: grab; }
+    #previewCanvas:active { cursor: grabbing; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-100 min-h-screen pb-16">
+
+  <!-- 미니멀 헤더 -->
+  <header class="border-b border-zinc-800/80 px-4 py-3 bg-[#09090b]/80 backdrop-blur sticky top-0 z-30 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <span class="text-xs font-semibold tracking-wider text-zinc-300 uppercase font-mono">DIGICAM VIEWFINDER HUD</span>
+      <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono">FIXED</span>
+    </div>
+    <span class="text-xs text-zinc-500 font-mono">1920×1080</span>
+  </header>
+
+  <main class="max-w-xl mx-auto px-4 pt-4 space-y-4">
+
+    <!-- 1. 16:9 와이드 디카 뷰파인더 캔버스 -->
+    <div class="bg-zinc-950 rounded-2xl p-2.5 border border-zinc-800 shadow-2xl flex flex-col items-center">
+      <div class="w-full flex items-center justify-between pb-2 px-1 text-[11px] text-zinc-400">
+        <span class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+          💡 <b>화면의 대화창·플레이어·AF포커스를 드래그해보세요!</b>
+        </span>
+        <button id="btnResetPositions" class="text-zinc-500 hover:text-zinc-300 text-[10px] underline">위치 초기화</button>
+      </div>
+
+      <!-- 16:9 캔버스 (960 x 540) -->
+      <canvas id="previewCanvas" width="960" height="540" class="w-full aspect-[16/9] rounded-xl bg-black shadow-inner"></canvas>
+    </div>
+
+    <!-- 2. 내보내기 버튼 -->
+    <div class="space-y-3 bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-800">
+      <div class="grid grid-cols-2 gap-2">
+        <button id="btnGenerateMP4" class="py-3 bg-gradient-to-r from-red-500 to-amber-500 hover:opacity-95 text-zinc-950 font-bold rounded-xl text-xs transition-all shadow-md active:scale-[0.99] flex items-center justify-center space-x-1.5">
+          <span>✨ 무손실 MP4 저장</span>
+        </button>
+        <button id="btnGenerateGIF" class="py-3 bg-zinc-100 hover:bg-white text-zinc-950 font-bold rounded-xl text-xs transition-all shadow-md active:scale-[0.99] flex items-center justify-center space-x-1.5">
+          <span>🎬 고화질 GIF 내보내기</span>
+        </button>
+      </div>
+      <p class="text-[10px] text-zinc-500 text-center">
+        💡 트위터 업로드 시 <b>[무손실 MP4]</b>를 선택하면 디카 OSD 텍스트가 번짐 없이 가장 선명하게 재생됩니다.
+      </p>
+
+      <div id="loadingStatus" class="hidden space-y-1.5 py-1">
+        <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+          <div id="progressBar" class="bg-red-500 h-full w-0 transition-all duration-200"></div>
+        </div>
+        <p id="statusMsg" class="text-center text-[11px] text-zinc-400 font-mono">고화질 렌더링 중...</p>
+      </div>
+
+      <div id="resultArea" class="hidden flex flex-col items-center space-y-3 pt-2">
+        <div id="previewMediaWrapper" class="w-full max-w-[320px] rounded-lg overflow-hidden border border-zinc-700 shadow-xl aspect-[16/9] bg-black"></div>
+        <div class="flex w-full gap-2">
+          <a id="btnDownload" download="aesthetic_digicam_16x9" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white text-center font-bold rounded-lg text-xs transition">
+            💾 기기에 저장하기
+          </a>
+          <button id="btnShareX" class="py-2.5 px-4 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold rounded-lg text-xs transition flex items-center gap-1.5">
+            𝕏 트윗
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 모바일 탭 제어판 -->
+    <div class="bg-zinc-900/80 rounded-2xl border border-zinc-800/80 overflow-hidden">
+      <div class="grid grid-cols-3 border-b border-zinc-800 text-xs font-medium text-center">
+        <button id="tabBtn1" class="tab-btn py-3 border-b-2 border-red-500 text-white font-semibold transition" data-tab="tab1">📷 촬영 미디어</button>
+        <button id="tabBtn2" class="tab-btn py-3 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition" data-tab="tab2">📹 디카 HUD·대사</button>
+        <button id="tabBtn3" class="tab-btn py-3 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition" data-tab="tab3">🎨 테마·컬러</button>
+      </div>
+
+      <div class="p-4 space-y-4">
+        
+        <!-- [탭 1] 이미지 & 움짤(GIF) 등록 -->
+        <div id="tab1" class="tab-content space-y-4">
+          <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 space-y-3">
+            <div class="flex justify-between items-center">
+              <label class="text-xs font-bold text-zinc-200">배경 미디어 등록 (GIF / JPG / PNG)</label>
+              <span id="bgStatus" class="text-[10px] text-zinc-400 font-mono px-2 py-0.5 bg-zinc-800 rounded border border-zinc-700">대기 중</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <label class="flex flex-col items-center justify-center p-3 bg-zinc-900 hover:bg-zinc-800 rounded-lg border border-zinc-700 cursor-pointer transition text-center group active:scale-[0.98]">
+                <span class="text-base mb-1">🖼️</span>
+                <span class="text-xs font-semibold text-zinc-200 group-hover:text-white">사진 갤러리</span>
+                <span class="text-[10px] text-zinc-500">일반 사진 / 앨범</span>
+                <input type="file" id="bgInputGallery" accept="image/*" class="hidden">
+              </label>
+
+              <label class="flex flex-col items-center justify-center p-3 bg-red-950/20 hover:bg-red-950/40 rounded-lg border border-red-500/30 cursor-pointer transition text-center group active:scale-[0.98]">
+                <span class="text-base mb-1">📁</span>
+                <span class="text-xs font-bold text-red-400 group-hover:text-red-300">내 파일 / 다운로드</span>
+                <span class="text-[10px] text-red-300/70">★ GIF 움짤 전용</span>
+                <input type="file" id="bgInputFiles" accept="*/*" class="hidden">
+              </label>
+            </div>
+
+            <p class="text-[11px] text-zinc-400 bg-zinc-900/60 p-2 rounded border border-zinc-800/80 leading-relaxed">
+              💡 <b>다운로드한 GIF가 갤러리에 없다면?</b><br>
+              오른쪽 <b>[📁 내 파일 / 다운로드]</b>를 누르면 다운로드 폴더의 GIF 움짤이 목록에 바로 나타납니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- [탭 2] 디카 OSD HUD & 대사 커스텀 -->
+        <div id="tab2" class="tab-content hidden space-y-4">
+          
+          <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-3">
+            <span class="text-xs font-semibold text-zinc-300 flex items-center gap-1.5 font-mono">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span> OSD VIEWFINDER SETTINGS
+            </span>
+
+            <div class="grid grid-cols-3 gap-1.5">
+              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
+                <span class="text-[10px] text-zinc-400 mb-1">녹화 표시</span>
+                <button type="button" id="btnToggleRec" class="w-full py-1 rounded text-[10px] font-bold transition bg-red-500/20 text-red-400 border border-red-500/30">
+                  REC (ON)
+                </button>
+              </div>
+              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
+                <span class="text-[10px] text-zinc-400 mb-1">AF 포커스</span>
+                <button type="button" id="btnToggleAF" class="w-full py-1 rounded text-[10px] font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  [ AF ] ON
+                </button>
+              </div>
+              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
+                <span class="text-[10px] text-zinc-400 mb-1">뷰파인더 틀</span>
+                <button type="button" id="btnToggleBracket" class="w-full py-1 rounded text-[10px] font-bold transition bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  ┌ ┘ ON
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-zinc-800/80">
+              <div>
+                <label class="text-[10px] text-zinc-500">촬영 날짜 (타임스탬프)</label>
+                <input type="text" id="hudDateInput" placeholder="2026.10.07" value="2026.10.07" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono placeholder-zinc-500">
+              </div>
+              <div>
+                <label class="text-[10px] text-zinc-500">촬영 시간</label>
+                <input type="text" id="hudTimeInput" placeholder="18:24:00" value="18:24:00" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono placeholder-zinc-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-zinc-500">렌즈 줌 표기</label>
+                <input type="text" id="hudZoomInput" placeholder="WIDE 1.2x" value="WIDE 1.2x" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+              </div>
+              <div>
+                <label class="text-[10px] text-zinc-500">조리개/셔터 스피드</label>
+                <input type="text" id="hudShutterInput" placeholder="F2.8 1/250s" value="F2.8 1/250s" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[11px] text-zinc-400">인용 대사 캡슐</label>
+            <input type="text" id="quoteText" placeholder="예: 도파미너, 오랜만입니다." value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500">
+          </div>
+
+          <div>
+            <label class="text-[11px] text-zinc-400">메신저 상대 이름</label>
+            <input type="text" id="senderName" placeholder="예: 윤세라" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
+          </div>
+
+          <div class="space-y-2 border-t border-zinc-800 pt-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-zinc-300">💬 메신저 말풍선</span>
+                <span class="text-[10px] text-zinc-500 ml-1">(글자 수에 따라 가변 조절)</span>
+              </div>
+              <button id="btnAddBubble" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-[11px] font-medium rounded-md transition border border-amber-500/30">
+                + 말풍선 추가
+              </button>
+            </div>
+            <div id="bubblesContainer" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800">
+            <div>
+              <label class="text-[11px] text-zinc-400">곡명</label>
+              <input type="text" id="songTitle" placeholder="예: I Don't Think That I Like Her" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
+            </div>
+            <div>
+              <label class="text-[11px] text-zinc-400">가수 / 테마</label>
+              <input type="text" id="artistName" placeholder="예: Charlie Puth" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
+            </div>
+          </div>
+        </div>
+
+        <!-- [탭 3] 테마 및 디카 HUD 컬러 -->
+        <div id="tab3" class="tab-content hidden space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-2 font-mono">디카 OSD 텍스트 컬러</label>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-900" data-color="#ffffff">WHITE</button>
+              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#a3e635] text-black" data-color="#a3e635">LIME GREEN</button>
+              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#ff2a85] text-white" data-color="#ff2a85">NEON PINK</button>
+              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#f59e0b] text-black" data-color="#f59e0b">AMBER</button>
+              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#38bdf8] text-black" data-color="#38bdf8">CYAN</button>
+            </div>
+          </div>
+
+          <div class="border-t border-zinc-800 pt-3">
+            <label class="block text-xs font-medium text-zinc-400 mb-2">말풍선 & 재생바 포인트 색상</label>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <button class="color-btn w-8 h-8 rounded-full bg-[#f59e0b] ring-2 ring-white ring-offset-2 ring-offset-zinc-900 transition" data-color="#f59e0b" title="앰버 옐로우"></button>
+              <button class="color-btn w-8 h-8 rounded-full bg-[#ff2a85] transition" data-color="#ff2a85" title="도파 핑크"></button>
+              <button class="color-btn w-8 h-8 rounded-full bg-[#5eead4] transition" data-color="#5eead4" title="세이지 민트"></button>
+              <button class="color-btn w-8 h-8 rounded-full bg-[#c084fc] transition" data-color="#c084fc" title="라벤더 퍼플"></button>
+              <button class="color-btn w-8 h-8 rounded-full bg-[#38bdf8] transition" data-color="#38bdf8" title="세레니티 블루"></button>
+              <button class="color-btn w-8 h-8 rounded-full bg-[#e4e4e7] transition" data-color="#e4e4e7" title="모노 화이트"></button>
+              
+              <div class="flex items-center gap-1.5 ml-1 pl-2 border-l border-zinc-800">
+                <input type="color" id="nativeColorPicker" value="#f59e0b" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0">
+                <span id="hexDisplay" class="text-xs font-mono text-zinc-400">#f59e0b</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 미니멀 푸터 -->
+    <footer class="text-center pt-2">
+      <a href="https://your-dopa-url.com" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] text-zinc-500 hover:text-zinc-300 transition">
+        <span>aesthetic digicam kit</span>
+        <span>·</span>
+        <span class="font-medium underline underline-offset-2">dopa</span>
+      </a>
+    </footer>
+
+  </main>
+
+  <script>
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let bgMedia = null;
+    let animProgress = 0;
+    let previewTimer = null;
+    let isExporting = false; // 내보내기 시 미리보기 타이머 중단용
+
+    let themeColor = '#f59e0b';
+    let hudColor = '#ffffff';
+    let isRecOn = true;
+    let isAFOn = true;
+    let isBracketOn = true;
+
+    // 모서리 둥근 사각형 유틸
+    function drawRoundRect(c, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      if (typeof c.roundRect === 'function') {
+        c.beginPath();
+        c.roundRect(x, y, w, h, radius);
+        c.closePath();
+      } else {
+        c.beginPath();
+        c.moveTo(x + radius, y);
+        c.lineTo(x + w - radius, y);
+        c.quadraticCurveTo(x + w, y, x + w, y + radius);
+        c.lineTo(x + w, y + h - radius);
+        c.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        c.lineTo(x + radius, y + h);
+        c.quadraticCurveTo(x, y + h, x, y + h - radius);
+        c.lineTo(x, y + radius);
+        c.quadraticCurveTo(x, y, x + radius, y);
+        c.closePath();
+      }
+    }
+    const roundRect = drawRoundRect;
+
+    // 텍스트 줄바꿈 계산
+    function getWrappedLines(context, text, maxWidth) {
+      if (!text) return [''];
+      const chars = Array.from(text);
+      const lines = [];
+      let currentLine = '';
+
+      for (let i = 0; i < chars.length; i++) {
+        const testLine = currentLine + chars[i];
+        const metrics = context.measureText(testLine);
+        if (metrics.width > maxWidth && currentLine.length > 0) {
+          lines.push(currentLine);
+          currentLine = chars[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines.length > 0 ? lines : [''];
+    }
+
+    const defaultElements = {
+      afBox:  { id: 'afBox',  x: 430, y: 190, w: 100, h: 100 },
+      quote:  { id: 'quote',  x: 580, y: 350, w: 240, h: 36 },
+      chat:   { id: 'chat',   x: 45,  y: 70,  w: 255, h: 380 },
+      player: { id: 'player', x: 210, y: 390, w: 220, h: 86 }
+    };
+    let elements = JSON.parse(JSON.stringify(defaultElements));
+    let renderOrder = ['afBox', 'chat', 'player', 'quote'];
+
+    let draggingItem = null;
+    let dragOffset = { x: 0, y: 0 };
+
+    let chatBubbles = [
+      { side: 'left',  text: '', placeholder: '도파미너, 클로즈베타 기대되네요.' },
+      { side: 'right', text: '', placeholder: '네, 정말로요!' },
+      { side: 'left',  text: '', placeholder: '저도 당신을 어서 만나고 싶어요.' },
+      { side: 'left',  text: '', placeholder: '훗, 언제가 좋을까요?' }
+    ];
+
+    // DOM 설정
+    const bgInputGallery = document.getElementById('bgInputGallery');
+    const bgInputFiles = document.getElementById('bgInputFiles');
+    const bgStatus = document.getElementById('bgStatus');
+    const quoteText = document.getElementById('quoteText');
+    const senderName = document.getElementById('senderName');
+    const songTitle = document.getElementById('songTitle');
+    const artistName = document.getElementById('artistName');
+    const nativeColorPicker = document.getElementById('nativeColorPicker');
+    const hexDisplay = document.getElementById('hexDisplay');
+    const bubblesContainer = document.getElementById('bubblesContainer');
+    const btnAddBubble = document.getElementById('btnAddBubble');
+    const btnResetPositions = document.getElementById('btnResetPositions');
+    
+    const btnToggleRec = document.getElementById('btnToggleRec');
+    const btnToggleAF = document.getElementById('btnToggleAF');
+    const btnToggleBracket = document.getElementById('btnToggleBracket');
+    const hudDateInput = document.getElementById('hudDateInput');
+    const hudTimeInput = document.getElementById('hudTimeInput');
+    const hudZoomInput = document.getElementById('hudZoomInput');
+    const hudShutterInput = document.getElementById('hudShutterInput');
+
+    btnToggleRec.addEventListener('click', () => {
+      isRecOn = !isRecOn;
+      btnToggleRec.textContent = isRecOn ? 'REC (ON)' : 'STBY (OFF)';
+      btnToggleRec.className = isRecOn 
+        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-red-500/20 text-red-400 border border-red-500/30'
+        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      draw();
+    });
+
+    btnToggleAF.addEventListener('click', () => {
+      isAFOn = !isAFOn;
+      btnToggleAF.textContent = isAFOn ? '[ AF ] ON' : '[ AF ] OFF';
+      btnToggleAF.className = isAFOn
+        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      draw();
+    });
+
+    btnToggleBracket.addEventListener('click', () => {
+      isBracketOn = !isBracketOn;
+      btnToggleBracket.textContent = isBracketOn ? '┌ ┘ ON' : '┌ ┘ OFF';
+      btnToggleBracket.className = isBracketOn
+        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-amber-500/20 text-amber-400 border border-amber-500/30'
+        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      draw();
+    });
+
+    document.querySelectorAll('.hud-color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.hud-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900'));
+        btn.classList.add('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900');
+        hudColor = btn.dataset.color;
+        draw();
+      });
+    });
+
+    btnResetPositions.addEventListener('click', () => {
+      elements = JSON.parse(JSON.stringify(defaultElements));
+      renderOrder = ['afBox', 'chat', 'player', 'quote'];
+      draw();
+    });
+
+    function renderBubbleInputs() {
+      bubblesContainer.innerHTML = '';
+      chatBubbles.forEach((bubble, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-1.5 bg-zinc-950 p-1.5 rounded-lg border border-zinc-800 text-xs';
+        row.innerHTML = `
+          <button class="toggle-side px-2 py-1 rounded text-[10px] font-bold ${bubble.side === 'left' ? 'bg-zinc-800 text-zinc-300' : 'bg-amber-500/20 text-amber-300'}" data-index="${idx}">
+            ${bubble.side === 'left' ? '← 상대' : '나 →'}
+          </button>
+          <input type="text" value="${bubble.text}" placeholder="${bubble.placeholder}" class="bubble-text flex-1 bg-transparent border-0 text-white placeholder-zinc-500 text-xs px-1 focus:outline-none" data-index="${idx}">
+          <button class="delete-bubble text-zinc-500 hover:text-red-400 px-1.5" data-index="${idx}">✕</button>
+        `;
+        bubblesContainer.appendChild(row);
+      });
+
+      document.querySelectorAll('.toggle-side').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = e.target.dataset.index;
+          chatBubbles[i].side = chatBubbles[i].side === 'left' ? 'right' : 'left';
+          renderBubbleInputs();
+          draw();
+        });
+      });
+
+      document.querySelectorAll('.bubble-text').forEach(input => {
+        input.addEventListener('input', (e) => {
+          chatBubbles[e.target.dataset.index].text = e.target.value;
+          draw();
+        });
+      });
+
+      document.querySelectorAll('.delete-bubble').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (chatBubbles.length <= 1) return;
+          chatBubbles.splice(e.target.dataset.index, 1);
+          renderBubbleInputs();
+          draw();
+        });
+      });
+    }
+
+    btnAddBubble.addEventListener('click', () => {
+      chatBubbles.push({ side: 'left', text: '', placeholder: '새로운 메시지를 입력하세요...' });
+      renderBubbleInputs();
+      draw();
+    });
+    renderBubbleInputs();
+
+    // 탭 토글
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('border-red-500', 'text-white');
+          b.classList.add('border-transparent', 'text-zinc-400');
+        });
+        btn.classList.add('border-red-500', 'text-white');
+        btn.classList.remove('border-transparent', 'text-zinc-400');
+
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(btn.dataset.tab).classList.remove('hidden');
+      });
+    });
+
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900'));
+        btn.classList.add('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900');
+        themeColor = btn.dataset.color;
+        nativeColorPicker.value = themeColor;
+        hexDisplay.textContent = themeColor;
+        draw();
+      });
+    });
+
+    nativeColorPicker.addEventListener('input', (e) => {
+      themeColor = e.target.value;
+      hexDisplay.textContent = themeColor;
+      draw();
+    });
+
+    // ================= 모바일 완벽 대응: GIF 디코더 =================
+    async function loadMediaFile(file, statusEl) {
+      if (!file) return null;
+      if (statusEl) {
+        statusEl.textContent = '파일 분석 중...';
+        statusEl.className = 'text-[10px] text-amber-400 font-mono px-2 py-0.5 bg-amber-500/10 rounded border border-amber-500/20';
+      }
+
+      try {
+        const buffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        const isGifHeader = (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46);
+
+        if (isGifHeader) {
+          if (statusEl) statusEl.textContent = 'GIF 프레임 추출 중...';
+          
+          const ReaderClass = (window.omggif && window.omggif.GifReader) || window.GifReader;
+          if (ReaderClass) {
+            const reader = new ReaderClass(bytes);
+            const numFrames = reader.numFrames();
+
+            if (numFrames > 1) {
+              const width = reader.width;
+              const height = reader.height;
+              const canvasList = [];
+
+              const framePixels = new Uint8ClampedArray(width * height * 4);
+
+              for (let i = 0; i < numFrames; i++) {
+                reader.decodeAndBlitFrameRGBA(i, framePixels);
+
+                const fCanvas = document.createElement('canvas');
+                fCanvas.width = width;
+                fCanvas.height = height;
+                const fCtx = fCanvas.getContext('2d');
+
+                const imgData = fCtx.createImageData(width, height);
+                imgData.data.set(framePixels);
+                fCtx.putImageData(imgData, 0, 0);
+
+                canvasList.push(fCanvas);
+              }
+
+              if (statusEl) {
+                statusEl.textContent = `움짤 GIF (${canvasList.length}프레임 작동 중 ✨)`;
+                statusEl.className = 'text-[10px] text-emerald-400 font-mono px-2 py-0.5 bg-emerald-500/10 rounded border border-emerald-500/20';
+              }
+
+              return {
+                isGif: true,
+                frames: canvasList,
+                width: width,
+                height: height
+              };
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('GIF decode error, fallback to static image:', err);
+      }
+
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            if (statusEl) {
+              statusEl.textContent = '정적 이미지 등록됨';
+              statusEl.className = 'text-[10px] text-zinc-400 font-mono px-2 py-0.5 bg-zinc-800 rounded border border-zinc-700';
+            }
+            resolve({ isGif: false, img, width: img.width, height: img.height });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function onMediaSelected(inputEl) {
+      if (inputEl.files && inputEl.files[0]) {
+        bgMedia = await loadMediaFile(inputEl.files[0], bgStatus);
+        draw();
+      }
+    }
+    bgInputGallery.addEventListener('change', () => onMediaSelected(bgInputGallery));
+    bgInputFiles.addEventListener('change', () => onMediaSelected(bgInputFiles));
+
+    function getDrawableSource(media, prog) {
+      if (!media) return null;
+      if (media.isGif && media.frames && media.frames.length > 0) {
+        const frameIdx = Math.floor(prog * media.frames.length * 3) % media.frames.length;
+        return media.frames[frameIdx];
+      }
+      return media.img;
+    }
+
+    [quoteText, senderName, songTitle, artistName, hudDateInput, hudTimeInput, hudZoomInput, hudShutterInput].forEach(el => {
+      el.addEventListener('input', () => draw());
+    });
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * (canvas.width / rect.width),
+        y: (clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    function handleDragStart(e) {
+      if (isExporting) return;
+      const pos = getCanvasCoords(e);
+      for (let i = renderOrder.length - 1; i >= 0; i--) {
+        const key = renderOrder[i];
+        if (key === 'afBox' && !isAFOn) continue;
+        const item = elements[key];
+        if (pos.x >= item.x && pos.x <= item.x + item.w &&
+            pos.y >= item.y && pos.y <= item.y + item.h) {
+          draggingItem = key;
+          dragOffset.x = pos.x - item.x;
+          dragOffset.y = pos.y - item.y;
+          renderOrder.splice(i, 1);
+          renderOrder.push(key);
+          if (e.cancelable) e.preventDefault();
+          draw();
+          break;
+        }
+      }
+    }
+
+    function handleDragMove(e) {
+      if (!draggingItem || isExporting) return;
+      const pos = getCanvasCoords(e);
+      elements[draggingItem].x = Math.round(pos.x - dragOffset.x);
+      elements[draggingItem].y = Math.round(pos.y - dragOffset.y);
+      if (e.cancelable) e.preventDefault();
+      draw();
+    }
+
+    function handleDragEnd() {
+      draggingItem = null;
+      draw();
+    }
+
+    canvas.addEventListener('mousedown', handleDragStart);
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('mouseup', handleDragEnd);
+
+    canvas.addEventListener('touchstart', handleDragStart, { passive: false });
+    window.addEventListener('touchmove', handleDragMove, { passive: false });
+    window.addEventListener('touchend', handleDragEnd);
+
+    // ================= 메인 렌더링 =================
+    function draw(prog = animProgress) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. 전체 배경
+      const bgSource = getDrawableSource(bgMedia, prog);
+      if (bgSource && bgMedia) {
+        const scale = Math.max(canvas.width / bgMedia.width, canvas.height / bgMedia.height);
+        const w = bgMedia.width * scale;
+        const h = bgMedia.height * scale;
+        ctx.drawImage(bgSource, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+      } else {
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#1c1924');
+        grad.addColorStop(0.6, '#0f172a');
+        grad.addColorStop(1, '#020617');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 15px Pretendard';
+        ctx.textAlign = 'center';
+        ctx.fillText('촬영 미디어 탭에서 이미지나 GIF를 등록해주세요', canvas.width / 2, canvas.height / 2);
+      }
+
+      // 2. 디카 비네팅
+      renderDigicamVignette();
+
+      // 3. 위젯 렌더링
+      renderOrder.forEach(key => {
+        if (key === 'afBox' && isAFOn) renderFocusBox(prog);
+        if (key === 'chat') renderGlassChatWindow(prog);
+        if (key === 'player') renderFloatingMusicPlayer(prog);
+        if (key === 'quote') renderTopQuotePill();
+      });
+
+      // 4. 레트로 디카 HUD 오버레이
+      renderDigicamHUD(prog);
+
+      // 드래그 가이드 점선
+      if (draggingItem && !isExporting) {
+        const it = elements[draggingItem];
+        ctx.save();
+        ctx.strokeStyle = themeColor;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        drawRoundRect(ctx, it.x - 3, it.y - 3, it.w + 6, it.h + 6, 8);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function renderDigicamVignette() {
+      ctx.save();
+      const vignette = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.35,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.72
+      );
+      vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      vignette.addColorStop(1, 'rgba(5, 7, 12, 0.45)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function renderDigicamHUD(prog) {
+      ctx.save();
+      ctx.strokeStyle = hudColor;
+      ctx.fillStyle = hudColor;
+
+      // [1] 상단 OSD
+      ctx.font = 'bold 12px monospace, monospace';
+      ctx.textAlign = 'left';
+
+      if (isRecOn) {
+        const isBlink = Math.sin(prog * Math.PI * 4) > 0;
+        if (isBlink) {
+          ctx.beginPath();
+          ctx.arc(44, 22, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+        }
+        ctx.fillStyle = isBlink ? '#ef4444' : hudColor;
+        ctx.fillText('REC', 54, 26);
+      } else {
+        ctx.fillStyle = hudColor;
+        ctx.fillText('STBY', 40, 26);
+      }
+
+      ctx.fillStyle = hudColor;
+      ctx.font = '11px monospace';
+      ctx.fillText('TC 00:18:24', 96, 26);
+
+      ctx.textAlign = 'right';
+      ctx.font = '11px monospace';
+      ctx.fillText('RAW  60FPS  ISO 400', 880, 26);
+
+      const batX = 892, batY = 16, batW = 24, batH = 12;
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(batX, batY, batW, batH);
+      ctx.fillRect(batX + batW + 1, batY + 3, 2, 6);
+      ctx.fillRect(batX + 3, batY + 2.5, 5.5, 7);
+      ctx.fillRect(batX + 10.5, batY + 2.5, 5.5, 7);
+
+      // [2] 뷰파인더 코너 브래킷
+      if (isBracketOn) {
+        const bLeft = 40, bRight = 920, bTop = 48, bBottom = 492, bLen = 24;
+        ctx.lineWidth = 1.5;
+
+        ctx.beginPath();
+        ctx.moveTo(bLeft, bTop + bLen); ctx.lineTo(bLeft, bTop); ctx.lineTo(bLeft + bLen, bTop);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(bRight - bLen, bTop); ctx.lineTo(bRight, bTop); ctx.lineTo(bRight, bTop + bLen);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(bLeft, bBottom - bLen); ctx.lineTo(bLeft, bBottom); ctx.lineTo(bLeft + bLen, bBottom);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(bRight - bLen, bBottom); ctx.lineTo(bRight, bBottom); ctx.lineTo(bRight, bBottom - bLen);
+        ctx.stroke();
+      }
+
+      // [3] 하단 OSD
+      const dateVal = hudDateInput.value.trim() || hudDateInput.placeholder;
+      const timeVal = hudTimeInput.value.trim() || hudTimeInput.placeholder;
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 11.5px monospace';
+      ctx.fillText(`${dateVal}  ${timeVal}`, 40, 518);
+
+      ctx.textAlign = 'center';
+      ctx.font = '9.5px monospace';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.fillText('· dopa digicam kit ·', canvas.width / 2, 518);
+
+      const zoomVal = hudZoomInput.value.trim() || hudZoomInput.placeholder;
+      const shutterVal = hudShutterInput.value.trim() || hudShutterInput.placeholder;
+      ctx.fillStyle = hudColor;
+      ctx.textAlign = 'right';
+      ctx.font = '11px monospace';
+      ctx.fillText(`${zoomVal}   ${shutterVal}`, 920, 518);
+
+      ctx.restore();
+    }
+
+    // ★ 오타가 100% 픽스된 정확한 AF 포커스 박스 그리기
+    function renderFocusBox(prog) {
+      const it = elements.afBox;
+      ctx.save();
+      ctx.strokeStyle = hudColor;
+      ctx.lineWidth = 1.2;
+
+      const pulseAlpha = Math.sin(prog * Math.PI * 2) * 0.25 + 0.75;
+      ctx.globalAlpha = pulseAlpha;
+
+      const corner = 14;
+      
+      // 좌상
+      ctx.beginPath();
+      ctx.moveTo(it.x, it.y + corner); 
+      ctx.lineTo(it.x, it.y); 
+      ctx.lineTo(it.x + corner, it.y);
+      ctx.stroke();
+
+      // 우상 (이전 오타 발생 지점 수정 완료)
+      ctx.beginPath();
+      ctx.moveTo(it.x + it.w - corner, it.y); 
+      ctx.lineTo(it.x + it.w, it.y); 
+      ctx.lineTo(it.x + it.w, it.y + corner);
+      ctx.stroke();
+
+      // 좌하
+      ctx.beginPath();
+      ctx.moveTo(it.x, it.y + it.h - corner); 
+      ctx.lineTo(it.x, it.y + it.h); 
+      ctx.lineTo(it.x + corner, it.y + it.h);
+      ctx.stroke();
+
+      // 우하
+      ctx.beginPath();
+      ctx.moveTo(it.x + it.w - corner, it.y + it.h); 
+      ctx.lineTo(it.x + it.w, it.y + it.h); 
+      ctx.lineTo(it.x + it.w, it.y + it.h - corner);
+      ctx.stroke();
+
+      // 중앙 십자선
+      const cx = it.x + it.w / 2;
+      const cy = it.y + it.h / 2;
+      ctx.beginPath();
+      ctx.moveTo(cx - 5, cy); ctx.lineTo(cx + 5, cy);
+      ctx.moveTo(cx, cy - 5); ctx.lineTo(cx, cy + 5);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function renderTopQuotePill() {
+      const it = elements.quote;
+      const text = quoteText.value.trim() || quoteText.placeholder.replace('예: ', '');
+      if (!text) return;
+
+      ctx.save();
+      ctx.font = '500 11px Pretendard';
+      const textWidth = ctx.measureText(text).width;
+      it.w = Math.max(160, Math.round(textWidth + 48));
+
+      drawRoundRect(ctx, it.x, it.y, it.w, it.h, it.h / 2);
+      ctx.fillStyle = 'rgba(12, 14, 22, 0.78)';
+      ctx.fill();
+
+      ctx.fillStyle = themeColor;
+      ctx.font = 'bold 12px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('“', it.x + 14, it.y + 22);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '500 11px Pretendard';
+      ctx.fillText(text, it.x + 28, it.y + 22);
+      ctx.restore();
+    }
+
+    function renderGlassChatWindow(prog) {
+      const it = elements.chat;
+      const name = senderName.value.trim() || senderName.placeholder.replace('예: ', '');
+
+      ctx.save();
+      ctx.font = 'bold 9.5px Pretendard';
+      const maxTextWidth = it.w - 56;
+
+      const bubbleLayouts = chatBubbles.map(bubble => {
+        const text = bubble.text.trim() || bubble.placeholder;
+        const lines = getWrappedLines(ctx, text, maxTextWidth);
+        let maxLineWidth = 0;
+        lines.forEach(line => {
+          const w = ctx.measureText(line).width;
+          if (w > maxLineWidth) maxLineWidth = w;
+        });
+        const bw = Math.min(it.w - 32, Math.max(46, Math.round(maxLineWidth + 24)));
+        const bh = Math.max(32, 16 + lines.length * 14.5);
+        return { text, lines, bw, bh, side: bubble.side };
+      });
+
+      const totalBubblesHeight = bubbleLayouts.reduce((sum, b) => sum + b.bh + 8, 0);
+      it.h = Math.max(260, Math.round(totalBubblesHeight + 105));
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+
+      drawRoundRect(ctx, it.x, it.y, it.w, it.h, 20);
+      ctx.fillStyle = 'rgba(10, 12, 18, 0.82)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      const hx = it.x + 18, hy = it.y + 14, hw = it.w - 36, hh = 30;
+      drawRoundRect(ctx, hx, hy, hw, hh, 15);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(hx + 16, hy + hh / 2, 7.5, 0, Math.PI * 2);
+      ctx.fillStyle = themeColor;
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Pretendard';
+      ctx.textAlign = 'center';
+      ctx.fillText(name, hx + hw / 2 + 5, hy + 19);
+
+      const total = bubbleLayouts.length;
+      const revealWindow = 0.65;
+      const stepDuration = revealWindow / total;
+      
+      let visibleCount = 0;
+      let typingIndex = -1;
+
+      if (prog >= revealWindow) {
+        visibleCount = total;
+      } else {
+        const currentStep = prog / stepDuration;
+        visibleCount = Math.floor(currentStep);
+        const subProgress = currentStep - visibleCount;
+        if (subProgress < 0.42 && visibleCount < total) {
+          typingIndex = visibleCount;
+        } else {
+          visibleCount = Math.min(total, visibleCount + 1);
+        }
+      }
+
+      let currentY = it.y + 56;
+
+      bubbleLayouts.forEach((layout, idx) => {
+        const isLeft = layout.side === 'left';
+        const bx = isLeft ? (it.x + 14) : (it.x + it.w - layout.bw - 14);
+
+        if (idx < visibleCount) {
+          drawRoundRect(ctx, bx, currentY, layout.bw, layout.bh, 12);
+          if (isLeft) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fill();
+            ctx.fillStyle = '#0f172a';
+          } else {
+            ctx.fillStyle = themeColor;
+            ctx.fill();
+            ctx.fillStyle = '#0f172a';
+          }
+
+          ctx.font = 'bold 9.5px Pretendard';
+          ctx.textAlign = 'left';
+          layout.lines.forEach((line, lineIdx) => {
+            ctx.fillText(line, bx + 12, currentY + 18 + lineIdx * 14.5);
+          });
+
+          currentY += layout.bh + 8;
+        } else if (idx === typingIndex) {
+          const tw = 48, th = 28;
+          const tx = isLeft ? (it.x + 14) : (it.x + it.w - tw - 14);
+          drawRoundRect(ctx, tx, currentY + 2, tw, th, 14);
+          ctx.fillStyle = isLeft ? 'rgba(255, 255, 255, 0.95)' : themeColor;
+          ctx.fill();
+
+          for (let d = 0; d < 3; d++) {
+            const bounce = Math.sin((prog * 20 + d * 0.5) * Math.PI) * 2;
+            ctx.beginPath();
+            ctx.arc(tx + 14 + d * 10, currentY + 16 + bounce, 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+          }
+          currentY += th + 10;
+        }
+      });
+
+      const ix = it.x + 14, iy = it.y + it.h - 38, iw = it.w - 28, ih = 26;
+      drawRoundRect(ctx, ix, iy, iw, ih, 13);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.fill();
+      ctx.fillStyle = '#71717a';
+      ctx.font = '11px sans-serif';
+      ctx.fillText('+', ix + 10, iy + 17);
+      ctx.font = '9px Pretendard';
+      ctx.fillText('메시지 보내기...', ix + 26, iy + 17);
+      ctx.fillText('📷', ix + iw - 18, iy + 17);
+
+      ctx.restore();
+    }
+
+    function renderFloatingMusicPlayer(prog) {
+      const it = elements.player;
+      const title = songTitle.value.trim() || songTitle.placeholder.replace('예: ', '');
+      const artist = artistName.value.trim() || artistName.placeholder.replace('예: ', '');
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+
+      drawRoundRect(ctx, it.x, it.y, it.w, it.h, 16);
+      ctx.fillStyle = 'rgba(12, 14, 22, 0.88)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      drawRoundRect(ctx, it.x + 12, it.y + 12, 38, 38, 8);
+      ctx.fillStyle = '#1e293b';
+      ctx.fill();
+
+      const bgSource = getDrawableSource(bgMedia, prog);
+      if (bgSource) {
+        ctx.save();
+        drawRoundRect(ctx, it.x + 12, it.y + 12, 38, 38, 8);
+        ctx.clip();
+        ctx.drawImage(bgSource, it.x + 12, it.y + 12, 38, 38);
+        ctx.restore();
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText(title.length > 13 ? title.slice(0, 13) + '..' : title, it.x + 58, it.y + 26);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9.5px Pretendard';
+      ctx.fillText(artist.length > 14 ? artist.slice(0, 14) + '..' : artist, it.x + 58, it.y + 42);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⏮', it.x + 80, it.y + 64);
+      ctx.fillText('▶', it.x + 110, it.y + 64);
+      ctx.fillText('⏭', it.x + 140, it.y + 64);
+
+      const bx = it.x + 12, by = it.y + 74, bw = it.w - 24;
+      ctx.beginPath();
+      ctx.moveTo(bx, by); ctx.lineTo(bx + bw, by);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      const curW = bw * (0.3 + prog * 0.4);
+      ctx.beginPath();
+      ctx.moveTo(bx, by); ctx.lineTo(bx + curW, by);
+      ctx.strokeStyle = themeColor;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(bx + curW, by, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // ================= 타이머 관리 (내보내기 충돌 방지) =================
+    function startPreviewLoop() {
+      stopPreviewLoop();
+      previewTimer = setInterval(() => {
+        if (isExporting) return;
+        animProgress = (animProgress + 0.005) % 1;
+        draw(animProgress);
+      }, 30);
+    }
+
+    function stopPreviewLoop() {
+      if (previewTimer) {
+        clearInterval(previewTimer);
+        previewTimer = null;
+      }
+    }
+
+    startPreviewLoop();
+
+    // ================= 고화질 내보내기 =================
+    const btnGenerateGIF = document.getElementById('btnGenerateGIF');
+    const btnGenerateMP4 = document.getElementById('btnGenerateMP4');
+    const loadingStatus = document.getElementById('loadingStatus');
+    const progressBar = document.getElementById('progressBar');
+    const statusMsg = document.getElementById('statusMsg');
+    const resultArea = document.getElementById('resultArea');
+    const previewMediaWrapper = document.getElementById('previewMediaWrapper');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnShareX = document.getElementById('btnShareX');
+
+    btnGenerateGIF.addEventListener('click', () => {
+      isExporting = true;
+      stopPreviewLoop();
+
+      btnGenerateGIF.disabled = true;
+      btnGenerateMP4.disabled = true;
+      loadingStatus.classList.remove('hidden');
+      resultArea.classList.add('hidden');
+      progressBar.style.width = '15%';
+      statusMsg.textContent = '순차 프레임 캡처 중...';
+
+      const frames = [];
+      const totalFrames = 20; 
+      for (let i = 0; i < totalFrames; i++) {
+        draw(i / totalFrames);
+        frames.push(canvas.toDataURL('image/png'));
+      }
+
+      progressBar.style.width = '45%';
+      statusMsg.textContent = '색상 최적화 GIF 인코딩 중...';
+
+      gifshot.createGIF({
+        images: frames,
+        gifWidth: 960,
+        gifHeight: 540,
+        interval: 0.25, 
+        sampleInterval: 2,
+        numWorkers: 2
+      }, function(obj) {
+        isExporting = false;
+        startPreviewLoop();
+
+        btnGenerateGIF.disabled = false;
+        btnGenerateMP4.disabled = false;
+        loadingStatus.classList.add('hidden');
+
+        if (!obj.error) {
+          previewMediaWrapper.innerHTML = `<img src="${obj.image}" class="w-full h-full object-cover">`;
+          btnDownload.href = obj.image;
+          btnDownload.download = `aesthetic_digicam_16x9.gif`;
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          alert('GIF 생성 실패: 다시 시도해주세요.');
+        }
+      });
+    });
+
+    // 2. 무손실 초고화질 MP4 내보내기
+    btnGenerateMP4.addEventListener('click', () => {
+      isExporting = true;
+      stopPreviewLoop();
+
+      btnGenerateGIF.disabled = true;
+      btnGenerateMP4.disabled = true;
+      loadingStatus.classList.remove('hidden');
+      resultArea.classList.add('hidden');
+      progressBar.style.width = '10%';
+      statusMsg.textContent = '무손실 6초 비디오 녹화 시작...';
+
+      draw(0.0);
+
+      const stream = canvas.captureStream(30);
+      let mimeType = 'video/mp4';
+      if (!MediaRecorder.isTypeSupported('video/mp4')) {
+        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+          mimeType = 'video/webm;codecs=vp9';
+        } else if (MediaRecorder.isTypeSupported('video/webm')) {
+          mimeType = 'video/webm';
+        } else {
+          mimeType = '';
+        }
+      }
+
+      let recorder;
+      try {
+        recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      } catch (e) {
+        recorder = new MediaRecorder(stream);
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'video/mp4' });
+        const videoUrl = URL.createObjectURL(blob);
+
+        previewMediaWrapper.innerHTML = `<video src="${videoUrl}" autoplay loop muted playsinline class="w-full h-full object-cover"></video>`;
+        btnDownload.href = videoUrl;
+        btnDownload.download = `aesthetic_digicam_16x9.mp4`;
+
+        isExporting = false;
+        startPreviewLoop();
+
+        btnGenerateGIF.disabled = false;
+        btnGenerateMP4.disabled = false;
+        loadingStatus.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+        resultArea.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      recorder.start();
+
+      let currentFrame = 0;
+      const totalSteps = 180;
+      const stepInterval = setInterval(() => {
+        const p = currentFrame / totalSteps;
+        draw(p);
+        currentFrame++;
+        
+        const pct = Math.min(95, Math.round((currentFrame / totalSteps) * 100));
+        progressBar.style.width = `${pct}%`;
+        statusMsg.textContent = `비디오 렌더링 중 (${Math.round(currentFrame / 30)}/6초)...`;
+
+        if (currentFrame >= totalSteps) {
+          clearInterval(stepInterval);
+          recorder.stop();
+        }
+      }, 33);
+    });
+
+    // 트위터 공유
+    btnShareX.addEventListener('click', () => {
+      const url = window.location.href;
+      const text = encodeURIComponent(`16:9 레트로 디카 뷰파인더 움짤 페어틀 ✨\n#움짤페어틀 #페어틀 #디카페어틀 #자캐 #드림 #도파\n`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+    });
+  </script>
+</body>
+</html>

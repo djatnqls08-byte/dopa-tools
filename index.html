@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>도삐의 무료 도구함 · DOPA</title>
+<meta name="description" content="캐릭터 이미지만 넣으면 끝 · 페어틀·세션카드 무료 도구 모음 · 가입 없음">
+<meta property="og:title" content="도삐의 무료 도구함 · DOPA">
+<meta property="og:description" content="캐릭터 이미지만 넣으면 끝 · 페어틀·세션카드 무료 도구 모음 · 가입 없음">
+<meta name="theme-color" content="#121314">
+<!-- 버셀 웹 분석 -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* 도파 네온(나이트) 테마와 같은 색 · lib/themes.js dopa.dark */
+:root { --bg:#121314; --panel:#1B1C1E; --panel2:#222326; --border:#2A2C2F; --border2:#3A3D41; --text:#F2F2F0; --muted:#9A9DA2; --accent:#F0185E; --glow:rgba(240,24,94,.25); --point:#D9FF3F; color-scheme:dark; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif; }
+a { color:inherit; text-decoration:none; }
+.wrap { max-width:1080px; margin:0 auto; padding:max(28px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); display:flex; flex-direction:column; gap:28px; }
+header { display:flex; flex-direction:column; gap:14px; }
+.brand { display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600; letter-spacing:.14em; color:var(--muted); }
+.brand img { width:28px; height:28px; border-radius:8px; }
+h1 { margin:0; font-size:clamp(1.7rem, 5vw, 2.4rem); font-weight:800; letter-spacing:-.03em; line-height:1.25; text-wrap:balance; word-break:keep-all; }
+h1 em { font-style:normal; color:var(--accent); }
+.lead { margin:0; color:var(--muted); font-size:1rem; line-height:1.65; word-break:keep-all; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { font-size:.78rem; font-weight:700; padding:6px 11px; border-radius:999px; border:1px solid var(--border2); color:var(--text); background:var(--panel); }
+.chip b { color:var(--point); font-weight:800; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap:16px; }
+.card { display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--border); border-radius:18px; overflow:hidden; transition:border-color .15s, transform .15s; min-width:0; }
+.card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.thumb { position:relative; aspect-ratio:16/9; background:var(--panel2); overflow:hidden; }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.tag { position:absolute; left:10px; top:10px; font-size:.74rem; font-weight:800; padding:4px 10px; border-radius:8px; background:var(--accent); color:#fff; }
+.new { position:absolute; right:10px; top:10px; font-family:'IBM Plex Mono',monospace; font-size:.7rem; font-weight:600; letter-spacing:.08em; padding:3px 8px; border-radius:6px; background:var(--point); color:#121314; }
+.body { padding:16px 18px 18px; display:flex; flex-direction:column; gap:8px; }
+.title { font-size:1.12rem; font-weight:800; letter-spacing:-.02em; display:flex; align-items:center; gap:6px; }
+.title svg { width:15px; height:15px; color:var(--muted); flex:none; }
+.desc { color:var(--muted); font-size:.92rem; line-height:1.6; word-break:keep-all; }
+.cta { display:flex; flex-direction:column; gap:14px; align-items:flex-start; padding:24px 22px; border-radius:18px; background:linear-gradient(135deg, rgba(240,24,94,.16), rgba(139,0,255,.10)); border:1px solid rgba(240,24,94,.35); }
+.cta p { margin:0; line-height:1.65; word-break:keep-all; }
+.cta .k { font-family:'IBM Plex Mono',monospace; font-size:.74rem; font-weight:600; letter-spacing:.12em; color:var(--accent); }
+.cta .h { font-size:1.18rem; font-weight:800; letter-spacing:-.02em; }
+.cta .s { color:var(--muted); font-size:.92rem; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:13px 20px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:.98rem; box-shadow:0 6px 22px var(--glow); }
+footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; color:var(--muted); font-size:.82rem; line-height:1.6; }
+footer a { color:var(--text); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><img src="/logo.svg" alt="">DOPA · TOOLS</div>
+    <h1>캐릭터 이미지만 넣으면 끝,<br><em>도삐의 무료 도구함</em></h1>
+    <p class="lead">페어틀·세션카드를 클릭 몇 번으로 만들어요. 가입 없이 바로 쓰고, PNG·GIF로 저장할 수 있어요.</p>
+    <div class="chips"><span class="chip">가입 <b>X</b></span><span class="chip">무료</span><span class="chip">새 틀 계속 추가</span></div>
+  </header>
+
+  <main class="grid" id="grid" aria-live="polite"></main>
+
+  <section class="cta">
+    <span class="k">DOPA · AI INTERACTIVE STORY</span>
+    <p class="h">이 캐릭터로 이야기까지 이어 가고 싶다면</p>
+    <p class="s">설정을 잊지 않는 AI 인터랙티브 스토리 〈도파〉 · 11/5 텀블벅 펀딩 오픈</p>
+    <a class="btn tb" href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">텀블벅 알림 신청하기</a>
+  </section>
+
+  <footer>
+    <span>만든 곳 · 도파 스튜디오</span>
+    <span>새 틀 소식은 <a href="https://x.com/DOPA_studio" target="_blank" rel="noopener">X @DOPA_studio</a></span>
+  </footer>
+</div>
+
+<script>
+// 도구 목록 = 앱 탐색 '바로가기'와 같은 시트 '링크' 탭 (시트에 한 줄 추가하면 여기도 뜬다) · 못 읽으면 아래 기본 목록
+const SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2Z9gpMAq_a1qUmAIbO3q6S73u0qVN7TrzkL3iYRFWa0vtWp12Y26oA93paHdzrKs2UqzSorVLhon0/pub?output=csv&gid=427440773";
+const IMG = "https://qytikqvngyvrszjygbbn.supabase.co/storage/v1/object/public/studio-images/";
+const FALLBACK = [
+  { t: "비밀 다이어리", d: "너와 처음 만난 날, 둘만의 기억을 남기다.", i: IMG + "link/1792141936943-wtl5ut.gif", l: "/diary/", g: "페어틀", o: 1 },
+  { t: "디카 뷰파인더", d: "최애를 카메라에 담아보세요!", i: IMG + "prompt/1791382649485-bo0pa0.gif", l: "/viewfinder/", g: "페어틀", o: 2 },
+  { t: "시스템 오버라이드", d: "시스템 에러! 사이버 터미널에서 만난 두 사람.", i: IMG + "prompt/1791391557710-6tdo3z.gif", l: "/override/", g: "페어틀", o: 3 },
+  { t: "수사 보드", d: "내 페어의 은밀한 수사 기록을 붉은 실로 엮어보세요.", i: IMG + "link/1791420748115-tnu2g1.gif", l: "/board/", g: "페어틀", o: 4 },
+  { t: "시나리오 카드 만들기", d: "만들기 어려운 세션카드를 클릭으로 쉽게.", i: IMG + "link/1791423531798-57t1v2.jpg", l: "/card/", g: "세션카드", o: 5 },
+];
+// 옛 개별 사이트 주소 → 이 사이트 안의 주소
+const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/", "dopa-card.vercel.app": "/card/" };
+const local = (u) => { try { const x = new URL(u, location.href); if (MOVED[x.host]) return MOVED[x.host]; if (x.host === location.host) return x.pathname; return x.href; } catch (e) { return u; } };
+
+function csv(text) {
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+const esc = (s) => String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ARROW = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>';
+
+function render(list) {
+  const shown = [...list].sort((a, b) => a.o - b.o);   // 시트 '순서' 대로 (앱 탐색 바로가기와 같은 줄)
+  const top = shown[0] && shown[0].o;                    // 맨 앞 틀에 NEW · 새 틀은 시트에서 순서 1로 올리면 된다
+  document.getElementById("grid").innerHTML = shown.map((x) => {
+    const href = local(x.l), out = /^https?:/.test(href);
+    return `<a class="card" href="${esc(href)}"${out ? ' target="_blank" rel="noopener"' : ""} data-tool="${esc(x.t)}">
+      <div class="thumb"><img src="${esc(x.i)}" alt="${esc(x.t)} 미리보기" loading="lazy">${x.g ? `<span class="tag">${esc(x.g)}</span>` : ""}${x.o === top && list.length > 1 ? '<span class="new">NEW</span>' : ""}</div>
+      <div class="body"><div class="title">${esc(x.t)}${ARROW}</div><div class="desc">${esc(x.d)}</div></div>
+    </a>`;
+  }).join("");
+}
+
+render(FALLBACK);
+fetch(SHEET).then((r) => r.ok ? r.text() : Promise.reject(r.status)).then((t) => {
+  const [head, ...rows] = csv(t); const ix = (k) => head.findIndex((h) => h.trim() === k);
+  const [on, ti, de, im, li, ta, or] = ["공개여부", "제목", "설명", "이미지", "링크", "태그", "순서"].map(ix);
+  const list = rows.filter((r) => String(r[on]).trim().toUpperCase() === "TRUE" && r[ti] && r[li])
+    .map((r) => ({ t: r[ti].trim(), d: (r[de] || "").trim(), i: (r[im] || "").trim(), l: r[li].trim(), g: (r[ta] || "").trim(), o: Number(r[or]) || 0 }));
+  if (list.length) render(list);
+}).catch(() => {});
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a"); if (!a) return;
+  if (a.dataset.tool) window.va("event", { name: "tool", data: { tool: a.dataset.tool } });
+  else if (a.classList.contains("tb")) window.va("event", { name: "tumblbug" });
+});
+</script>
+</body>
+</html>
