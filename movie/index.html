@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>영화 감상 · 도파 도구함</title>
+<meta name="description" content="둘이 같이 본 영화를 OTT 상세 페이지처럼 · 티켓·별점·리뷰·명장면 · PNG·GIF·MP4 저장">
+<meta name="theme-color" content="#121314">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css">
+<style>
+@font-face { font-family:'GmarketSans'; font-weight:700; font-display:swap; src:url('/fonts/GmarketSansBold.woff') format('woff'); }
+#stageBox { position:relative; width:100%; overflow:hidden; background:#0B0B0C; }
+#stage { position:absolute; left:0; top:0; width:1600px; height:900px; transform-origin:0 0; }
+#canvas { font-family:'Noto Sans KR', sans-serif; }
+#canvas [data-img] { cursor:grab; }
+textarea.sh-field { min-height:84px; resize:vertical; line-height:1.55; }
+</style>
+</head>
+<body class="sh" data-tool="movie" data-ex='input[data-up=hero][accept="image/*"]|input[data-up=avatarA][accept="image/*"]|input[data-up=avatarB][accept="image/*"]|input[data-up=poster][accept="image/*"]'>
+<div class="sh-app">
+  <aside class="sh-side">
+    <a class="sh-back" href="/"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>DOPA 도구함</a>
+    <p class="sh-sidek"><b>FRAMES</b>다른 틀 둘러보기</p>
+    <nav class="sh-list" id="shList"></nav>
+  </aside>
+
+  <main class="sh-center">
+    <div class="sh-title">
+      <a class="sh-mback" href="/" aria-label="도구함으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <span class="sh-pill">#페어틀</span>
+      <h1>영화 감상</h1>
+      <p>둘이 같이 본 영화, 티켓부터 리뷰까지.</p>
+    </div>
+    <div class="sh-canvas"><div id="stageBox"><div id="stage"><div id="canvas"></div></div></div></div>
+    <div class="sh-tip">사진 안을 끌면 위치가 바뀌어요. GIF로 저장하면 자막이 써지고 별점이 톡톡 튀어요.</div>
+  </main>
+
+  <section class="sh-panel">
+    <div class="sh-tabs">
+      <button data-tab="photo">사진</button><button data-tab="text">영화</button><button data-tab="review">리뷰</button><button data-tab="deco">꾸미기</button>
+    </div>
+    <div class="sh-body">
+      <div class="sh-pane" data-pane="photo"><div id="phRows" class="sh-col" style="gap:20px"></div></div>
+
+      <div class="sh-pane" data-pane="text" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>영화</b></div>
+          <span class="sh-lab">제목</span><input data-p="title" class="sh-field" maxlength="10">
+          <span class="sh-lab">제목 위 작은 글</span><input data-p="tag" class="sh-field" maxlength="24">
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">연도</span><input data-p="year" class="sh-field" maxlength="6"></div><div class="sh-col"><span class="sh-lab">상영 시간</span><input data-p="runtime" class="sh-field" maxlength="10"></div></div>
+          <span class="sh-lab">장르</span><input data-p="genre" class="sh-field" maxlength="16">
+          <span class="sh-lab">줄거리 한두 줄</span><textarea data-p="synopsis" class="sh-field" maxlength="70"></textarea>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>자막</b><small>2초씩 번갈아 써져요</small></div>
+          <p class="sh-note">'이름: 대사' 꼴로 쓰면 이름은 작게, 대사는 크게 나와요. {A} · {B} 라고 쓰면 그 자리에 이름이 들어가요.</p>
+          <input data-p="subA" class="sh-field" maxlength="30">
+          <input data-p="subB" class="sh-field" maxlength="30">
+        </div>
+      </div>
+
+      <div class="sh-pane" data-pane="review" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>A</b><small>왼쪽 리뷰</small></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">이름</span><input data-p="nameA" class="sh-field" maxlength="8"></div><div class="sh-col"><span class="sh-lab">한마디 배지</span><input data-p="badgeA" class="sh-field" maxlength="8"></div></div>
+          <div class="sh-row"><span class="sh-lab">별점</span><input type="range" data-p="ratingA" min="0" max="5" step="1"></div>
+          <textarea data-p="reviewA" class="sh-field" maxlength="90"></textarea>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>B</b><small>오른쪽 리뷰</small></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">이름</span><input data-p="nameB" class="sh-field" maxlength="8"></div><div class="sh-col"><span class="sh-lab">한마디 배지</span><input data-p="badgeB" class="sh-field" maxlength="8"></div></div>
+          <div class="sh-row"><span class="sh-lab">별점</span><input type="range" data-p="ratingB" min="0" max="5" step="1"></div>
+          <textarea data-p="reviewB" class="sh-field" maxlength="90"></textarea>
+        </div>
+      </div>
+
+      <div class="sh-pane" data-pane="deco" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>보이는 방식</b></div>
+          <label class="sh-check2">움직임 (끄면 한 장면만)<input type="checkbox" id="mvMotion"></label>
+          <span class="sh-lab">자막 모양</span>
+          <select data-p="subStyle" class="sh-field"><option value="자막">영화 자막</option><option value="캡션 카드">캡션 카드</option></select>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>모바일 티켓</b></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">날짜</span><input data-p="date" class="sh-field" maxlength="12"></div><div class="sh-col"><span class="sh-lab">시간</span><input data-p="time" class="sh-field" maxlength="16"></div></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">상영관</span><input data-p="hall" class="sh-field" maxlength="14"></div><div class="sh-col"><span class="sh-lab">좌석</span><input data-p="seat" class="sh-field" maxlength="10"></div></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">예매번호</span><input data-p="bookNo" class="sh-field" maxlength="12"></div><div class="sh-col"><span class="sh-lab">매점</span><input data-p="snack" class="sh-field" maxlength="16"></div></div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>우리가 고른 명장면</b></div>
+          <div class="sh-grid2"><div class="sh-col"><span class="sh-lab">장면 1 설명</span><input data-p="scene1" class="sh-field" maxlength="16"></div><div class="sh-col"><span class="sh-lab">장면 2 설명</span><input data-p="scene2" class="sh-field" maxlength="16"></div></div>
+          <div class="sh-row"><span class="sh-lab">장면 1 위치</span><input type="range" data-p="scene1Prog" min="0" max="100" step="1"></div>
+          <div class="sh-row"><span class="sh-lab">장면 2 위치</span><input type="range" data-p="scene2Prog" min="0" max="100" step="1"></div>
+          <span class="sh-lab">그림 작가 (크레딧)</span><input data-p="credit" class="sh-field" maxlength="16">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="sh-rail">
+    <button data-act="panel" class="m-hide"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>편집</button>
+    <button data-act="mode"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></svg></span><span id="shModeLab">라이트</span></button>
+    <button data-open="shReset" class="warn"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span>처음으로</button>
+    <button data-open="shDl" class="dl"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>다운로드</button>
+  </nav>
+</div>
+
+<div class="sh-pop" id="shDl" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>다운로드</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="mvPng"><div><b>PNG 한 장</b><small>자막이 떠 있는 장면 · 1600×900</small></div></button>
+  <button class="sh-choice" id="mvGif"><div><b>GIF 움짤</b><small>4초 반복 · 자막·별점·티켓이 움직여요</small></div></button>
+  <button class="sh-choice" id="mvMp4"><div><b>MP4 영상</b><small>4초 · X에 올릴 땐 화질이 가장 좋아요</small></div><span class="tag">추천</span></button>
+  <p class="sh-note" id="dlStatus" style="text-align:center"></p>
+  <p class="sh-foot">결과물은 자유롭게 자랑해 주세요 · 틀 자체의 재배포는 삼가 주세요<br>설정을 잊지 않는 AI 이야기 〈도파〉 · <a href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">11/5 텀블벅 알림 신청</a></p>
+</div></div>
+
+<div class="sh-pop" id="shReset" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>처음으로</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="shResetPos"><div><b>사진 위치만 되돌리기</b><small>글은 그대로, 사진 위치·크기만 처음대로</small></div></button>
+  <button class="sh-choice" id="mvResetAll"><div><b>전부 지우기</b><small>넣은 사진과 글까지 모두 예시 상태로</small></div></button>
+  <button id="btnResetPositions" hidden></button>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/morphdom@2.7.4/dist/morphdom-umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="/movie/movie.js"></script>
+<script src="/shell/shell.js"></script>
+</body>
+</html>

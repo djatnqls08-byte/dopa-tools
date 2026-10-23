@@ -10,6 +10,7 @@
     { k: "viewfinder", t: "디카 뷰파인더", img: IMG + "prompt/1791382649485-bo0pa0.gif" },
     { k: "override", t: "시스템 오버라이드", img: IMG + "prompt/1791391557710-6tdo3z.gif" },
     { k: "board", t: "수사 보드", img: IMG + "link/1791420748115-tnu2g1.gif" },
+    { k: "movie", t: "영화 감상", img: "/movie/thumb.png" },
   ];
   const me = document.body.dataset.tool;
   const LS_MODE = "dopa_tools_mode";
@@ -149,9 +150,7 @@
   const EX_SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2Z9gpMAq_a1qUmAIbO3q6S73u0qVN7TrzkL3iYRFWa0vtWp12Y26oA93paHdzrKs2UqzSorVLhon0/pub?output=csv&gid=427440773";
   const EX_MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
   const exSel = (document.body.dataset.ex || "").split("|").map((x) => x.trim());
-  function csvRows(text) { const rows = []; let row = [], cell = "", q = false; for (let i = 0; i < text.length; i++) { const c = text[i]; if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; } else if (c === '"') q = true; else if (c === ",") { row.push(cell); cell = ""; } else if (c === "
-" || c === "") { if (c === "" && text[i + 1] === "
-") i++; row.push(cell); rows.push(row); row = []; cell = ""; } else cell += c; } if (cell || row.length) { row.push(cell); rows.push(row); } return rows; }
+  function csvRows(text) { const rows = []; let row = [], cell = "", q = false; for (let i = 0; i < text.length; i++) { const c = text[i]; if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; } else if (c === '"') q = true; else if (c === ",") { row.push(cell); cell = ""; } else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; } else cell += c; } if (cell || row.length) { row.push(cell); rows.push(row); } return rows; }
   const waitFor = async (sel, ms = 6000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const el = document.querySelector(sel); if (el) return el; await new Promise((r) => setTimeout(r, 150)); } return null; };
   const filled = (inp) => { const box = inp.closest(".sh-sec, label.photo"); return !!(box && [...box.querySelectorAll("button")].some((b) => /빼기|지우기/.test(b.textContent))); };
   async function examples() {

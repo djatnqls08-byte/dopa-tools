@@ -180,6 +180,10 @@ const FALLBACK = [
   { t: "시스템 오버라이드", d: "시스템 에러! 사이버 터미널에서 만난 두 사람.", i: IMG + "prompt/1791391557710-6tdo3z.gif", l: "/override/", g: "페어틀", o: 3 },
   { t: "수사 보드", d: "내 페어의 은밀한 수사 기록을 붉은 실로 엮어보세요.", i: IMG + "link/1791420748115-tnu2g1.gif", l: "/board/", g: "페어틀", o: 4 },
 ];
+// 시트에 아직 줄이 없는 새 틀 (시트 '링크' 탭에 줄을 넣으면 그 줄이 대신 쓰인다)
+const LOCAL = [
+  { t: "영화 감상", d: "둘이 같이 본 영화, 티켓부터 리뷰까지.", i: "/movie/thumb.png", l: "/movie/", g: "페어틀", o: 5 },
+];
 // 옛 개별 사이트 주소 → 이 사이트 안의 주소
 const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
 const HIDE = ["dopa-card.vercel.app"];   // 10/23 자기야: 세션카드 메이커는 도구함에서 뺀다 (앱 탐색 바로가기는 시트 그대로)
@@ -189,6 +193,7 @@ const EXTRA = {
   "/viewfinder/": { fmt: ["PNG", "GIF", "MP4"] },
   "/override/": { fmt: ["PNG", "GIF", "MP4"], modes: "해킹 움짤 · 클래식", isNew: true },
   "/board/": { fmt: ["PNG", "GIF", "MP4"], modes: "사건 파일 · 클래식", isNew: true },
+  "/movie/": { fmt: ["PNG", "GIF", "MP4"], isNew: true },
 };
 const hidden = (u) => { try { return HIDE.includes(new URL(u, location.href).host); } catch (e) { return false; } };
 const local = (u) => { try { const x = new URL(u, location.href); if (MOVED[x.host]) return MOVED[x.host]; if (x.host === location.host) return x.pathname; return x.href; } catch (e) { return u; } };
@@ -222,13 +227,14 @@ function render(list) {
   }).join("");
 }
 
-render(FALLBACK);
+const withLocal = (list) => list.concat(LOCAL.filter((x) => !list.some((y) => local(y.l) === x.l)));
+render(withLocal(FALLBACK));
 fetch(SHEET).then((r) => (r.ok ? r.text() : Promise.reject(r.status))).then((t) => {
   const [head, ...rows] = csv(t); const ix = (k) => head.findIndex((h) => h.trim() === k);
   const [on, ti, de, im, li, ta, or] = ["공개여부", "제목", "설명", "이미지", "링크", "태그", "순서"].map(ix);
   const list = rows.filter((r) => String(r[on]).trim().toUpperCase() === "TRUE" && r[ti] && r[li] && !hidden(r[li].trim()))
     .map((r) => ({ t: r[ti].trim(), d: (r[de] || "").trim(), i: (r[im] || "").trim(), l: r[li].trim(), g: (r[ta] || "").trim(), o: Number(r[or]) || 0 }));
-  if (list.length) render(list);
+  if (list.length) render(withLocal(list));
 }).catch(() => {});
 
 // 나이트 / 라이트 (도구 편집 화면과 같이 기억)
