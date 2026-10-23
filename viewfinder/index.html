@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>16:9 도파 페어틀</title>
+  <title>디카 뷰파인더 · 도파 도구함</title>
+  <meta name="theme-color" content="#121314">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- gifshot (GIF 내보내기 인코더) -->
@@ -24,240 +28,147 @@
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/shell/shell.css">
 </head>
-<body class="bg-[#09090b] text-zinc-100 min-h-screen pb-16">
+<body class="sh" data-tool="viewfinder">
+<div class="sh-app">
+  <aside class="sh-side">
+    <a class="sh-back" href="/"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>도구함으로</a>
+    <p>다른 페어틀도 만들어 볼 수 있어요.</p>
+    <nav class="sh-list" id="shList"></nav>
+  </aside>
 
-  <!-- 미니멀 헤더 -->
-  <header class="border-b border-zinc-800/80 px-4 py-3 bg-[#09090b]/80 backdrop-blur sticky top-0 z-30 flex items-center justify-between">
-    <div class="flex items-center space-x-2">
-      <span class="text-xs font-semibold tracking-wider text-zinc-300 uppercase font-mono">DIGICAM VIEWFINDER HUD</span>
-      <span class="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono">FIXED</span>
+  <main class="sh-center">
+    <div class="sh-title">
+      <a class="sh-mback" href="/" aria-label="도구함으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <span class="sh-pill">#페어틀</span>
+      <h1>디카 뷰파인더</h1>
+      <p>최애를 카메라에 담아보세요!</p>
     </div>
-    <span class="text-xs text-zinc-500 font-mono">1920×1080</span>
-  </header>
-
-  <main class="max-w-xl mx-auto px-4 pt-4 space-y-4">
-
-    <!-- 1. 16:9 와이드 디카 뷰파인더 캔버스 -->
-    <div class="bg-zinc-950 rounded-2xl p-2.5 border border-zinc-800 shadow-2xl flex flex-col items-center">
-      <div class="w-full flex items-center justify-between pb-2 px-1 text-[11px] text-zinc-400">
-        <span class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-          💡 <b>화면의 대화창·플레이어·AF포커스를 드래그해보세요!</b>
-        </span>
-        <button id="btnResetPositions" class="text-zinc-500 hover:text-zinc-300 text-[10px] underline">위치 초기화</button>
-      </div>
-
-      <!-- 16:9 캔버스 (960 x 540) -->
-      <canvas id="previewCanvas" width="960" height="540" class="w-full aspect-[16/9] rounded-xl bg-black shadow-inner"></canvas>
-    </div>
-
-    <!-- 2. 내보내기 버튼 -->
-    <div class="space-y-3 bg-zinc-900/60 p-3.5 rounded-xl border border-zinc-800">
-      <div class="grid grid-cols-2 gap-2">
-        <button id="btnGenerateMP4" class="py-3 bg-gradient-to-r from-red-500 to-amber-500 hover:opacity-95 text-zinc-950 font-bold rounded-xl text-xs transition-all shadow-md active:scale-[0.99] flex items-center justify-center space-x-1.5">
-          <span>✨ 무손실 MP4 저장</span>
-        </button>
-        <button id="btnGenerateGIF" class="py-3 bg-zinc-100 hover:bg-white text-zinc-950 font-bold rounded-xl text-xs transition-all shadow-md active:scale-[0.99] flex items-center justify-center space-x-1.5">
-          <span>🎬 고화질 GIF 내보내기</span>
-        </button>
-      </div>
-      <p class="text-[10px] text-zinc-500 text-center">
-        💡 트위터 업로드 시 <b>[무손실 MP4]</b>를 선택하면 디카 OSD 텍스트가 번짐 없이 가장 선명하게 재생됩니다.
-      </p>
-
-      <div id="loadingStatus" class="hidden space-y-1.5 py-1">
-        <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-          <div id="progressBar" class="bg-red-500 h-full w-0 transition-all duration-200"></div>
-        </div>
-        <p id="statusMsg" class="text-center text-[11px] text-zinc-400 font-mono">고화질 렌더링 중...</p>
-      </div>
-
-      <div id="resultArea" class="hidden flex flex-col items-center space-y-3 pt-2">
-        <div id="previewMediaWrapper" class="w-full max-w-[320px] rounded-lg overflow-hidden border border-zinc-700 shadow-xl aspect-[16/9] bg-black"></div>
-        <div class="flex w-full gap-2">
-          <a id="btnDownload" download="aesthetic_digicam_16x9" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white text-center font-bold rounded-lg text-xs transition">
-            💾 기기에 저장하기
-          </a>
-          <button id="btnShareX" class="py-2.5 px-4 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold rounded-lg text-xs transition flex items-center gap-1.5">
-            𝕏 트윗
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. 모바일 탭 제어판 -->
-    <div class="bg-zinc-900/80 rounded-2xl border border-zinc-800/80 overflow-hidden">
-      <div class="grid grid-cols-3 border-b border-zinc-800 text-xs font-medium text-center">
-        <button id="tabBtn1" class="tab-btn py-3 border-b-2 border-red-500 text-white font-semibold transition" data-tab="tab1">📷 촬영 미디어</button>
-        <button id="tabBtn2" class="tab-btn py-3 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition" data-tab="tab2">📹 디카 HUD·대사</button>
-        <button id="tabBtn3" class="tab-btn py-3 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition" data-tab="tab3">🎨 테마·컬러</button>
-      </div>
-
-      <div class="p-4 space-y-4">
-        
-        <!-- [탭 1] 이미지 & 움짤(GIF) 등록 -->
-        <div id="tab1" class="tab-content space-y-4">
-          <div class="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800 space-y-3">
-            <div class="flex justify-between items-center">
-              <label class="text-xs font-bold text-zinc-200">배경 미디어 등록 (GIF / JPG / PNG)</label>
-              <span id="bgStatus" class="text-[10px] text-zinc-400 font-mono px-2 py-0.5 bg-zinc-800 rounded border border-zinc-700">대기 중</span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <label class="flex flex-col items-center justify-center p-3 bg-zinc-900 hover:bg-zinc-800 rounded-lg border border-zinc-700 cursor-pointer transition text-center group active:scale-[0.98]">
-                <span class="text-base mb-1">🖼️</span>
-                <span class="text-xs font-semibold text-zinc-200 group-hover:text-white">사진 갤러리</span>
-                <span class="text-[10px] text-zinc-500">일반 사진 / 앨범</span>
-                <input type="file" id="bgInputGallery" accept="image/*" class="hidden">
-              </label>
-
-              <label class="flex flex-col items-center justify-center p-3 bg-red-950/20 hover:bg-red-950/40 rounded-lg border border-red-500/30 cursor-pointer transition text-center group active:scale-[0.98]">
-                <span class="text-base mb-1">📁</span>
-                <span class="text-xs font-bold text-red-400 group-hover:text-red-300">내 파일 / 다운로드</span>
-                <span class="text-[10px] text-red-300/70">★ GIF 움짤 전용</span>
-                <input type="file" id="bgInputFiles" accept="*/*" class="hidden">
-              </label>
-            </div>
-
-            <p class="text-[11px] text-zinc-400 bg-zinc-900/60 p-2 rounded border border-zinc-800/80 leading-relaxed">
-              💡 <b>다운로드한 GIF가 갤러리에 없다면?</b><br>
-              오른쪽 <b>[📁 내 파일 / 다운로드]</b>를 누르면 다운로드 폴더의 GIF 움짤이 목록에 바로 나타납니다.
-            </p>
-          </div>
-        </div>
-
-        <!-- [탭 2] 디카 OSD HUD & 대사 커스텀 -->
-        <div id="tab2" class="tab-content hidden space-y-4">
-          
-          <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-3">
-            <span class="text-xs font-semibold text-zinc-300 flex items-center gap-1.5 font-mono">
-              <span class="w-2 h-2 rounded-full bg-red-500"></span> OSD VIEWFINDER SETTINGS
-            </span>
-
-            <div class="grid grid-cols-3 gap-1.5">
-              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
-                <span class="text-[10px] text-zinc-400 mb-1">녹화 표시</span>
-                <button type="button" id="btnToggleRec" class="w-full py-1 rounded text-[10px] font-bold transition bg-red-500/20 text-red-400 border border-red-500/30">
-                  REC (ON)
-                </button>
-              </div>
-              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
-                <span class="text-[10px] text-zinc-400 mb-1">AF 포커스</span>
-                <button type="button" id="btnToggleAF" class="w-full py-1 rounded text-[10px] font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  [ AF ] ON
-                </button>
-              </div>
-              <div class="flex flex-col items-center justify-center bg-zinc-900 p-2 rounded-lg border border-zinc-800 text-center">
-                <span class="text-[10px] text-zinc-400 mb-1">뷰파인더 틀</span>
-                <button type="button" id="btnToggleBracket" class="w-full py-1 rounded text-[10px] font-bold transition bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  ┌ ┘ ON
-                </button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-zinc-800/80">
-              <div>
-                <label class="text-[10px] text-zinc-500">촬영 날짜 (타임스탬프)</label>
-                <input type="text" id="hudDateInput" placeholder="2026.10.07" value="2026.10.07" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono placeholder-zinc-500">
-              </div>
-              <div>
-                <label class="text-[10px] text-zinc-500">촬영 시간</label>
-                <input type="text" id="hudTimeInput" placeholder="18:24:00" value="18:24:00" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono placeholder-zinc-500">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-zinc-500">렌즈 줌 표기</label>
-                <input type="text" id="hudZoomInput" placeholder="WIDE 1.2x" value="WIDE 1.2x" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
-              </div>
-              <div>
-                <label class="text-[10px] text-zinc-500">조리개/셔터 스피드</label>
-                <input type="text" id="hudShutterInput" placeholder="F2.8 1/250s" value="F2.8 1/250s" class="w-full mt-0.5 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label class="text-[11px] text-zinc-400">인용 대사 캡슐</label>
-            <input type="text" id="quoteText" placeholder="예: 도파미너, 오랜만입니다." value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500">
-          </div>
-
-          <div>
-            <label class="text-[11px] text-zinc-400">메신저 상대 이름</label>
-            <input type="text" id="senderName" placeholder="예: 윤세라" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
-          </div>
-
-          <div class="space-y-2 border-t border-zinc-800 pt-3">
-            <div class="flex items-center justify-between">
-              <div>
-                <span class="text-xs font-semibold text-zinc-300">💬 메신저 말풍선</span>
-                <span class="text-[10px] text-zinc-500 ml-1">(글자 수에 따라 가변 조절)</span>
-              </div>
-              <button id="btnAddBubble" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 text-[11px] font-medium rounded-md transition border border-amber-500/30">
-                + 말풍선 추가
-              </button>
-            </div>
-            <div id="bubblesContainer" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800">
-            <div>
-              <label class="text-[11px] text-zinc-400">곡명</label>
-              <input type="text" id="songTitle" placeholder="예: I Don't Think That I Like Her" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
-            </div>
-            <div>
-              <label class="text-[11px] text-zinc-400">가수 / 테마</label>
-              <input type="text" id="artistName" placeholder="예: Charlie Puth" value="" class="w-full mt-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500">
-            </div>
-          </div>
-        </div>
-
-        <!-- [탭 3] 테마 및 디카 HUD 컬러 -->
-        <div id="tab3" class="tab-content hidden space-y-4">
-          <div>
-            <label class="block text-xs font-medium text-zinc-400 mb-2 font-mono">디카 OSD 텍스트 컬러</label>
-            <div class="flex items-center gap-2 flex-wrap">
-              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-white text-black ring-2 ring-white ring-offset-2 ring-offset-zinc-900" data-color="#ffffff">WHITE</button>
-              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#a3e635] text-black" data-color="#a3e635">LIME GREEN</button>
-              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#ff2a85] text-white" data-color="#ff2a85">NEON PINK</button>
-              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#f59e0b] text-black" data-color="#f59e0b">AMBER</button>
-              <button class="hud-color-btn px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#38bdf8] text-black" data-color="#38bdf8">CYAN</button>
-            </div>
-          </div>
-
-          <div class="border-t border-zinc-800 pt-3">
-            <label class="block text-xs font-medium text-zinc-400 mb-2">말풍선 & 재생바 포인트 색상</label>
-            <div class="flex items-center gap-2.5 flex-wrap">
-              <button class="color-btn w-8 h-8 rounded-full bg-[#f59e0b] ring-2 ring-white ring-offset-2 ring-offset-zinc-900 transition" data-color="#f59e0b" title="앰버 옐로우"></button>
-              <button class="color-btn w-8 h-8 rounded-full bg-[#ff2a85] transition" data-color="#ff2a85" title="도파 핑크"></button>
-              <button class="color-btn w-8 h-8 rounded-full bg-[#5eead4] transition" data-color="#5eead4" title="세이지 민트"></button>
-              <button class="color-btn w-8 h-8 rounded-full bg-[#c084fc] transition" data-color="#c084fc" title="라벤더 퍼플"></button>
-              <button class="color-btn w-8 h-8 rounded-full bg-[#38bdf8] transition" data-color="#38bdf8" title="세레니티 블루"></button>
-              <button class="color-btn w-8 h-8 rounded-full bg-[#e4e4e7] transition" data-color="#e4e4e7" title="모노 화이트"></button>
-              
-              <div class="flex items-center gap-1.5 ml-1 pl-2 border-l border-zinc-800">
-                <input type="color" id="nativeColorPicker" value="#f59e0b" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0">
-                <span id="hexDisplay" class="text-xs font-mono text-zinc-400">#f59e0b</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 미니멀 푸터 -->
-    <footer class="text-center pt-2">
-      <a href="https://your-dopa-url.com" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] text-zinc-500 hover:text-zinc-300 transition">
-        <span>aesthetic digicam kit</span>
-        <span>·</span>
-        <span class="font-medium underline underline-offset-2">dopa</span>
-      </a>
-    </footer>
-
+    <div class="sh-canvas"><canvas id="previewCanvas" width="960" height="540"></canvas></div>
+    <div class="sh-tip">화면의 대화창·플레이어·AF 포커스를 끌어서 옮길 수 있어요.</div>
   </main>
+
+  <section class="sh-panel">
+    <div class="sh-tabs">
+      <button data-tab="photo">사진</button><button data-tab="text">글</button><button data-tab="color">색</button><button data-tab="deco">꾸미기</button>
+    </div>
+    <div class="sh-body">
+      <!-- 사진 -->
+      <div class="sh-pane" data-pane="photo">
+        <div class="sh-sec">
+          <div class="sh-h"><b>촬영 사진</b><span id="bgStatus" class="sh-status">비어 있음</span></div>
+          <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" id="bgInputGallery" accept="image/*" hidden></label>
+          <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" id="bgInputFiles" accept="*/*" hidden></label></div>
+          <p class="sh-note">GIF 움짤을 넣으면 화면 전체가 움직여요.</p>
+        </div>
+      </div>
+
+      <!-- 글 -->
+      <div class="sh-pane" data-pane="text" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>인용 대사</b></div>
+          <input type="text" id="quoteText" class="sh-field" placeholder="예: 도파미너, 오랜만입니다.">
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>메신저</b><button id="btnAddBubble" class="sh-btn sm">+ 말풍선 추가</button></div>
+          <span class="sh-lab">상대 이름</span>
+          <input type="text" id="senderName" class="sh-field" placeholder="예: 윤세라">
+          <p class="sh-note">왼쪽 버튼을 누르면 상대·나가 바뀌어요. 글이 길면 말풍선이 늘어나요.</p>
+          <div id="bubblesContainer" class="sh-list-rows"></div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>음악 플레이어</b></div>
+          <div class="sh-grid2">
+            <div class="sh-col"><span class="sh-lab">곡명</span><input type="text" id="songTitle" class="sh-field" placeholder="예: I Don't Think That I Like Her"></div>
+            <div class="sh-col"><span class="sh-lab">가수 · 테마</span><input type="text" id="artistName" class="sh-field" placeholder="예: Charlie Puth"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 색 -->
+      <div class="sh-pane" data-pane="color" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>카메라 화면 글씨</b></div>
+          <div class="sh-chips">
+            <button class="hud-color-btn sh-chip on" data-color="#ffffff"><i style="background:#ffffff"></i>흰색</button>
+            <button class="hud-color-btn sh-chip" data-color="#a3e635"><i style="background:#a3e635"></i>라임</button>
+            <button class="hud-color-btn sh-chip" data-color="#ff2a85"><i style="background:#ff2a85"></i>핑크</button>
+            <button class="hud-color-btn sh-chip" data-color="#f59e0b"><i style="background:#f59e0b"></i>앰버</button>
+            <button class="hud-color-btn sh-chip" data-color="#38bdf8"><i style="background:#38bdf8"></i>하늘</button>
+          </div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>말풍선 · 재생바 색</b></div>
+          <div class="sh-dots">
+            <button class="color-btn on" data-color="#f59e0b" style="background:#f59e0b" aria-label="앰버"></button>
+            <button class="color-btn" data-color="#ff2a85" style="background:#ff2a85" aria-label="도파 핑크"></button>
+            <button class="color-btn" data-color="#5eead4" style="background:#5eead4" aria-label="민트"></button>
+            <button class="color-btn" data-color="#c084fc" style="background:#c084fc" aria-label="라벤더"></button>
+            <button class="color-btn" data-color="#38bdf8" style="background:#38bdf8" aria-label="블루"></button>
+            <button class="color-btn" data-color="#e4e4e7" style="background:#e4e4e7" aria-label="화이트"></button>
+          </div>
+          <label class="sh-color"><input type="color" id="nativeColorPicker" value="#f59e0b"><div><b>직접 고르기</b><small id="hexDisplay">#f59e0b</small></div></label>
+        </div>
+      </div>
+
+      <!-- 꾸미기 -->
+      <div class="sh-pane" data-pane="deco" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>카메라 화면 표시</b></div>
+          <div class="sh-seg3">
+            <button type="button" id="btnToggleRec" class="sh-btn sm on">REC 표시</button>
+            <button type="button" id="btnToggleAF" class="sh-btn sm on">AF 포커스</button>
+            <button type="button" id="btnToggleBracket" class="sh-btn sm on">모서리 틀</button>
+          </div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>촬영 정보</b></div>
+          <div class="sh-grid2">
+            <div class="sh-col"><span class="sh-lab">날짜</span><input type="text" id="hudDateInput" class="sh-field" placeholder="2026.10.07" value="2026.10.07"></div>
+            <div class="sh-col"><span class="sh-lab">시간</span><input type="text" id="hudTimeInput" class="sh-field" placeholder="18:24:00" value="18:24:00"></div>
+            <div class="sh-col"><span class="sh-lab">렌즈 줌</span><input type="text" id="hudZoomInput" class="sh-field" placeholder="WIDE 1.2x" value="WIDE 1.2x"></div>
+            <div class="sh-col"><span class="sh-lab">조리개 · 셔터</span><input type="text" id="hudShutterInput" class="sh-field" placeholder="F2.8 1/250s" value="F2.8 1/250s"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="sh-rail">
+    <button data-act="panel" class="m-hide"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>편집</button>
+    <button data-act="mode"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></svg></span><span id="shModeLab">라이트</span></button>
+    <button data-open="shReset" class="warn"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span>처음으로</button>
+    <button data-open="shDl" class="dl"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>다운로드</button>
+  </nav>
+</div>
+
+<!-- 다운로드 -->
+<div class="sh-pop" id="shDl" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>다운로드</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="shPng"><div><b>PNG 한 장</b><small>지금 보이는 그대로 · 바로 저장</small></div></button>
+  <button class="sh-choice" id="btnGenerateGIF"><div><b>GIF 움짤</b><small>반복 재생 · 어디든 올리기 좋아요</small></div></button>
+  <button class="sh-choice" id="btnGenerateMP4"><div><b>MP4 영상</b><small>6초 · X에 올릴 땐 화질이 가장 좋아요</small></div><span class="tag">추천</span></button>
+  <div id="loadingStatus" class="hidden sh-loading">
+    <div class="sh-progress"><div id="progressBar" style="width:0"></div></div>
+    <p id="statusMsg" class="sh-note">만드는 중…</p>
+  </div>
+  <div id="resultArea" class="hidden sh-result">
+    <div id="previewMediaWrapper" class="media"></div>
+    <a id="btnDownload" download="dopa_viewfinder" class="sh-btn main">기기에 저장하기</a>
+    <button id="btnShareX" hidden></button>
+  </div>
+  <p class="sh-foot">결과물은 자유롭게 자랑해 주세요 · 틀 자체의 재배포는 삼가 주세요<br>설정을 잊지 않는 AI 이야기 〈도파〉 · <a href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">11/5 텀블벅 알림 신청</a></p>
+</div></div>
+
+<!-- 처음으로 -->
+<div class="sh-pop" id="shReset" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>처음으로</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="shResetPos"><div><b>위치만 되돌리기</b><small>사진·글은 그대로, 끌어서 옮긴 자리만 처음대로</small></div></button>
+  <button class="sh-choice" id="shResetAll"><div><b>전부 지우기</b><small>넣은 사진과 글까지 모두 처음 상태로</small></div></button>
+  <button id="btnResetPositions" hidden></button>
+</div></div>
 
   <script>
     const canvas = document.getElementById('previewCanvas');
@@ -361,35 +272,26 @@
 
     btnToggleRec.addEventListener('click', () => {
       isRecOn = !isRecOn;
-      btnToggleRec.textContent = isRecOn ? 'REC (ON)' : 'STBY (OFF)';
-      btnToggleRec.className = isRecOn 
-        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-red-500/20 text-red-400 border border-red-500/30'
-        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      btnToggleRec.textContent = isRecOn ? 'REC 표시' : 'REC 숨김'; btnToggleRec.className = 'sh-btn sm' + (isRecOn ? ' on' : '');   // 10/23 공통 화면
       draw();
     });
 
     btnToggleAF.addEventListener('click', () => {
       isAFOn = !isAFOn;
-      btnToggleAF.textContent = isAFOn ? '[ AF ] ON' : '[ AF ] OFF';
-      btnToggleAF.className = isAFOn
-        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      btnToggleAF.textContent = isAFOn ? 'AF 포커스' : 'AF 숨김'; btnToggleAF.className = 'sh-btn sm' + (isAFOn ? ' on' : '');   // 10/23 공통 화면
       draw();
     });
 
     btnToggleBracket.addEventListener('click', () => {
       isBracketOn = !isBracketOn;
-      btnToggleBracket.textContent = isBracketOn ? '┌ ┘ ON' : '┌ ┘ OFF';
-      btnToggleBracket.className = isBracketOn
-        ? 'w-full py-1 rounded text-[10px] font-bold transition bg-amber-500/20 text-amber-400 border border-amber-500/30'
-        : 'w-full py-1 rounded text-[10px] font-bold transition bg-zinc-800 text-zinc-400 border border-zinc-700';
+      btnToggleBracket.textContent = isBracketOn ? '모서리 틀' : '틀 숨김'; btnToggleBracket.className = 'sh-btn sm' + (isBracketOn ? ' on' : '');   // 10/23 공통 화면
       draw();
     });
 
     document.querySelectorAll('.hud-color-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.hud-color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900'));
-        btn.classList.add('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900');
+        document.querySelectorAll('.hud-color-btn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
         hudColor = btn.dataset.color;
         draw();
       });
@@ -466,8 +368,8 @@
 
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900'));
-        btn.classList.add('ring-2', 'ring-white', 'ring-offset-2', 'ring-offset-zinc-900');
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
         themeColor = btn.dataset.color;
         nativeColorPicker.value = themeColor;
         hexDisplay.textContent = themeColor;
@@ -656,7 +558,7 @@
         ctx.fillStyle = '#94a3b8';
         ctx.font = 'bold 15px Pretendard';
         ctx.textAlign = 'center';
-        ctx.fillText('촬영 미디어 탭에서 이미지나 GIF를 등록해주세요', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('사진 탭에서 사진이나 GIF 움짤을 넣어 주세요', canvas.width / 2, canvas.height / 2);
       }
 
       // 2. 디카 비네팅
@@ -1130,7 +1032,7 @@
           btnDownload.href = obj.image;
           btnDownload.download = `aesthetic_digicam_16x9.gif`;
           resultArea.classList.remove('hidden');
-          resultArea.scrollIntoView({ behavior: 'smooth' });
+          
         } else {
           alert('GIF 생성 실패: 다시 시도해주세요.');
         }
@@ -1187,7 +1089,7 @@
         btnGenerateMP4.disabled = false;
         loadingStatus.classList.add('hidden');
         resultArea.classList.remove('hidden');
-        resultArea.scrollIntoView({ behavior: 'smooth' });
+        
       };
 
       recorder.start();
@@ -1217,5 +1119,6 @@
       window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
     });
   </script>
+<script src="/shell/shell.js"></script>
 </body>
 </html>
