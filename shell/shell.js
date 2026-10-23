@@ -98,5 +98,20 @@
     addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.classList.contains("sh-zoomed")) zoom(false); });
   }
 
+  // 색 고르기 옆에 색 코드 칸 (#F0185E 처럼 직접 입력 · 10/23 자기야)
+  const hexOk = (v) => /^#?[0-9a-f]{6}$/i.test(v.trim()) || /^#?[0-9a-f]{3}$/i.test(v.trim());
+  const norm = (v) => { let h = v.trim().replace(/^#/, ""); if (h.length === 3) h = h.split("").map((c) => c + c).join(""); return "#" + h.toUpperCase(); };
+  const hexFields = [];
+  $$('.sh-color input[type="color"]').forEach((cp) => {
+    const f = document.createElement("input"); f.type = "text"; f.className = "sh-hex"; f.maxLength = 7; f.spellcheck = false; f.setAttribute("aria-label", "색 코드"); f.value = cp.value.toUpperCase();
+    f.addEventListener("click", (e) => e.preventDefault());   // 라벨 안이라 누르면 색판이 열리지 않게
+    f.addEventListener("input", () => { f.classList.toggle("bad", !hexOk(f.value)); if (hexOk(f.value)) { cp.value = norm(f.value); cp.dispatchEvent(new Event("input", { bubbles: true })); cp.dispatchEvent(new Event("change", { bubbles: true })); } });
+    f.addEventListener("blur", () => { f.value = cp.value.toUpperCase(); f.classList.remove("bad"); });
+    cp.addEventListener("input", () => { if (document.activeElement !== f) f.value = cp.value.toUpperCase(); });
+    cp.closest(".sh-color").appendChild(f); hexFields.push([f, cp]);
+  });
+  // 미리 정해 둔 색 버튼을 눌러도 코드 칸이 따라오게
+  document.addEventListener("click", () => setTimeout(() => hexFields.forEach(([f, cp]) => { if (document.activeElement !== f) f.value = cp.value.toUpperCase(); }), 0));
+
   window.SH = { toast, open, close, setMode, zoom };
 })();
