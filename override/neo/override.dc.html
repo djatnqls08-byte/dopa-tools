@@ -1,0 +1,357 @@
+<!-- 클로드 디자인 「도파 시스템 오버라이드」 (10/23) · 글꼴 묶음은 빼고 페이지에서 웹 글꼴로 불러온다 · Pretendard → Noto Sans KR (저장 그림에 글꼴을 넣기 위해) -->
+<x-dc>
+
+<div ref="{{ rootRef }}" data-om-exportable-video-with-duration-secs="5" data-screen-label="{{ label }}" style="position: relative; width: 1600px; height: 900px; margin: 0 auto; overflow: hidden; background-color: #0C0E13; background-image: linear-gradient(#141821 2px, transparent 2px), linear-gradient(90deg, #141821 2px, transparent 2px); background-size: 64px 64px; background-position: -2px -2px; color: #F2F2F0; font-family: 'Share Tech Mono', 'Noto Sans KR', monospace;">
+  <div style="position: absolute; inset: 0; transform: {{ shake }};">
+
+    <div style="position: absolute; left: 76px; top: 64px; width: 520px; height: 560px; z-index: 2;">
+      <div style="position: absolute; left: -38px; top: 290px; width: 22px; height: 190px; background: {{ cA }}; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span style="transform: rotate(-90deg); white-space: nowrap; font-size: 15px; line-height: 1; letter-spacing: 0.16em; color: #0C0E13;">SUB_01 // HOST</span></div>
+      <div style="position: absolute; left: 300px; top: -16px; width: 220px; height: 10px; background: {{ cA }};"></div>
+      <div style="position: absolute; right: -24px; top: 0; width: 10px; height: 250px; background: {{ cA }};"></div>
+      <div style="position: absolute; right: -24px; top: 520px; width: 10px; height: 10px; background: {{ cA }};"></div>
+      <div style="position: absolute; inset: 0; background: {{ cA }}; clip-path: polygon(64px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 64px);"></div>
+      <div style="position: absolute; inset: 2px; background: {{ panelA }}; clip-path: polygon(63px 0, 100% 0, 100% calc(100% - 39px), calc(100% - 39px) 100%, 0 100%, 0 63px);"></div>
+      <div style="position: absolute; left: 36px; top: 96px; width: 128px; height: 128px; background: {{ cA }}; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 12px 14px; box-sizing: border-box; color: #0C0E13;">
+        <span style="font-size: 13px; line-height: 1; letter-spacing: 0.14em;">RISK</span>
+        <span style="font-size: 56px; line-height: 0.9;">{{ riskA }}</span>
+      </div>
+      <div style="position: absolute; left: 36px; top: 240px; width: 128px; height: 128px; background: {{ cA }}; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; padding: 12px 14px; box-sizing: border-box; color: #0C0E13;">
+        <span style="font-size: 13px; line-height: 1; letter-spacing: 0.14em;">ACCESS</span>
+        <span style="font-size: 34px; line-height: 1;">{{ accessA }}</span>
+      </div>
+      <div style="position: absolute; left: 36px; top: 392px; font-size: 12px; line-height: 1.5; letter-spacing: 0.1em; color: {{ cA }};">NODE_0427<br>HOST.SYS</div>
+      <div style="position: absolute; left: 188px; top: 32px; width: 300px; height: 470px; background: {{ cA }}; overflow: hidden; outline: 2px solid {{ cA }}; outline-offset: 4px;">
+        <sc-if value="{{ noPhotoA }}" hint-placeholder-val="{{ true }}">
+          <div style="position: absolute; left: 50%; top: 92px; width: 156px; height: 156px; margin-left: -78px; border-radius: 50%; background: #0C0E13; display: flex; align-items: center; justify-content: center; font-family: 'GmarketSans'; font-size: 92px; line-height: 1; color: {{ cA }}; padding-top: 10px; box-sizing: border-box;">?</div>
+          <div style="position: absolute; left: 50%; top: 262px; width: 270px; height: 240px; margin-left: -135px; border-radius: 135px 135px 0 0; background: #0C0E13;"></div>
+        </sc-if>
+        <div style="position: absolute; inset: 0; background-image: {{ photoABg }}; background-size: {{ photoASize }}; background-position: {{ photoAPos }};"></div>
+      </div>
+      <div style="position: absolute; left: 188px; top: 516px; width: 120px; height: 6px; background: {{ cA }};"></div>
+      <div style="position: absolute; left: 316px; top: 518px; width: 172px; height: 2px; background: {{ cA }};"></div>
+      <div style="position: absolute; left: 136px; top: 140px; display: flex; flex-direction: column; align-items: flex-end;">
+        <div style="background: {{ panelA }}; border: 2px solid {{ cA }}; padding: 6px 12px 5px; font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.1; color: {{ cA }};">{{ traitA1 }}</div>
+        <div style="width: 2px; height: 18px; background: {{ cA }}; margin-right: 14px;"></div>
+      </div>
+      <div style="position: absolute; left: 380px; top: 400px; display: flex; flex-direction: column; align-items: flex-start;">
+        <div style="width: 2px; height: 18px; background: {{ cA }}; margin-left: 14px;"></div>
+        <div style="background: {{ panelA }}; border: 2px solid {{ cA }}; padding: 6px 12px 5px; font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.1; color: {{ cA }};">{{ traitA2 }}</div>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 1004px; top: 64px; width: 520px; height: 560px; z-index: 2;">
+      <div style="position: absolute; right: -38px; top: 290px; width: 22px; height: 190px; background: {{ lineB }}; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><span style="transform: rotate(90deg); white-space: nowrap; font-size: 15px; line-height: 1; letter-spacing: 0.16em; color: #0C0E13;">SUB_02 // INTRUDER</span></div>
+      <div style="position: absolute; left: 0; top: -16px; width: 220px; height: 10px; background: {{ lineB }};"></div>
+      <div style="position: absolute; left: -24px; top: 0; width: 10px; height: 250px; background: {{ lineB }};"></div>
+      <div style="position: absolute; left: -24px; top: 520px; width: 10px; height: 10px; background: {{ lineB }};"></div>
+      <div style="position: absolute; inset: 0; background: #2A3340; clip-path: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 40px 100%, 0 calc(100% - 40px));"></div>
+      <div style="position: absolute; inset: 2px; background: #10141B; clip-path: polygon(0 0, calc(100% - 63px) 0, 100% 63px, 100% 100%, 39px 100%, 0 calc(100% - 39px));"></div>
+      <div style="position: absolute; left: 32px; top: 32px; width: 300px; height: 470px; outline: 2px solid #2A3340; outline-offset: 4px; background: repeating-linear-gradient(0deg, #141922 0 10px, #10141B 10px 20px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+        <span style="font-size: 40px; line-height: 1; letter-spacing: 0.2em; color: #3A4555;">NO SIGNAL</span>
+        <span style="font-size: 14px; line-height: 1; letter-spacing: 0.2em; color: #3A4555;">SUB_02 · WAITING</span>
+      </div>
+      <div style="position: absolute; left: 356px; top: 96px; width: 128px; height: 128px; border: 2px solid #2A3340; border-radius: 6px; box-sizing: border-box;"></div>
+      <div style="position: absolute; left: 356px; top: 240px; width: 128px; height: 128px; border: 2px solid #2A3340; border-radius: 6px; box-sizing: border-box;"></div>
+
+      <div style="position: absolute; inset: -6px; clip-path: {{ bClip }};">
+        <div style="position: absolute; inset: 6px;">
+          <div style="position: absolute; inset: 0; background: {{ cB }}; clip-path: polygon(0 0, calc(100% - 64px) 0, 100% 64px, 100% 100%, 40px 100%, 0 calc(100% - 40px));"></div>
+          <div style="position: absolute; inset: 2px; background: {{ panelB }}; clip-path: polygon(0 0, calc(100% - 63px) 0, 100% 63px, 100% 100%, 39px 100%, 0 calc(100% - 39px));"></div>
+          <div style="position: absolute; left: 356px; top: 96px; width: 128px; height: 128px; background: {{ cB }}; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; padding: 12px 14px; box-sizing: border-box; color: #0C0E13;">
+            <span style="font-size: 13px; line-height: 1; letter-spacing: 0.14em;">RISK</span>
+            <span style="font-size: 56px; line-height: 0.9;">{{ riskB }}</span>
+          </div>
+          <div style="position: absolute; left: 356px; top: 240px; width: 128px; height: 128px; background: {{ cB }}; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; padding: 12px 14px; box-sizing: border-box; color: #0C0E13;">
+            <span style="font-size: 13px; line-height: 1; letter-spacing: 0.14em;">ACCESS</span>
+            <span style="font-size: 34px; line-height: 1;">ROOT</span>
+          </div>
+          <div style="position: absolute; right: 36px; top: 392px; font-size: 12px; line-height: 1.5; letter-spacing: 0.1em; color: {{ cB }}; text-align: right;">NODE_0427<br>ROOT.SYS</div>
+          <div style="position: absolute; left: 32px; top: 32px; width: 300px; height: 470px; background: {{ cB }}; overflow: hidden; outline: 2px solid {{ cB }}; outline-offset: 4px;">
+            <sc-if value="{{ noPhotoB }}" hint-placeholder-val="{{ true }}">
+              <div style="position: absolute; left: 50%; top: 92px; width: 156px; height: 156px; margin-left: -78px; border-radius: 50%; background: #0C0E13; display: flex; align-items: center; justify-content: center; font-family: 'GmarketSans'; font-size: 92px; line-height: 1; color: {{ cB }}; padding-top: 10px; box-sizing: border-box;">?</div>
+              <div style="position: absolute; left: 50%; top: 262px; width: 270px; height: 240px; margin-left: -135px; border-radius: 135px 135px 0 0; background: #0C0E13;"></div>
+            </sc-if>
+            <div style="position: absolute; inset: 0; background-image: {{ photoBBg }}; background-size: {{ photoBSize }}; background-position: {{ photoBPos }};"></div>
+          </div>
+          <div style="position: absolute; left: 212px; top: 516px; width: 120px; height: 6px; background: {{ cB }};"></div>
+          <div style="position: absolute; left: 32px; top: 518px; width: 172px; height: 2px; background: {{ cB }};"></div>
+          <div style="position: absolute; left: 280px; top: 140px; display: flex; flex-direction: column; align-items: flex-start;">
+            <div style="background: {{ panelB }}; border: 2px solid {{ cB }}; padding: 6px 12px 5px; font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.1; color: {{ cB }};">{{ traitB1 }}</div>
+            <div style="width: 2px; height: 18px; background: {{ cB }}; margin-left: 14px;"></div>
+          </div>
+          <div style="position: absolute; left: 20px; top: 400px; display: flex; flex-direction: column; align-items: flex-start;">
+            <div style="width: 2px; height: 18px; background: {{ cB }}; margin-left: 14px;"></div>
+            <div style="background: {{ panelB }}; border: 2px solid {{ cB }}; padding: 6px 12px 5px; font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.1; color: {{ cB }};">{{ traitB2 }}</div>
+          </div>
+        </div>
+      </div>
+      <div style="position: absolute; left: 0; right: 0; top: {{ scanTop }}; height: 4px; margin-top: -2px; background: #F2F2F0; opacity: {{ scanOp }};"></div>
+    </div>
+
+    <div style="position: absolute; left: 76px; top: 648px; width: 520px; height: 150px; z-index: 3;">
+      <div style="position: absolute; inset: 0; background: {{ cA }}; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);"></div>
+      <div style="position: absolute; inset: 2px; background: #0C0E13; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 23px), calc(100% - 23px) 100%, 0 100%);"></div>
+      <div style="position: absolute; left: 0; top: 0; width: 14px; height: 100%; background: {{ cA }};"></div>
+      <div style="position: absolute; left: 36px; top: 20px; right: 28px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 14px; line-height: 1; letter-spacing: 0.16em; color: {{ cA }};"><span>SUBJECT_01</span><span>{{ nameAEn }}</span></div>
+        <div style="font-family: 'GmarketSans'; font-size: 58px; line-height: 1.05; letter-spacing: -0.01em; text-shadow: {{ rgb }};">{{ nameA }}</div>
+        <sc-if value="{{ showCards }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; gap: 4px;"><sc-for list="{{ segA }}" as="s" hint-placeholder-count="20"><div style="flex: 1; height: 8px; background: {{ s.c }};"></div></sc-for></div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 1004px; top: 648px; width: 520px; height: 150px; z-index: 3;">
+      <div style="position: absolute; inset: 0; background: {{ lineB }}; clip-path: polygon(0 0, 100% 0, 100% 100%, 24px 100%, 0 calc(100% - 24px));"></div>
+      <div style="position: absolute; inset: 2px; background: #0C0E13; clip-path: polygon(0 0, 100% 0, 100% 100%, 23px 100%, 0 calc(100% - 23px));"></div>
+      <div style="position: absolute; right: 0; top: 0; width: 14px; height: 100%; background: {{ lineB }};"></div>
+      <div style="position: absolute; left: 28px; top: 20px; right: 36px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div style="align-self: stretch; display: flex; justify-content: space-between; font-size: 14px; line-height: 1; letter-spacing: 0.16em; color: {{ lineB }};"><span>{{ nameBEn }}</span><span>SUBJECT_02</span></div>
+        <div style="font-family: 'GmarketSans'; font-size: 58px; line-height: 1.05; letter-spacing: -0.01em; color: {{ bName }}; text-shadow: {{ rgb }};">{{ nameB }}</div>
+        <sc-if value="{{ showCards }}" hint-placeholder-val="{{ true }}">
+          <div style="align-self: stretch; display: flex; gap: 4px;"><sc-for list="{{ segB }}" as="s" hint-placeholder-count="20"><div style="flex: 1; height: 8px; background: {{ s.c }};"></div></sc-for></div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 640px; top: 64px; width: 320px; height: 420px; z-index: 2;">
+      <div style="position: absolute; inset: 0; background: {{ cur }}; clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);"></div>
+      <div style="position: absolute; inset: 2px; background: #0C0E13; clip-path: polygon(19px 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%, 0 19px);"></div>
+      <div style="position: absolute; left: 2px; right: 2px; top: 2px; height: 40px; background: {{ cur }}; clip-path: polygon(19px 0, 100% 0, 100% 100%, 0 100%, 0 19px); display: flex; align-items: center; justify-content: space-between; padding: 0 14px 0 26px; font-size: 14px; line-height: 1; letter-spacing: 0.1em; color: #0C0E13;"><span>override.sh</span><span>{{ termTag }}</span></div>
+      <sc-if value="{{ showLog }}" hint-placeholder-val="{{ true }}">
+        <div style="position: absolute; left: 20px; right: 18px; top: 60px; display: flex; flex-direction: column; gap: 12px;">
+          <sc-for list="{{ logs }}" as="lg" hint-placeholder-count="0">
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <span style="font-size: 12px; line-height: 1; letter-spacing: 0.12em; color: {{ lg.color }};">{{ lg.tag }}</span>
+              <span style="font-family: 'Noto Sans KR', sans-serif; font-weight: 600; font-size: 15px; line-height: 1.35; color: {{ lg.textColor }};">{{ lg.text }}</span>
+            </div>
+          </sc-for>
+          <span style="font-size: 16px; line-height: 1; color: {{ cur }}; opacity: {{ cursorOp }};">&gt; █</span>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="position: absolute; left: 640px; top: 504px; width: 320px; height: 294px; z-index: 2;">
+      <div style="position: absolute; inset: 0; border: 2px solid {{ curDim }}; box-sizing: border-box;"></div>
+      <div style="position: absolute; left: 20px; top: 18px; right: 20px; display: flex; justify-content: space-between; font-size: 13px; line-height: 1; letter-spacing: 0.16em; color: {{ cur }};"><span>THREAT LEVEL</span><span>{{ threatState }}</span></div>
+      <div style="position: absolute; left: 18px; top: 46px; font-size: 120px; line-height: 1; color: {{ cur }}; text-shadow: {{ rgb }};">{{ threatNum }}<span style="font-size: 40px;">%</span></div>
+      <div style="position: absolute; left: 20px; right: 20px; top: 186px; display: flex; gap: 4px;"><sc-for list="{{ segT }}" as="s" hint-placeholder-count="16"><div style="flex: 1; height: 22px; background: {{ s.c }};"></div></sc-for></div>
+      <sc-if value="{{ showBarcode }}" hint-placeholder-val="{{ true }}">
+        <div style="position: absolute; left: 20px; right: 20px; bottom: 20px; display: flex; align-items: flex-end; justify-content: space-between;">
+          <div style="width: 150px; height: 34px; background: repeating-linear-gradient(90deg, {{ curDim }} 0 3px, transparent 3px 6px, {{ curDim }} 6px 8px, transparent 8px 13px, {{ curDim }} 13px 18px, transparent 18px 21px);"></div>
+          <span style="font-size: 12px; line-height: 1; letter-spacing: 0.12em; color: {{ curDim }};">0427-1600</span>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="position: absolute; left: 596px; top: 724px; width: 408px; height: 6px; display: flex; transform: scaleX({{ linkS }}); z-index: 6;">
+      <div style="flex: 1; background: {{ cA }};"></div><div style="flex: 1; background: {{ cB }};"></div>
+    </div>
+    <div style="position: absolute; left: 800px; top: 727px; transform: translate(-50%, -50%) scale({{ connS }}); background: #0C0E13; border: 2px solid #F2F2F0; padding: 14px 26px; display: flex; align-items: center; gap: 14px; font-size: 30px; line-height: 1; letter-spacing: 0.16em; white-space: nowrap; z-index: 7;">
+      <div style="width: 12px; height: 12px; background: {{ cA }};"></div>CONNECTED<div style="width: 12px; height: 12px; background: {{ cB }};"></div>
+    </div>
+
+    <sc-if value="{{ showWarn }}" hint-placeholder-val="{{ true }}">
+      <div style="position: absolute; left: 800px; top: 330px; width: 660px; height: 250px; transform: translate(-50%, -50%) scale({{ warnS }}); z-index: 8;">
+        <div style="position: absolute; inset: 0; background: {{ cSys }}; clip-path: polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px);"></div>
+        <div style="position: absolute; inset: 3px; background: #0C0E13; clip-path: polygon(27px 0, 100% 0, 100% calc(100% - 27px), calc(100% - 27px) 100%, 0 100%, 0 27px);"></div>
+        <div style="position: absolute; left: 3px; right: 3px; top: 3px; height: 46px; background: {{ cSys }}; clip-path: polygon(27px 0, 100% 0, 100% 100%, 0 100%, 0 27px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 36px; font-size: 18px; line-height: 1; letter-spacing: 0.18em; color: #0C0E13;"><span>! SECURITY ALERT</span><span>ERR_0427</span></div>
+        <div style="position: absolute; left: 36px; right: 36px; top: 74px; display: flex; flex-direction: column; gap: 16px;">
+          <span style="font-size: 50px; line-height: 1; letter-spacing: 0.04em; color: {{ cSys }};">UNAUTHORIZED ACCESS</span>
+          <span style="font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.3;">{{ warnText }}</span>
+          <div style="display: flex; gap: 4px;"><sc-for list="{{ segT }}" as="s" hint-placeholder-count="16"><div style="flex: 1; height: 10px; background: {{ s.c }};"></div></sc-for></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-for list="{{ streaks }}" as="st" hint-placeholder-count="0">
+      <div style="position: absolute; top: {{ st.top }}; left: {{ st.left }}; width: {{ st.w }}; height: {{ st.h }}; display: flex; flex-direction: {{ st.dir }}; z-index: 9;">
+        <div style="flex: 5; background: {{ st.c1 }};"></div><div style="flex: 3; background: {{ st.c2 }};"></div><div style="flex: 2; background: {{ st.c3 }};"></div>
+      </div>
+    </sc-for>
+
+    <div style="position: absolute; left: 0; top: 330px; width: 1600px; height: 220px; opacity: {{ bigOp }}; z-index: 10;">
+      <div style="position: absolute; inset: 0; background: #0C0E13;"></div>
+      <div style="position: absolute; left: 0; right: 0; top: 0; height: 4px; background: {{ cB }};"></div>
+      <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: {{ cA }};"></div>
+      <div style="position: absolute; left: 0; right: 0; top: 22px; display: flex; justify-content: space-between; padding: 0 76px; font-size: 16px; line-height: 1; letter-spacing: 0.24em; color: {{ cB }};"><span>// SUB_02 HAS TAKEN CONTROL</span><span>ROOT ACCESS GRANTED</span></div>
+      <div style="position: absolute; left: 0; right: 0; top: 66px; display: flex; justify-content: center; transform: scale({{ bigS }});">
+        <div style="position: relative; font-size: 128px; line-height: 1; letter-spacing: 0.04em; white-space: nowrap;">
+          <span style="position: absolute; left: {{ rgbL }}; top: 0; color: {{ cA }};">{{ bigText }}</span>
+          <span style="position: absolute; left: {{ rgbR }}; top: 0; color: {{ cB }};">{{ bigText }}</span>
+          <span style="position: relative; color: #F2F2F0;">{{ bigText }}</span>
+        </div>
+      </div>
+      <sc-for list="{{ dashes }}" as="d" hint-placeholder-count="0">
+        <div style="position: absolute; left: {{ d.x }}; top: {{ d.y }}; width: {{ d.w }}; height: 4px; background: {{ d.c }};"></div>
+      </sc-for>
+    </div>
+
+    <div style="position: absolute; left: 676px; top: 88px; width: 300px; transform: scale({{ bubbleS }}); transform-origin: 100% 100%; z-index: 11;">
+      <div style="position: relative; background: {{ cB }}; color: #0C0E13; padding: 16px 20px 18px; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 14px; line-height: 1; letter-spacing: 0.16em;">SUB_02 &gt;&gt; {{ nameB }}</span>
+        <span style="font-family: 'Noto Sans KR', sans-serif; font-weight: 800; font-size: 26px; line-height: 1.3;">{{ quoteB }}</span>
+      </div>
+      <div style="position: absolute; right: -40px; bottom: 18px; width: 40px; height: 4px; background: {{ cB }};"></div>
+    </div>
+
+    <div style="position: absolute; left: 76px; top: 818px; display: flex; align-items: center; gap: 10px; z-index: 3;">
+      <img src="/override/neo/dopa-wordmark.svg" alt="DOPA" style="height: 15px;">
+      <span style="font-size: 14px; line-height: 1; letter-spacing: 0.2em; color: #5F6878;">TOOLS</span>
+    </div>
+  </div>
+
+  <sc-if value="{{ showMarquee }}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; left: 0; right: 0; top: 0; height: 40px; background: #0C0E13; border-bottom: 2px solid {{ curDim }}; overflow: hidden; z-index: 12;">
+      <div style="display: flex; width: max-content; height: 100%; align-items: center; transform: translateX({{ mqTop }});">
+        <sc-for list="{{ mqItems }}" as="q" hint-placeholder-count="12"><span style="padding-right: 40px; font-size: 20px; line-height: 1; letter-spacing: 0.14em; color: {{ cur }}; white-space: nowrap;">{{ q }}</span></sc-for>
+      </div>
+    </div>
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: {{ cur }}; overflow: hidden; z-index: 12;">
+      <div style="display: flex; width: max-content; height: 100%; align-items: center; transform: translateX({{ mqBot }});">
+        <sc-for list="{{ mqItems }}" as="q" hint-placeholder-count="12"><span style="padding-right: 40px; font-size: 20px; line-height: 1; letter-spacing: 0.14em; color: #0C0E13; white-space: nowrap;">{{ q }}</span></sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{ slices }}" as="sl" hint-placeholder-count="0">
+    <div style="position: absolute; left: {{ sl.left }}; top: {{ sl.top }}; width: 1800px; height: {{ sl.h }}; background: {{ sl.c }}; z-index: 13;"></div>
+  </sc-for>
+  <div style="position: absolute; inset: 0; border: 10px solid {{ cSys }}; opacity: {{ frameOp }}; z-index: 14; pointer-events: none;"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1600, &quot;height&quot;: 900}, &quot;t&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: null, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 0, &quot;max&quot;: 1, &quot;step&quot;: 0.01, &quot;section&quot;: &quot;재생&quot;}, &quot;nameA&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;서태영&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;A&quot;}, &quot;nameAEn&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;SEO TAEYOUNG&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;A&quot;}, &quot;photoA&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;A&quot;}, &quot;riskA&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 34, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 0, &quot;max&quot;: 100, &quot;step&quot;: 1, &quot;section&quot;: &quot;A&quot;}, &quot;traitA1&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;원칙주의&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;A&quot;}, &quot;traitA2&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;방심&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;A&quot;}, &quot;nameB&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;도가연&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;nameBEn&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;DO GAYEON&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;photoB&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;riskB&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 97, &quot;tsType&quot;: &quot;number&quot;, &quot;min&quot;: 0, &quot;max&quot;: 100, &quot;step&quot;: 1, &quot;section&quot;: &quot;B&quot;}, &quot;traitB1&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;집요함&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;traitB2&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;계획범&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;quoteB&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;이제 이 화면, 내 거야.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;B&quot;}, &quot;bigText&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;SYSTEM OVERRIDE&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;문구&quot;}, &quot;warnText&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;접근 권한이 거부되었습니다.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;문구&quot;}, &quot;marquee&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;SUB_01 ⇄ SUB_02 /// OVERRIDE ///&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;문구&quot;}, &quot;log1&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;접속 확인 · 서태영&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log1Type&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;system&quot;, &quot;A&quot;, &quot;B&quot;, &quot;error&quot;], &quot;default&quot;: &quot;system&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log2&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;보고서 정리 끝. 로그아웃할게.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log2Type&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;system&quot;, &quot;A&quot;, &quot;B&quot;, &quot;error&quot;], &quot;default&quot;: &quot;A&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log3&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;외부 접속 감지 · 포트 0427&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log3Type&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;system&quot;, &quot;A&quot;, &quot;B&quot;, &quot;error&quot;], &quot;default&quot;: &quot;error&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log4&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;늦었어. 이미 들어와 있거든.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log4Type&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;system&quot;, &quot;A&quot;, &quot;B&quot;, &quot;error&quot;], &quot;default&quot;: &quot;B&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log5&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;권한 이전 완료&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;log5Type&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;system&quot;, &quot;A&quot;, &quot;B&quot;, &quot;error&quot;], &quot;default&quot;: &quot;system&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;로그&quot;}, &quot;colorSys&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#F0185E&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#F0185E&quot;, &quot;#D9FF3F&quot;, &quot;#8B00FF&quot;, &quot;#FBBF24&quot;], &quot;section&quot;: &quot;색&quot;}, &quot;colorA&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#F0185E&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#F0185E&quot;, &quot;#8B00FF&quot;, &quot;#FBBF24&quot;, &quot;#D9FF3F&quot;], &quot;section&quot;: &quot;색&quot;}, &quot;colorB&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#19E3EE&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#19E3EE&quot;, &quot;#10B981&quot;, &quot;#D9FF3F&quot;, &quot;#8B00FF&quot;], &quot;section&quot;: &quot;색&quot;}, &quot;showCards&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}, &quot;showLog&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}, &quot;showWarn&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}, &quot;showBarcode&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}, &quot;showFrame&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}, &quot;showMarquee&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;켜고 끄기&quot;}}">
+const DUR = 5;
+const BG = '#0C0E13';
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const eOut = (x) => 1 - Math.pow(1 - x, 3);
+const eBack = (x) => x <= 0 ? 0 : 1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => { const A = hex(a), B = hex(b); return '#' + A.map((v, i) => Math.round(v * (1 - k) + B[i] * k).toString(16).padStart(2, '0')).join(''); };
+const LOG_STARTS = [0.1, 0.55, 1.25, 2.75, 3.45];
+const fixedRnd = (i) => { const v = Math.sin(i * 91.17 + 3.3) * 43758.5453; return v - Math.floor(v); };
+class Component extends DCLogic {
+  state = { sec: 0 };
+  rootRef = React.createRef();
+  componentDidMount() {
+    this.paused = false;
+    this.t0 = performance.now();
+    const loop = (now) => {
+      if (!this.paused && this.props.t == null) this.setState({ sec: ((now - this.t0) / 1000) % DUR });
+      this.raf = requestAnimationFrame(loop);
+    };
+    this.raf = requestAnimationFrame(loop);
+    this.onSeek = (e) => { this.paused = true; const tm = e.detail && e.detail.time; if (tm != null) this.setState({ sec: tm >= DUR ? DUR : tm % DUR }); };
+    this.rootRef.current && this.rootRef.current.addEventListener('data-om-seek-to-time-frame', this.onSeek);
+    window.dopaOverrideSetT = (t) => { this.paused = true; this.setState({ sec: clamp(t) * DUR }); };
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    this.rootRef.current && this.rootRef.current.removeEventListener('data-om-seek-to-time-frame', this.onSeek);
+  }
+  renderVals() {
+    const p = this.props;
+    const sec = p.t != null ? clamp(p.t) * DUR : this.state.sec;
+    const seg = (a, b) => clamp((sec - a) / (b - a));
+    const cSys = p.colorSys ?? '#F0185E', cA = p.colorA ?? '#F0185E', cB = p.colorB ?? '#19E3EE';
+    const nameA = p.nameA ?? '서태영', nameB = p.nameB ?? '도가연';
+    const riskA = Math.round(p.riskA ?? 34), riskB = Math.round(p.riskB ?? 97);
+    const rst = eOut(seg(4.72, 5.0));
+    const glitch = sec >= 2.0 && sec < 2.6;
+    const f = Math.floor(sec * 12);
+    const rnd = (i) => { const v = Math.sin(f * 12.9898 + i * 78.233) * 43758.5453; return v - Math.floor(v); };
+
+    const rv = eOut(seg(2.6, 3.25)) * (1 - rst);
+    const taken = rv > 0.5;
+    const cur = taken ? cB : cSys;
+    const curDim = mix(cur, BG, 0.62);
+    const clipTop = 100 * (1 - rv);
+
+    const thr = 12 + (riskB - 12) * eOut(seg(1.25, 1.95));
+    const threat = Math.round(thr + (12 - thr) * rst);
+    const segs = (n, val, on) => Array.from({ length: n }, (_, i) => ({ c: i < Math.round(n * val / 100) ? on : mix(on, BG, 0.78) }));
+
+    const typeMap = {
+      system: { tag: '[SYS]', color: '#7A8494', textColor: '#9AA3B2' },
+      A: { tag: '[SUB_01]', color: cA, textColor: '#F2F2F0' },
+      B: { tag: '[SUB_02]', color: cB, textColor: '#F2F2F0' },
+      error: { tag: '[ERR]', color: cSys, textColor: cSys }
+    };
+    const defs = [
+      [p.log1 ?? `접속 확인 · ${nameA}`, p.log1Type ?? 'system'],
+      [p.log2 ?? '보고서 정리 끝. 로그아웃할게.', p.log2Type ?? 'A'],
+      [p.log3 ?? '외부 접속 감지 · 포트 0427', p.log3Type ?? 'error'],
+      [p.log4 ?? '늦었어. 이미 들어와 있거든.', p.log4Type ?? 'B'],
+      [p.log5 ?? '권한 이전 완료', p.log5Type ?? 'system']
+    ];
+    const logs = rst > 0.5 ? [] : defs.map(([text, type], i) => {
+      const n = Math.max(0, Math.min(text.length, Math.floor((sec - LOG_STARTS[i]) * 28)));
+      return { ...(typeMap[type] || typeMap.system), text: text.slice(0, n), n };
+    }).filter((l) => l.n > 0);
+
+    const sw = seg(1.95, 2.35) * (1 - seg(2.55, 2.8));
+    const streaks = sw > 0.01 ? Array.from({ length: 16 }, (_, i) => {
+      const left = i % 2 === 0, col = left ? cA : cB;
+      const w = sw * (260 + fixedRnd(i) * 520) * (0.85 + rnd(i) * 0.3);
+      return {
+        top: `${60 + fixedRnd(i + 40) * 760}px`, h: `${10 + Math.floor(fixedRnd(i + 80) * 26)}px`,
+        w: `${w.toFixed(0)}px`, left: left ? '0px' : `${(1600 - w).toFixed(0)}px`, dir: left ? 'row' : 'row-reverse',
+        c1: col, c2: mix(col, BG, 0.45), c3: mix(col, BG, 0.75)
+      };
+    }) : [];
+
+    const slices = glitch ? Array.from({ length: 6 }, (_, i) => ({
+      top: `${48 + rnd(i + 3) * 790}px`, h: `${4 + Math.floor(rnd(i + 11) * 22)}px`,
+      left: `${-100 + (rnd(i + 19) - 0.5) * 160}px`, c: [cA, cB, '#F2F2F0'][Math.floor(rnd(i + 29) * 3)]
+    })) : [];
+
+    const bigIn = seg(2.7, 2.85), bigOut = seg(4.15, 4.3);
+    const bigOp = bigIn > 0 && bigOut < 1 ? 1 : 0;
+    const jit = sec >= 2.7 && sec < 3.1;
+    const off = jit ? 8 + rnd(5) * 12 : 4;
+    const dashes = bigOp ? Array.from({ length: 14 }, (_, i) => {
+      const r = jit ? rnd(i + 50) : fixedRnd(i + 120);
+      return { x: `${180 + r * 1200}px`, y: `${50 + fixedRnd(i + 200) * 130}px`, w: `${10 + Math.floor(fixedRnd(i + 300) * 40)}px`, c: [cA, cB, '#F2F2F0'][i % 3] };
+    }) : [];
+
+    const mq = p.marquee ?? 'SUB_01 ⇄ SUB_02 /// OVERRIDE ///';
+    const loopT = sec / DUR;
+
+    return {
+      rootRef: this.rootRef,
+      label: `t ${sec.toFixed(1)}s`,
+      shake: glitch ? `translate(${((rnd(1) - 0.5) * 26).toFixed(1)}px, ${((rnd(2) - 0.5) * 12).toFixed(1)}px)` : 'none',
+      cSys, cA, cB, cur, curDim,
+      panelA: mix(cA, BG, 0.86), panelB: mix(cB, BG, 0.86),
+      lineB: taken ? cB : '#2A3340', bName: taken ? '#F2F2F0' : '#5F6878',
+      nameA, nameB, nameAEn: p.nameAEn ?? 'SEO TAEYOUNG', nameBEn: p.nameBEn ?? 'DO GAYEON',
+      traitA1: p.traitA1 ?? '원칙주의', traitA2: p.traitA2 ?? '방심', traitB1: p.traitB1 ?? '집요함', traitB2: p.traitB2 ?? '계획범',
+      photoABg: p.photoA ? `url("${p.photoA}")` : 'none', photoBBg: p.photoB ? `url("${p.photoB}")` : 'none',
+      noPhotoA: !p.photoA, noPhotoB: !p.photoB,
+      riskA, riskB, accessA: taken ? 'DENIED' : 'ADMIN',
+      segA: segs(20, riskA, cA), segB: segs(20, riskB * eOut(seg(3.3, 3.9)) * (1 - rst), cB),
+      segT: segs(16, threat, cur),
+      threatNum: threat, threatState: taken ? 'OVERRIDDEN' : sec >= 1.2 ? 'BREACH' : 'STABLE',
+      termTag: taken ? 'ROOT: SUB_02' : 'USER: SUB_01',
+      bClip: `inset(${clipTop.toFixed(2)}% 0 0 0)`, scanTop: `${clipTop}%`, scanOp: rv > 0.005 && rv < 0.995 ? 1 : 0,
+      showLog: p.showLog ?? true, showBarcode: p.showBarcode ?? true, showCards: p.showCards ?? true,
+      showWarn: p.showWarn ?? true, showMarquee: p.showMarquee ?? true,
+      logs, cursorOp: Math.floor(sec * 4) % 2 === 0 ? 1 : 0,
+      warnText: p.warnText ?? '접근 권한이 거부되었습니다.',
+      warnS: (eBack(seg(1.2, 1.45)) * (1 - seg(1.95, 2.05))).toFixed(3),
+      streaks, slices,
+      rgb: glitch ? `-6px 0 0 ${cA}, 6px 0 0 ${cB}` : 'none',
+      bigOp, bigText: p.bigText ?? 'SYSTEM OVERRIDE',
+      bigS: (1 + 0.18 * (1 - eOut(bigIn))).toFixed(3),
+      rgbL: `${-off}px`, rgbR: `${off}px`, dashes,
+      quoteB: p.quoteB ?? '이제 이 화면, 내 거야.',
+      bubbleS: (eBack(seg(3.15, 3.4)) * (1 - seg(4.15, 4.27))).toFixed(3),
+      linkS: (eOut(seg(4.25, 4.55)) * (1 - rst)).toFixed(3),
+      connS: (eBack(seg(4.3, 4.55)) * (1 - rst)).toFixed(3),
+      frameOp: (p.showFrame ?? true) && sec >= 1.2 && sec < 2.0 && Math.floor((sec - 1.2) * 4) % 2 === 0 ? 1 : 0,
+      mqItems: Array.from({ length: 12 }, () => mq),
+      mqTop: `${(-loopT * 50).toFixed(3)}%`, mqBot: `${(-(1 - loopT) * 50).toFixed(3)}%`
+    };
+  }
+}
+</script>
