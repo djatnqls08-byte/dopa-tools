@@ -179,3 +179,11 @@ body.sh-zoomed .sh-center { z-index:75; }
 body.sh-zoomed .sh-canvas { position:fixed; z-index:72; left:50%; top:50%; transform:translate(-50%,-50%); width:min(96vw, calc((100dvh - 96px) * var(--ar, 1.7778))); max-width:none !important; border-radius:12px; box-shadow:0 30px 90px rgba(0,0,0,.6); }
 body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body.sh-zoomed .sh-zoombtn { visibility:hidden; }
 @media (max-width: 760px) { .sh-zoombtn { padding:6px 10px; font-size:.76rem; } }
+.sh-canvas { max-width:min(100%, calc((100vh - 190px) * var(--ar, 1.7778))); }
+/* 같은 도구 안의 모드 고르기 (수사 보드: 클래식 / 사건 파일) */
+.sh-modes { display:inline-flex; padding:3px; border-radius:999px; background:var(--panel2); border:1px solid var(--border); }
+.sh-modes a { padding:6px 14px; border-radius:999px; font-size:.8rem; font-weight:700; color:var(--muted); }
+.sh-modes a.on { background:var(--accent); color:#fff; }
+.sh-check2 { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:11px 12px; border-radius:10px; border:1px solid var(--border2); background:var(--panel2); font-weight:700; font-size:.86rem; cursor:pointer; }
+.sh-check2 input { width:20px; height:20px; accent-color:var(--accent); flex:none; }
+@media (max-width: 760px) { .sh-title { flex-wrap:wrap; } .sh-modes { order:3; } .sh-modes a { padding:5px 12px; font-size:.74rem; } }
