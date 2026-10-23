@@ -171,7 +171,7 @@
     const ph = $("#fPhoto"); ph.textContent = "";
     Object.entries(PHOTO_SLOTS).filter(([k]) => S.slots[k]).forEach(([k, l]) => {
       const lab = document.createElement("label"); lab.className = "photo"; lab.innerHTML = `<span>${l}</span>`;
-      const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*";
+      const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*"; inp.dataset.slot = k;
       inp.addEventListener("change", () => { const f = inp.files && inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => shrink(r.result, (url) => { S.photos[k] = url; render(); save(); buildPanel(); }); r.readAsDataURL(f); });
       lab.appendChild(inp);
       if (S.photos[k]) { const x = document.createElement("button"); x.type = "button"; x.textContent = "지우기"; x.addEventListener("click", (e) => { e.preventDefault(); delete S.photos[k]; render(); save(); buildPanel(); }); lab.appendChild(x); }

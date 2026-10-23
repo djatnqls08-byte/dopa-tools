@@ -143,5 +143,35 @@
   }
   document.addEventListener("click", (e) => { const cp = e.target.closest && e.target.closest('input[type="color"]'); if (!cp) return; e.preventDefault(); showPk(cp); }, true);
 
+  // 예시 그림: 시트 '링크' 탭의 이 도구 줄에 적은 예시1~예시4 그림을, 비어 있는 사진 칸에 넣어 둔다 (10/23 자기야 "시트에서 그림 바꾸면 바뀌게")
+  //  · 도구 페이지가 <body data-ex="칸1 선택자|칸2 선택자|…"> 로 어느 칸에 넣을지 알려 준다 (예시1 → 첫 칸 …)
+  //  · 이미 사진이 든 칸(빼기·지우기 버튼이 있는 칸)은 건드리지 않는다
+  const EX_SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2Z9gpMAq_a1qUmAIbO3q6S73u0qVN7TrzkL3iYRFWa0vtWp12Y26oA93paHdzrKs2UqzSorVLhon0/pub?output=csv&gid=427440773";
+  const EX_MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
+  const exSel = (document.body.dataset.ex || "").split("|").map((x) => x.trim());
+  function csvRows(text) { const rows = []; let row = [], cell = "", q = false; for (let i = 0; i < text.length; i++) { const c = text[i]; if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; } else if (c === '"') q = true; else if (c === ",") { row.push(cell); cell = ""; } else if (c === "
+" || c === "") { if (c === "" && text[i + 1] === "
+") i++; row.push(cell); rows.push(row); row = []; cell = ""; } else cell += c; } if (cell || row.length) { row.push(cell); rows.push(row); } return rows; }
+  const waitFor = async (sel, ms = 6000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { const el = document.querySelector(sel); if (el) return el; await new Promise((r) => setTimeout(r, 150)); } return null; };
+  const filled = (inp) => { const box = inp.closest(".sh-sec, label.photo"); return !!(box && [...box.querySelectorAll("button")].some((b) => /빼기|지우기/.test(b.textContent))); };
+  async function examples() {
+    if (!exSel.some(Boolean)) return;
+    try {
+      const [head, ...rows] = csvRows(await (await fetch(EX_SHEET)).text());
+      const col = (k) => head.findIndex((h) => h.trim() === k), li = col("링크");
+      const row = rows.find((r) => { try { const u = new URL((r[li] || "").trim(), location.href); const path = EX_MOVED[u.host] || (u.host === location.host ? u.pathname : ""); return path && location.pathname.startsWith(path); } catch (e) { return false; } });
+      if (!row) return;
+      for (let i = 0; i < exSel.length; i++) {
+        const url = (row[col("예시" + (i + 1))] || "").trim(); if (!url || !exSel[i] || !/^https:\/\//.test(url)) continue;
+        const inp = await waitFor(exSel[i]); if (!inp || filled(inp)) continue;
+        const blob = await (await fetch(url)).blob(); const dt = new DataTransfer();
+        dt.items.add(new File([blob], "example." + ((blob.type.split("/")[1] || "png").replace("jpeg", "jpg")), { type: blob.type || "image/png" }));
+        inp.files = dt.files; inp.dispatchEvent(new Event("change", { bubbles: true }));
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    } catch (e) { console.warn("예시 그림을 못 불러왔어요", e); }
+  }
+  examples();
+
   window.SH = { toast, open, close, setMode, zoom };
 })();
