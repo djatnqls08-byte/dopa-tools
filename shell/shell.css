@@ -213,3 +213,4 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 .sh-modes button { padding:6px 14px; border-radius:999px; border:0; background:none; font-size:.8rem; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit; }
 .sh-modes button.on { background:var(--accent); color:#fff; }
 @media (max-width: 760px) { .sh-modes button { padding:5px 12px; font-size:.74rem; } }
+.sh-side .sh-sidek { margin:2px 0 12px; font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:.7rem; font-weight:600; letter-spacing:.12em; color:var(--muted); }
