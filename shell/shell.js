@@ -172,5 +172,19 @@
   }
   examples();
 
+  // 숫자 세기 (10/23 자기야 "다 트래킹 돼?") — 00호 생존 웹과 같은 survival_events 표에 넣기만 한다 (이름·사진·IP 없음)
+  //  · ep = 도구 이름 · ev: view(열기) / save(내려받기, scene = png·gif·mp4) / tumblbug(알림 버튼)
+  //  · src = 들어온 곳 (?from=x 또는 t.co → x) · 한 번 정해지면 이 탭에서 계속 쓴다
+  const T_SB = "https://qytikqvngyvrszjygbbn.supabase.co", T_PK = "sb_publishable_h-nZS3_gVKpcLxgowjGK_Q_mr4bFXAp";
+  const tsrc = (() => { try { const q = new URLSearchParams(location.search).get("from"); const r = document.referrer ? new URL(document.referrer).host : ""; const v = q || (/t\.co$|x\.com$|twitter\.com$/.test(r) ? "x" : /threads/.test(r) ? "threads" : r && r !== location.host ? r : ""); if (v) sessionStorage.setItem("dopa_tools_src", v.slice(0, 40)); return sessionStorage.getItem("dopa_tools_src") || "direct"; } catch (e) { return "direct"; } })();
+  const tsid = (() => { try { let v = sessionStorage.getItem("dopa_tools_sid"); if (!v) { v = Math.random().toString(36).slice(2, 12); sessionStorage.setItem("dopa_tools_sid", v); } return v; } catch (e) { return ""; } })();
+  function track(ev, extra) { if (/localhost|127\.0\.0\.1/.test(location.host)) return; try { fetch(`${T_SB}/rest/v1/survival_events`, { method: "POST", keepalive: true, headers: { apikey: T_PK, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify(Object.assign({ ev, ep: (me || "tools").slice(0, 10), sid: tsid, src: tsrc }, extra || {})) }).catch(() => {}); } catch (e) {} }
+  track("view");
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest && e.target.closest("a"); if (!a) return;
+    if (a.hasAttribute("download") && a.getAttribute("href")) { const ext = ((a.getAttribute("download") || "").split(".").pop() || "").toLowerCase(); track("save", { scene: /^(png|gif|mp4|webm)$/.test(ext) ? ext : "file" }); }
+    else if (/tumblbug\.com/.test(a.href)) track("tumblbug");
+  }, true);
+
   window.SH = { toast, open, close, setMode, zoom };
 })();
