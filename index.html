@@ -150,7 +150,7 @@ footer a { color:var(--text); font-weight:700; }
     </a>
   </section>
 
-  <div class="sec-h"><h2>페어틀</h2><span id="count"></span></div>
+  <div class="sec-h"><h2>페어틀 · 놀거리</h2><span id="count"></span></div>
   <main class="grid" id="grid" aria-live="polite"></main>
 
   <section class="how">
@@ -183,6 +183,7 @@ const FALLBACK = [
 // 시트에 아직 줄이 없는 새 틀 (시트 '링크' 탭에 줄을 넣으면 그 줄이 대신 쓰인다)
 const LOCAL = [
   { t: "영화 감상", d: "둘이 같이 본 영화, 티켓부터 리뷰까지.", i: "/movie/thumb.png", l: "/movie/", g: "페어틀", o: 5 },
+  { t: "특수 격리실 00호", d: "그는 내 캐릭터의 이름을 기억한다. 갈래 길을 골라 살아남는 괴담.", i: "https://dopa-survival.vercel.app/og.png", l: "https://dopa-survival.vercel.app/?from=tools", g: "", o: 6 },
 ];
 // 옛 개별 사이트 주소 → 이 사이트 안의 주소
 const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
@@ -194,6 +195,7 @@ const EXTRA = {
   "/override/": { fmt: ["PNG", "GIF", "MP4"], modes: "해킹 움짤 · 클래식", isNew: true },
   "/board/": { fmt: ["PNG", "GIF", "MP4"], modes: "사건 파일 · 클래식", isNew: true },
   "/movie/": { fmt: ["PNG", "GIF", "MP4"], isNew: true },
+  "https://dopa-survival.vercel.app/?from=tools": { meta: ["플레이 · 약 10분", "그 / 그녀 버전"] },
 };
 const hidden = (u) => { try { return HIDE.includes(new URL(u, location.href).host); } catch (e) { return false; } };
 const local = (u) => { try { const x = new URL(u, location.href); if (MOVED[x.host]) return MOVED[x.host]; if (x.host === location.host) return x.pathname; return x.href; } catch (e) { return u; } };
@@ -222,7 +224,7 @@ function render(list) {
     return `<a class="card" href="${esc(href)}"${out ? ' target="_blank" rel="noopener"' : ""} data-tool="${esc(x.t)}">
       <div class="thumb"><img src="${esc(x.i)}" alt="${esc(x.t)} 미리보기" loading="lazy"><div class="badges">${x.g ? `<span class="badge">${esc(x.g)}</span>` : ""}${ex.isNew ? '<span class="badge new">NEW</span>' : ""}</div></div>
       <div class="body"><div class="title">${esc(x.t)}${ARROW}</div><p class="desc">${esc(x.d)}</p>
-        <div class="meta">${ex.modes ? `<span class="mode">모드 · ${esc(ex.modes)}</span>` : ""}${(ex.fmt || []).map((f) => `<span class="mono">${f}</span>`).join("")}</div></div>
+        <div class="meta">${ex.modes ? `<span class="mode">모드 · ${esc(ex.modes)}</span>` : ""}${(ex.meta || []).map((f) => `<span class="mode">${esc(f)}</span>`).join("")}${(ex.fmt || []).map((f) => `<span class="mono">${f}</span>`).join("")}</div></div>
     </a>`;
   }).join("");
 }
