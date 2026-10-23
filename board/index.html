@@ -84,17 +84,17 @@
       <!-- 사진 -->
       <div class="sh-pane" data-pane="photo">
         <div class="sh-sec">
-          <div class="sh-h"><b>왼쪽 폴라로이드</b><span id="bgStatus1" class="sh-status">비어 있음</span></div>
+          <div class="sh-h"><b>A 폴라로이드</b><span id="bgStatus1" class="sh-status">비어 있음</span></div>
           <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" id="bgInput1Gallery" accept="image/*" hidden></label>
           <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" id="bgInput1Files" accept="*/*" hidden></label></div>
           <div class="sh-row"><span class="sh-lab">크기</span><input type="range" id="zoom1" min="50" max="300" value="100"></div>
         </div>
         <div class="sh-sec">
-          <div class="sh-h"><b>오른쪽 폴라로이드</b><span id="bgStatus2" class="sh-status">비어 있음</span></div>
+          <div class="sh-h"><b>B 폴라로이드</b><span id="bgStatus2" class="sh-status">비어 있음</span></div>
           <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" id="bgInput2Gallery" accept="image/*" hidden></label>
           <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" id="bgInput2Files" accept="*/*" hidden></label></div>
           <div class="sh-row"><span class="sh-lab">크기</span><input type="range" id="zoom2" min="50" max="300" value="100"></div>
-          <button id="btnSwapMedia" class="sh-btn sm"><svg class="i" viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>왼쪽·오른쪽 바꾸기</button>
+          <button id="btnSwapMedia" class="sh-btn sm"><svg class="i" viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>A·B 자리 바꾸기</button>
         </div>
         <div class="sh-sec">
           <div class="sh-h"><b>보드 배경</b><span id="bgStatusBoard" class="sh-status">기본 코르크</span></div>
@@ -109,8 +109,8 @@
         <div class="sh-sec">
           <div class="sh-h"><b>인물</b></div>
           <div class="sh-grid2">
-            <div class="sh-col"><span class="sh-lab">왼쪽 이름</span><input type="text" id="name1" class="sh-field" placeholder="윤세라"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger1" class="sh-field" value="20" min="0" max="100"></div>
-            <div class="sh-col"><span class="sh-lab">오른쪽 이름</span><input type="text" id="name2" class="sh-field" placeholder="백우진"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger2" class="sh-field" value="95" min="0" max="100"></div>
+            <div class="sh-col"><span class="sh-lab">A 이름</span><input type="text" id="name1" class="sh-field" placeholder="윤세라"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger1" class="sh-field" value="20" min="0" max="100"></div>
+            <div class="sh-col"><span class="sh-lab">B 이름</span><input type="text" id="name2" class="sh-field" placeholder="백우진"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger2" class="sh-field" value="95" min="0" max="100"></div>
           </div>
         </div>
         <div class="sh-sec">
@@ -128,8 +128,8 @@
       <div class="sh-pane" data-pane="color" hidden>
         <div class="sh-sec">
           <label class="sh-color"><input type="color" id="colorSys" value="#dc2626"><div><b>붉은 실 · 도장</b><small>보드를 잇는 실과 기밀 도장 잉크</small></div></label>
-          <label class="sh-color"><input type="color" id="colorLeft" value="#2563eb"><div><b>왼쪽 인물 펜</b><small>조서 글씨와 프로필 강조</small></div></label>
-          <label class="sh-color"><input type="color" id="colorRight" value="#dc2626"><div><b>오른쪽 인물 펜</b><small>조서 글씨와 프로필 강조</small></div></label>
+          <label class="sh-color"><input type="color" id="colorLeft" value="#2563eb"><div><b>A 펜</b><small>조서 글씨와 프로필 강조</small></div></label>
+          <label class="sh-color"><input type="color" id="colorRight" value="#dc2626"><div><b>B 펜</b><small>조서 글씨와 프로필 강조</small></div></label>
         </div>
       </div>
 
@@ -137,8 +137,8 @@
       <div class="sh-pane" data-pane="deco" hidden>
         <div class="sh-sec">
           <div class="sh-h"><b>보드 위에 올릴 것</b></div>
-          <button class="toggle-widget btn-on" data-widget="profile1">왼쪽 폴라로이드</button>
-          <button class="toggle-widget btn-on" data-widget="profile2">오른쪽 폴라로이드</button>
+          <button class="toggle-widget btn-on" data-widget="profile1">A 폴라로이드</button>
+          <button class="toggle-widget btn-on" data-widget="profile2">B 폴라로이드</button>
           <button class="toggle-widget btn-on" data-widget="logConsole">조서 기록</button>
           <button class="toggle-widget btn-on" data-widget="warningBox">기밀 도장</button>
           <button class="toggle-widget btn-on" data-widget="barcode">증거 태그</button>
@@ -292,8 +292,8 @@
         row.innerHTML = `
           <select class="log-type-select bg-[#1a1a1a] text-[9px] border border-zinc-700 font-typewriter text-zinc-300 py-1 focus:outline-none" data-index="${idx}">
             <option value="sys" ${log.type==='sys'?'selected':''}>기록</option>
-            <option value="left" ${log.type==='left'?'selected':''}>왼쪽</option>
-            <option value="right" ${log.type==='right'?'selected':''}>오른쪽</option>
+            <option value="left" ${log.type==='left'?'selected':''}>A</option>
+            <option value="right" ${log.type==='right'?'selected':''}>B</option>
             <option value="err" ${log.type==='err'?'selected':''}>지움</option>
           </select>
           <input type="text" value="${log.text}" placeholder="${log.placeholder}" class="log-text flex-1 bg-transparent border-0 text-white placeholder-zinc-600 text-[10px] px-1 font-typewriter focus:outline-none" data-index="${idx}">

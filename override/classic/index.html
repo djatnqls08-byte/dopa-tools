@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>시스템 오버라이드 · 도파 도구함</title>
+  <meta name="theme-color" content="#121314">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.js"></script>
+  <script>
+    if (!window.omggif && !window.GifReader) {
+      document.write('<script src="https://unpkg.com/omggif@1.0.10/omggif.js"><\/script>');
+    }
+  </script>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --sys-color: #ff0055;
+    }
+
+    body { font-family: "Pretendard", -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .font-cyber { font-family: 'Share Tech Mono', monospace; }
+    #previewCanvas { touch-action: none; cursor: crosshair; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--sys-color); border-radius: 4px; }
+    
+    .sys-bg { background-color: var(--sys-color); }
+    .sys-text { color: var(--sys-color); }
+    .sys-border { border-color: var(--sys-color); }
+
+    .cyber-bg {
+      background-color: #050505;
+      background-image: 
+        linear-gradient(0deg, transparent 24%, color-mix(in srgb, var(--sys-color) 8%, transparent) 25%, color-mix(in srgb, var(--sys-color) 8%, transparent) 26%, transparent 27%, transparent 74%, color-mix(in srgb, var(--sys-color) 8%, transparent) 75%, color-mix(in srgb, var(--sys-color) 8%, transparent) 76%, transparent 77%, transparent), 
+        linear-gradient(90deg, transparent 24%, color-mix(in srgb, var(--sys-color) 8%, transparent) 25%, color-mix(in srgb, var(--sys-color) 8%, transparent) 26%, transparent 27%, transparent 74%, color-mix(in srgb, var(--sys-color) 8%, transparent) 75%, color-mix(in srgb, var(--sys-color) 8%, transparent) 76%, transparent 77%, transparent);
+      background-size: 40px 40px;
+    }
+
+    @keyframes scrollStripe {
+      0% { background-position: 0 0; }
+      100% { background-position: 28px 0; }
+    }
+    .hazard-stripe {
+      background: repeating-linear-gradient(-45deg, #050505, #050505 10px, var(--sys-color) 10px, var(--sys-color) 20px);
+      background-size: 28px 28px;
+      animation: scrollStripe 2s linear infinite;
+    }
+
+    .btn-on { background-color: color-mix(in srgb, var(--sys-color) 20%, transparent); color: var(--sys-color); border: 1px solid color-mix(in srgb, var(--sys-color) 50%, transparent); }
+    .btn-off { background-color: #18181b; color: #71717a; border: 1px solid #27272a; }
+    .glow-canvas { box-shadow: 0 0 30px color-mix(in srgb, var(--sys-color) 20%, transparent); }
+    
+    input[type=range] { -webkit-appearance: none; background: transparent; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%;
+      background: var(--sys-color); cursor: pointer; margin-top: -5px; box-shadow: 0 0 8px var(--sys-color);
+    }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #27272a; border-radius: 2px; }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/shell/shell.css">
+</head>
+<body class="sh" data-tool="override">
+<div class="sh-app">
+  <aside class="sh-side">
+    <a class="sh-back" href="/"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>도구함으로</a>
+    <p>다른 페어틀도 만들어 볼 수 있어요.</p>
+    <nav class="sh-list" id="shList"></nav>
+  </aside>
+
+  <main class="sh-center">
+    <div class="sh-title">
+      <a class="sh-mback" href="/" aria-label="도구함으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <span class="sh-pill">#페어틀</span>
+      <h1>시스템 오버라이드</h1>
+      <p>시스템 에러! 사이버 터미널에서 만난 두 사람.</p>
+      <nav class="sh-modes" aria-label="모드"><a href="/override/">해킹 움짤</a><a href="/override/classic/" class="on">클래식</a></nav>
+    </div>
+    <div class="sh-canvas"><canvas id="previewCanvas" width="960" height="540"></canvas></div>
+    <div class="sh-tip">사진을 끌면 인물 위치가, 창을 끌면 자리가 바뀌어요. 가운데 근처에선 자석처럼 붙어요.</div>
+  </main>
+
+  <section class="sh-panel">
+    <div class="sh-tabs">
+      <button data-tab="photo">사진</button><button data-tab="text">글</button><button data-tab="color">색</button><button data-tab="deco">꾸미기</button>
+    </div>
+    <div class="sh-body">
+      <!-- 사진 -->
+      <div class="sh-pane" data-pane="photo">
+        <div class="sh-sec">
+          <div class="sh-h"><b>A 인물</b><span id="bgStatus1" class="sh-status">비어 있음</span></div>
+          <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" id="bgInput1Gallery" accept="image/*" hidden></label>
+          <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" id="bgInput1Files" accept="*/*" hidden></label></div>
+          <div class="sh-row"><span class="sh-lab">크기</span><input type="range" id="zoom1" min="50" max="300" value="100"></div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>B 인물</b><span id="bgStatus2" class="sh-status">비어 있음</span></div>
+          <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" id="bgInput2Gallery" accept="image/*" hidden></label>
+          <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" id="bgInput2Files" accept="*/*" hidden></label></div>
+          <div class="sh-row"><span class="sh-lab">크기</span><input type="range" id="zoom2" min="50" max="300" value="100"></div>
+          <button id="btnSwapMedia" class="sh-btn sm"><svg class="i" viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>A·B 자리 바꾸기</button>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>가운데 나누기</b></div>
+          <div class="sh-seg3">
+            <button id="btnToggleLine" class="sh-btn sm on">구분선 보임</button>
+            <button id="btnToggleAngle" class="sh-btn sm">기울기 0°</button>
+            <button id="btnToggleGradient" class="sh-btn sm">경계 흐림 끔</button>
+          </div>
+          <p class="sh-note">경계를 흐리게 하면 구분선은 자동으로 꺼져요.</p>
+        </div>
+      </div>
+
+      <!-- 글 -->
+      <div class="sh-pane" data-pane="text" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>인물</b></div>
+          <div class="sh-grid2">
+            <div class="sh-col"><span class="sh-lab">A 이름</span><input type="text" id="name1" class="sh-field" placeholder="윤세라"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger1" class="sh-field" value="20" min="0" max="100"></div>
+            <div class="sh-col"><span class="sh-lab">B 이름</span><input type="text" id="name2" class="sh-field" placeholder="백우진"><span class="sh-lab">위험도 (0~100)</span><input type="number" id="danger2" class="sh-field" value="95" min="0" max="100"></div>
+          </div>
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>경고창 문구</b></div>
+          <input type="text" id="quoteText" class="sh-field" placeholder="접근 권한이 거부되었습니다.">
+        </div>
+        <div class="sh-sec">
+          <div class="sh-h"><b>터미널 기록</b><button id="btnAddBubble" class="sh-btn sm">+ 한 줄 추가</button></div>
+          <p class="sh-note">줄마다 말한 사람을 고를 수 있어요. '에러'를 고르면 경고색으로 떠요.</p>
+          <div id="bubblesContainer" class="sh-list-rows"></div>
+        </div>
+      </div>
+
+      <!-- 색 -->
+      <div class="sh-pane" data-pane="color" hidden>
+        <div class="sh-sec">
+          <label class="sh-color"><input type="color" id="colorSys" value="#ff0055"><div><b>시스템 색</b><small>배경 격자·테두리·로고·경고창</small></div></label>
+          <label class="sh-color"><input type="color" id="colorLeft" value="#10b981"><div><b>A 색</b><small>이름표와 기록 글씨</small></div></label>
+          <label class="sh-color"><input type="color" id="colorRight" value="#ff0055"><div><b>B 색</b><small>이름표와 기록 글씨</small></div></label>
+        </div>
+      </div>
+
+      <!-- 꾸미기 -->
+      <div class="sh-pane" data-pane="deco" hidden>
+        <div class="sh-sec">
+          <div class="sh-h"><b>화면에 올릴 것</b></div>
+          <button class="toggle-widget btn-on" data-widget="profile1">A 프로필</button>
+          <button class="toggle-widget btn-on" data-widget="profile2">B 프로필</button>
+          <button class="toggle-widget btn-on" data-widget="logConsole">터미널 기록</button>
+          <button class="toggle-widget btn-on" data-widget="warningBox">경고창</button>
+          <button class="toggle-widget btn-on" data-widget="barcode">바코드</button>
+          <button class="toggle-widget btn-off" data-widget="hazardLine">경고 테두리</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="sh-rail">
+    <button data-act="panel" class="m-hide"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span>편집</button>
+    <button data-act="mode"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></svg></span><span id="shModeLab">라이트</span></button>
+    <button data-open="shReset" class="warn"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span>처음으로</button>
+    <button data-open="shDl" class="dl"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span>다운로드</button>
+  </nav>
+</div>
+
+<!-- 다운로드 -->
+<div class="sh-pop" id="shDl" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>다운로드</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="shPng"><div><b>PNG 한 장</b><small>지금 보이는 그대로 · 바로 저장</small></div></button>
+  <button class="sh-choice" id="btnGenerateGIF"><div><b>GIF 움짤</b><small>반복 재생 · 어디든 올리기 좋아요</small></div></button>
+  <button class="sh-choice" id="btnGenerateMP4"><div><b>MP4 영상</b><small>X에 올릴 땐 화질이 가장 좋아요</small></div><span class="tag">추천</span></button>
+  <div id="loadingStatus" class="hidden sh-loading">
+    <div class="sh-progress"><div id="progressBar" style="width:0"></div></div>
+    <p id="statusMsg" class="sh-note">만드는 중…</p>
+  </div>
+  <div id="resultArea" class="hidden sh-result">
+    <div id="previewMediaWrapper" class="media"></div>
+    <a id="btnDownload" download="dopa_override" class="sh-btn main">기기에 저장하기</a>
+    <button id="btnShareX" hidden></button>
+  </div>
+  <p class="sh-foot">결과물은 자유롭게 자랑해 주세요 · 틀 자체의 재배포는 삼가 주세요<br>설정을 잊지 않는 AI 이야기 〈도파〉 · <a href="https://tumblbug.com/dopastudio" target="_blank" rel="noopener">11/5 텀블벅 알림 신청</a></p>
+</div></div>
+
+<!-- 처음으로 -->
+<div class="sh-pop" id="shReset" hidden><div class="sh-card">
+  <div class="sh-card-h"><b>처음으로</b><button class="sh-x" aria-label="닫기">×</button></div>
+  <button class="sh-choice" id="shResetPos"><div><b>위치만 되돌리기</b><small>사진·글은 그대로, 끌어서 옮긴 자리만 처음대로</small></div></button>
+  <button class="sh-choice" id="shResetAll"><div><b>전부 지우기</b><small>넣은 사진과 글까지 모두 처음 상태로</small></div></button>
+  <button id="btnResetPositions" hidden></button>
+</div></div>
+
+  <script>
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // 미디어 및 변수
+    let bgMedia1 = null; let bgMedia2 = null;
+    let bgConfig1 = { scale: 1, x: 0, y: 0, defaultScale: 1 };
+    let bgConfig2 = { scale: 1, x: 0, y: 0, defaultScale: 1 };
+    
+    let animProgress = 0; let previewTimer = null; let isExporting = false;
+    let showSplitLine = true; let splitAngle = 0; let isGradientEdge = false;
+    
+    let cSys = '#ff0055'; let cLeft = '#10b981'; let cRight = '#ff0055'; 
+
+    // 도파 로고 렌더러
+    const dopaDevilSvgRaw = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="26,34 14,8 38,24" fill="{COLOR}"/><polygon points="74,34 86,8 62,24" fill="{COLOR}"/><circle cx="52" cy="56" r="38" fill="%23111827"/><circle cx="49" cy="53" r="37" fill="{COLOR}"/><line x1="33" y1="46" x2="44" y2="57" stroke="%23111827" stroke-width="4.5" stroke-linecap="round"/><line x1="44" y1="46" x2="33" y2="57" stroke="%23111827" stroke-width="4.5" stroke-linecap="round"/><path d="M 56 50 Q 64 42 72 51" fill="none" stroke="%23111827" stroke-width="4.5" stroke-linecap="round"/><path d="M 37 66 Q 52 80 67 65" fill="none" stroke="%23111827" stroke-width="4.5" stroke-linecap="round"/><polygon points="61,70 65,77 67,70" fill="%23111827"/><polygon points="85,18 87,14 91,16 88,19 90,23 86,21 83,24 84,20 80,18 84,17" fill="%23ffffff"/></svg>`;
+    let dopaLogoImg = new Image();
+    function updateLogoImage() {
+      const coloredSvg = dopaDevilSvgRaw.replace(/{COLOR}/g, encodeURIComponent(cSys));
+      dopaLogoImg.src = `data:image/svg+xml;utf8,${coloredSvg}`;
+    }
+    updateLogoImage();
+
+    // 텍스트 줄바꿈
+    function getWrappedLines(context, text, maxWidth) {
+      if (!text) return [''];
+      const chars = Array.from(text); const lines = []; let currentLine = '';
+      for (let i = 0; i < chars.length; i++) {
+        const testLine = currentLine + chars[i];
+        if (context.measureText(testLine).width > maxWidth && currentLine.length > 0) {
+          lines.push(currentLine); currentLine = chars[i];
+        } else { currentLine = testLine; }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines.length > 0 ? lines : [''];
+    }
+
+    // 초기 오브젝트 위치
+    const defaultElements = {
+      profile1:   { id: 'profile1',   x: 40,  y: 70,  w: 220, h: 90 },
+      profile2:   { id: 'profile2',   x: 700, y: 70,  w: 220, h: 90 },
+      logConsole: { id: 'logConsole', x: 280, y: 310, w: 400, h: 200 },
+      warningBox: { id: 'warningBox', x: 330, y: 40,  w: 300, h: 60 },
+      barcode:    { id: 'barcode',    x: 40,  y: 450, w: 180, h: 70 }
+    };
+    let elements = JSON.parse(JSON.stringify(defaultElements));
+    let renderOrder = ['barcode', 'profile1', 'profile2', 'warningBox', 'logConsole'];
+    let wState = { profile1: true, profile2: true, logConsole: true, warningBox: true, barcode: true, hazardLine: false };
+
+    let draggingItem = null; 
+    let draggingBackground = 0; 
+    let dragOffset = { x: 0, y: 0 };
+    let snapGuides = { x: null, y: null }; // 네온 가이드라인 표시용 좌표
+
+    let logEntries = [
+      { type: 'sys',   text: '', placeholder: 'SYSTEM: 두 개체의 접촉이 감지되었습니다.' },
+      { type: 'left',  text: '', placeholder: 'SUB_01: 접근을 시도합니다.' },
+      { type: 'right', text: '', placeholder: 'SUB_02: 또 뵙네요.' },
+      { type: 'err',   text: '', placeholder: 'ERROR: 위험도가 임계점을 돌파했습니다!' }
+    ];
+
+    // ★ 강력한 하드 리셋 버튼 (줌, 위치, 오브젝트 전부 초기화)
+    document.getElementById('btnResetPositions').addEventListener('click', () => {
+      elements = JSON.parse(JSON.stringify(defaultElements));
+      renderOrder = ['barcode', 'profile1', 'profile2', 'warningBox', 'logConsole'];
+      
+      // 배경 사진 위치 초기화
+      bgConfig1.x = 0; bgConfig1.y = 0;
+      bgConfig2.x = 0; bgConfig2.y = 0;
+      
+      // 배경 사진 줌 초기화
+      if(bgMedia1) { bgConfig1.scale = bgConfig1.defaultScale; document.getElementById('zoom1').value = 100; }
+      if(bgMedia2) { bgConfig2.scale = bgConfig2.defaultScale; document.getElementById('zoom2').value = 100; }
+      
+      draw();
+    });
+
+    // 분할 설정 컨트롤
+    const btnToggleLine = document.getElementById('btnToggleLine'), btnToggleAngle = document.getElementById('btnToggleAngle'), btnToggleGradient = document.getElementById('btnToggleGradient');
+    // 10/23 공통 화면: 가운데 나누기 버튼 (글자·모양만 바꿈 · 동작은 그대로)
+    const segCls = (on) => 'sh-btn sm' + (on ? ' on' : '');
+    btnToggleLine.addEventListener('click', () => {
+      if (isGradientEdge) return;
+      showSplitLine = !showSplitLine;
+      btnToggleLine.textContent = showSplitLine ? '구분선 보임' : '구분선 숨김'; btnToggleLine.className = segCls(showSplitLine);
+      draw();
+    });
+    btnToggleAngle.addEventListener('click', () => {
+      splitAngle = splitAngle === 0 ? 20 : splitAngle === 20 ? -20 : 0;
+      btnToggleAngle.textContent = splitAngle === 0 ? '기울기 0°' : splitAngle === 20 ? '기울기 20° ╱' : '기울기 -20° ╲'; btnToggleAngle.className = segCls(splitAngle !== 0);
+      draw();
+    });
+    btnToggleGradient.addEventListener('click', () => {
+      isGradientEdge = !isGradientEdge;
+      btnToggleGradient.textContent = isGradientEdge ? '경계 흐림 켬' : '경계 흐림 끔'; btnToggleGradient.className = segCls(isGradientEdge);
+      showSplitLine = false; btnToggleLine.textContent = isGradientEdge ? '구분선 (흐림 중)' : '구분선 숨김'; btnToggleLine.className = segCls(false) + (isGradientEdge ? ' off' : '');
+      draw();
+    });
+
+    document.querySelectorAll('.toggle-widget').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const wKey = btn.dataset.widget; wState[wKey] = !wState[wKey];
+        btn.classList.toggle('btn-on', !!wState[wKey]); btn.classList.toggle('btn-off', !wState[wKey]);   // 10/23 공통 화면: 글자는 그대로, 스위치 색만
+        draw();
+      });
+    });
+
+    // 컬러 커스텀
+    document.getElementById('colorSys').addEventListener('input', (e) => { cSys = e.target.value; document.documentElement.style.setProperty('--sys-color', cSys); updateLogoImage(); draw(); });
+    document.getElementById('colorLeft').addEventListener('input', (e) => { cLeft = e.target.value; draw(); });
+    document.getElementById('colorRight').addEventListener('input', (e) => { cRight = e.target.value; draw(); });
+
+    // 스왑 버튼
+    document.getElementById('btnSwapMedia').addEventListener('click', () => {
+      const tb = bgMedia1; bgMedia1 = bgMedia2; bgMedia2 = tb;
+      const tc = bgConfig1; bgConfig1 = bgConfig2; bgConfig2 = tc;
+      const tz = document.getElementById('zoom1').value; document.getElementById('zoom1').value = document.getElementById('zoom2').value; document.getElementById('zoom2').value = tz;
+      const tn = name1.value; name1.value = name2.value; name2.value = tn;
+      const td = danger1.value; danger1.value = danger2.value; danger2.value = td;
+      draw();
+    });
+
+    // 로그 렌더링
+    const bubblesContainer = document.getElementById('bubblesContainer');
+    function renderLogInputs() {
+      bubblesContainer.innerHTML = '';
+      logEntries.forEach((log, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-1.5 bg-[#050505] p-1.5 border border-zinc-800 text-xs';
+        row.innerHTML = `
+          <select class="log-type-select bg-zinc-900 text-[9px] border border-zinc-700 font-cyber text-white py-1 focus:outline-none" data-index="${idx}">
+            <option value="sys" ${log.type==='sys'?'selected':''}>시스템</option>
+            <option value="left" ${log.type==='left'?'selected':''}>A</option>
+            <option value="right" ${log.type==='right'?'selected':''}>B</option>
+            <option value="err" ${log.type==='err'?'selected':''}>에러</option>
+          </select>
+          <input type="text" value="${log.text}" placeholder="${log.placeholder}" class="log-text flex-1 bg-transparent border-0 text-white placeholder-zinc-700 text-[10px] px-1 font-cyber focus:outline-none" data-index="${idx}">
+          <button class="delete-log text-zinc-600 hover:text-red-500 px-1 text-[10px]" data-index="${idx}" aria-label="이 줄 지우기">✕</button>
+        `;
+        bubblesContainer.appendChild(row);
+      });
+      elements.logConsole.h = Math.max(160, 45 + logEntries.length * 36);
+
+      document.querySelectorAll('.log-type-select').forEach(sel => { sel.addEventListener('change', (e) => { logEntries[e.target.dataset.index].type = e.target.value; draw(); }); });
+      document.querySelectorAll('.log-text').forEach(input => { input.addEventListener('input', (e) => { logEntries[e.target.dataset.index].text = e.target.value; draw(); }); });
+      document.querySelectorAll('.delete-log').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (logEntries.length <= 1) return; logEntries.splice(e.target.dataset.index, 1); renderLogInputs(); draw();
+        });
+      });
+    }
+    document.getElementById('btnAddBubble').addEventListener('click', () => { logEntries.push({ type: 'sys', text: '', placeholder: 'NEW_LOG_ENTRY' }); renderLogInputs(); draw(); });
+    renderLogInputs();
+
+    // 탭 전환
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('sys-border', 'sys-text'); b.classList.add('border-transparent', 'text-zinc-500'); });
+        btn.classList.add('sys-border', 'sys-text'); btn.classList.remove('border-transparent', 'text-zinc-500');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById(btn.dataset.tab).classList.remove('hidden');
+      });
+    });
+
+    const quoteText = document.getElementById('quoteText'), name1 = document.getElementById('name1'), danger1 = document.getElementById('danger1'), name2 = document.getElementById('name2'), danger2 = document.getElementById('danger2');
+    [quoteText, name1, name2, danger1, danger2].forEach(el => el.addEventListener('input', () => draw()));
+
+    // 줌 슬라이더 제어
+    const zoom1 = document.getElementById('zoom1'), zoom2 = document.getElementById('zoom2');
+    zoom1.addEventListener('input', (e) => { if(bgMedia1) { bgConfig1.scale = bgConfig1.defaultScale * (e.target.value / 100); draw(); } });
+    zoom2.addEventListener('input', (e) => { if(bgMedia2) { bgConfig2.scale = bgConfig2.defaultScale * (e.target.value / 100); draw(); } });
+
+    // GIF 파서
+    async function loadMediaFile(file, statusEl) {
+      if (!file) return null;
+      if (statusEl) { statusEl.textContent = 'ANALYZING...'; statusEl.className = 'text-[9px] text-[#ff0055] font-cyber border border-[#ff0055]/50 px-1 py-0.5 animate-pulse'; }
+      try {
+        const buffer = await file.arrayBuffer(); const bytes = new Uint8Array(buffer);
+        if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+          const ReaderClass = (window.omggif && window.omggif.GifReader) || window.GifReader;
+          if (ReaderClass) {
+            const reader = new ReaderClass(bytes); const numFrames = reader.numFrames();
+            if (numFrames > 1) {
+              const w = reader.width, h = reader.height; const canvasList = []; const framePixels = new Uint8ClampedArray(w * h * 4);
+              for (let i = 0; i < numFrames; i++) {
+                reader.decodeAndBlitFrameRGBA(i, framePixels);
+                const fCanvas = document.createElement('canvas'); fCanvas.width = w; fCanvas.height = h;
+                const fCtx = fCanvas.getContext('2d'); const imgData = fCtx.createImageData(w, h);
+                imgData.data.set(framePixels); fCtx.putImageData(imgData, 0, 0); canvasList.push(fCanvas);
+              }
+              if (statusEl) { statusEl.textContent = `GIF_OK [${canvasList.length}F]`; statusEl.className = 'text-[9px] text-emerald-400 font-cyber border border-emerald-500/50 px-1 py-0.5'; }
+              return { isGif: true, frames: canvasList, width: w, height: h };
+            }
+          }
+        }
+      } catch (err) {}
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            if (statusEl) { statusEl.textContent = 'IMG_OK'; statusEl.className = 'text-[9px] text-zinc-300 font-cyber border border-zinc-600 px-1 py-0.5'; }
+            resolve({ isGif: false, img, width: img.width, height: img.height });
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function onMediaSelected(inputEl, isLeft) {
+      if (inputEl.files && inputEl.files[0]) {
+        const media = await loadMediaFile(inputEl.files[0], isLeft ? document.getElementById('bgStatus1') : document.getElementById('bgStatus2'));
+        if (media) {
+          const coverScale = Math.max(480 / media.width, 540 / media.height);
+          if (isLeft) { bgMedia1 = media; bgConfig1 = { scale: coverScale, x: 0, y: 0, defaultScale: coverScale }; zoom1.value = 100; } 
+          else { bgMedia2 = media; bgConfig2 = { scale: coverScale, x: 0, y: 0, defaultScale: coverScale }; zoom2.value = 100; }
+          draw();
+        }
+      }
+    }
+    document.getElementById('bgInput1Gallery').addEventListener('change', (e) => onMediaSelected(e.target, true));
+    document.getElementById('bgInput1Files').addEventListener('change', (e) => onMediaSelected(e.target, true));
+    document.getElementById('bgInput2Gallery').addEventListener('change', (e) => onMediaSelected(e.target, false));
+    document.getElementById('bgInput2Files').addEventListener('change', (e) => onMediaSelected(e.target, false));
+
+    function getDrawableSource(media, prog) {
+      if (!media) return null;
+      if (media.isGif && media.frames && media.frames.length > 0) {
+        const frameIdx = Math.floor(prog * media.frames.length * 3) % media.frames.length; return media.frames[frameIdx];
+      }
+      return media.img;
+    }
+
+    // ================= 스마트 드래그 & 자석 스냅 엔진 =================
+    const SNAP_THRESHOLD = 15; // 15px 이내 접근 시 자석 스냅
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
+    }
+    
+    function handleDragStart(e) {
+      if (isExporting) return;
+      const pos = getCanvasCoords(e);
+      draggingItem = null; draggingBackground = 0; snapGuides = { x: null, y: null };
+
+      // 1. 위젯 클릭 체크
+      for (let i = renderOrder.length - 1; i >= 0; i--) {
+        const key = renderOrder[i];
+        if (!wState[key]) continue;
+        const item = elements[key];
+        if (pos.x >= item.x && pos.x <= item.x + item.w && pos.y >= item.y && pos.y <= item.y + item.h) {
+          draggingItem = key; dragOffset.x = pos.x - item.x; dragOffset.y = pos.y - item.y;
+          renderOrder.splice(i, 1); renderOrder.push(key);
+          if (e.cancelable) e.preventDefault(); draw(); return;
+        }
+      }
+
+      // 2. 배경 드래그 체크
+      const cx = canvas.width / 2, rad = splitAngle * Math.PI / 180, tan = Math.tan(rad);
+      const splitX = cx + (canvas.height / 2 - pos.y) * tan;
+
+      if (pos.x < splitX) { if (bgMedia1) { draggingBackground = 1; dragOffset.x = pos.x; dragOffset.y = pos.y; } } 
+      else { if (bgMedia2) { draggingBackground = 2; dragOffset.x = pos.x; dragOffset.y = pos.y; } }
+      if (e.cancelable) e.preventDefault();
+    }
+    
+    function handleDragMove(e) {
+      if (isExporting || (!draggingItem && draggingBackground === 0)) return;
+      const pos = getCanvasCoords(e);
+      snapGuides = { x: null, y: null };
+
+      if (draggingItem) {
+        const item = elements[draggingItem];
+        let newX = Math.round(pos.x - dragOffset.x);
+        let newY = Math.round(pos.y - dragOffset.y);
+        
+        // 위젯 X축 자석 스냅 (화면 중앙, 좌측 분할 중앙, 우측 분할 중앙)
+        const itemCX = newX + item.w / 2;
+        if (Math.abs(itemCX - 480) < SNAP_THRESHOLD) { newX = 480 - item.w / 2; snapGuides.x = 480; }
+        else if (Math.abs(itemCX - 240) < SNAP_THRESHOLD) { newX = 240 - item.w / 2; snapGuides.x = 240; }
+        else if (Math.abs(itemCX - 720) < SNAP_THRESHOLD) { newX = 720 - item.w / 2; snapGuides.x = 720; }
+        
+        // 위젯 Y축 자석 스냅 (화면 중앙)
+        const itemCY = newY + item.h / 2;
+        if (Math.abs(itemCY - 270) < SNAP_THRESHOLD) { newY = 270 - item.h / 2; snapGuides.y = 270; }
+        
+        item.x = newX; item.y = newY;
+      } 
+      else if (draggingBackground !== 0) {
+        const dx = pos.x - dragOffset.x; const dy = pos.y - dragOffset.y;
+        if (draggingBackground === 1) { 
+          bgConfig1.x += dx; bgConfig1.y += dy; 
+          // 배경 1 위치 자석 스냅 (0,0 이 원본 중앙 위치)
+          if (Math.abs(bgConfig1.x) < SNAP_THRESHOLD) { bgConfig1.x = 0; snapGuides.x = 240; }
+          if (Math.abs(bgConfig1.y) < SNAP_THRESHOLD) { bgConfig1.y = 0; snapGuides.y = 270; }
+        } else { 
+          bgConfig2.x += dx; bgConfig2.y += dy; 
+          // 배경 2 위치 자석 스냅
+          if (Math.abs(bgConfig2.x) < SNAP_THRESHOLD) { bgConfig2.x = 0; snapGuides.x = 720; }
+          if (Math.abs(bgConfig2.y) < SNAP_THRESHOLD) { bgConfig2.y = 0; snapGuides.y = 270; }
+        }
+        dragOffset.x = pos.x; dragOffset.y = pos.y;
+      }
+      if (e.cancelable) e.preventDefault(); draw();
+    }
+    
+    function handleDragEnd() { draggingItem = null; draggingBackground = 0; snapGuides = { x: null, y: null }; draw(); }
+
+    canvas.addEventListener('mousedown', handleDragStart); window.addEventListener('mousemove', handleDragMove); window.addEventListener('mouseup', handleDragEnd);
+    canvas.addEventListener('touchstart', handleDragStart, { passive: false }); window.addEventListener('touchmove', handleDragMove, { passive: false }); window.addEventListener('touchend', handleDragEnd);
+
+    // ================= 메인 렌더링 =================
+    function drawMediaConfigured(c, media, srcImg, areaW, areaH, config) {
+      if (!srcImg || !media) return;
+      const sw = media.width * config.scale; const sh = media.height * config.scale;
+      const x = (areaW - sw) / 2 + config.x; const y = (areaH - sh) / 2 + config.y;
+      c.drawImage(srcImg, x, y, sw, sh);
+    }
+
+    function drawSplitBackground(prog) {
+      const w = canvas.width, h = canvas.height, cx = w / 2, cy = h / 2;
+      const rad = splitAngle * Math.PI / 180; const tan = Math.tan(rad); const dx = (h / 2) * tan;
+
+      if (isGradientEdge) {
+        const src1 = getDrawableSource(bgMedia1, prog);
+        if (src1) drawMediaConfigured(ctx, bgMedia1, src1, w, h, bgConfig1);
+        else {
+          ctx.fillStyle = `rgba(${parseInt(cLeft.slice(1,3),16)}, ${parseInt(cLeft.slice(3,5),16)}, ${parseInt(cLeft.slice(5,7),16)}, 0.08)`; ctx.fillRect(0, 0, w, h);
+          ctx.fillStyle = cLeft; ctx.font = '12px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillText('WAITING FOR SUB_01...', 240, 270);
+        }
+
+        const offCanvas = document.createElement('canvas'); offCanvas.width = w; offCanvas.height = h; const offCtx = offCanvas.getContext('2d');
+        const src2 = getDrawableSource(bgMedia2, prog);
+        if (src2) drawMediaConfigured(offCtx, bgMedia2, src2, w, h, bgConfig2);
+        else {
+          offCtx.fillStyle = `rgba(${parseInt(cRight.slice(1,3),16)}, ${parseInt(cRight.slice(3,5),16)}, ${parseInt(cRight.slice(5,7),16)}, 0.08)`; offCtx.fillRect(0, 0, w, h);
+          offCtx.fillStyle = cRight; offCtx.font = '12px "Share Tech Mono"'; offCtx.textAlign = 'center'; offCtx.fillText('WAITING FOR SUB_02...', 720, 270);
+        }
+
+        const blurWidth = 350;
+        const gx1 = cx - Math.cos(rad) * blurWidth / 2, gy1 = cy + Math.sin(rad) * blurWidth / 2;
+        const gx2 = cx + Math.cos(rad) * blurWidth / 2, gy2 = cy - Math.sin(rad) * blurWidth / 2;
+        const grad = offCtx.createLinearGradient(gx1, gy1, gx2, gy2);
+        grad.addColorStop(0, 'rgba(0,0,0,0)'); grad.addColorStop(1, 'rgba(0,0,0,1)');
+
+        offCtx.globalCompositeOperation = 'destination-in'; offCtx.fillStyle = grad; offCtx.fillRect(0, 0, w, h);
+        ctx.drawImage(offCanvas, 0, 0);
+      } else {
+        ctx.save(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(cx + dx, 0); ctx.lineTo(cx - dx, h); ctx.lineTo(0, h); ctx.closePath(); ctx.clip();
+        const src1 = getDrawableSource(bgMedia1, prog);
+        if (src1) drawMediaConfigured(ctx, bgMedia1, src1, w, h, bgConfig1);
+        else { ctx.fillStyle = `rgba(${parseInt(cLeft.slice(1,3),16)}, ${parseInt(cLeft.slice(3,5),16)}, ${parseInt(cLeft.slice(5,7),16)}, 0.08)`; ctx.fillRect(0, 0, w, h); ctx.fillStyle = cLeft; ctx.font = '12px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillText('WAITING FOR SUB_01...', cx - dx/2 - 120, 270); }
+        ctx.restore();
+
+        ctx.save(); ctx.beginPath(); ctx.moveTo(cx + dx, 0); ctx.lineTo(w, 0); ctx.lineTo(w, h); ctx.lineTo(cx - dx, h); ctx.closePath(); ctx.clip();
+        const src2 = getDrawableSource(bgMedia2, prog);
+        if (src2) drawMediaConfigured(ctx, bgMedia2, src2, w, h, bgConfig2);
+        else { ctx.fillStyle = `rgba(${parseInt(cRight.slice(1,3),16)}, ${parseInt(cRight.slice(3,5),16)}, ${parseInt(cRight.slice(5,7),16)}, 0.08)`; ctx.fillRect(0, 0, w, h); ctx.fillStyle = cRight; ctx.font = '12px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillText('WAITING FOR SUB_02...', cx + dx/2 + 120, 270); }
+        ctx.restore();
+
+        if (showSplitLine) {
+          ctx.strokeStyle = cSys; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx + dx, 0); ctx.lineTo(cx - dx, h); ctx.stroke();
+          if (wState.barcode) {
+            ctx.fillStyle = '#050505'; ctx.fillRect(cx - 50, cy - 15, 100, 30); ctx.strokeStyle = cSys; ctx.strokeRect(cx - 50, cy - 15, 100, 30);
+            ctx.fillStyle = cSys; ctx.font = 'bold 12px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillText('SYNC_RATE', cx, cy + 4);
+          }
+        }
+      }
+    }
+
+    function drawHazardStripe(y, h, reverse) {
+      ctx.save(); const stripeW = 20; const offset = (animProgress * stripeW * 4) % (stripeW * 2);
+      ctx.beginPath(); ctx.rect(0, y, canvas.width, h); ctx.clip();
+      for (let x = -stripeW * 2; x < canvas.width + stripeW * 2; x += stripeW * 2) {
+        ctx.fillStyle = cSys; ctx.beginPath();
+        if (reverse) { ctx.moveTo(x + offset, y); ctx.lineTo(x + offset + stripeW, y); ctx.lineTo(x + offset + stripeW * 2, y + h); ctx.lineTo(x + offset + stripeW, y + h); } 
+        else { ctx.moveTo(x - offset, y); ctx.lineTo(x - offset + stripeW, y); ctx.lineTo(x - offset - stripeW, y + h); ctx.lineTo(x - offset - stripeW * 2, y + h); }
+        ctx.fill();
+      }
+      ctx.strokeStyle = cSys; ctx.lineWidth = 2; ctx.strokeRect(0, y, canvas.width, h); ctx.restore();
+    }
+
+    function draw(prog = animProgress) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#050505'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+      for (let y = 0; y < canvas.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+      drawSplitBackground(prog);
+      ctx.fillStyle = 'rgba(5, 5, 5, 0.25)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (wState.hazardLine) {
+        ctx.save(); ctx.strokeStyle = cSys; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(canvas.width/2 - 30, canvas.height/2); ctx.lineTo(canvas.width/2 + 30, canvas.height/2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(canvas.width/2, canvas.height/2 - 30); ctx.lineTo(canvas.width/2, canvas.height/2 + 30); ctx.stroke();
+        ctx.setLineDash([]); const r1 = 15 + Math.sin(prog * Math.PI * 4) * 3;
+        ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, r1, 0, Math.PI*2); ctx.stroke();
+        ctx.fillStyle = cSys; ctx.font = '9px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillText('TARGET LOCKED', canvas.width/2, canvas.height/2 + 45); ctx.restore();
+      }
+
+      renderOrder.forEach(key => {
+        if (!wState[key]) return;
+        if (key === 'barcode') renderBarcodeLabel(prog);
+        if (key === 'profile1') renderProfile(elements.profile1, name1.value, danger1.value, 'SUB_01 [L]', cLeft);
+        if (key === 'profile2') renderProfile(elements.profile2, name2.value, danger2.value, 'SUB_02 [R]', cRight);
+        if (key === 'warningBox') renderWarningBox(prog);
+        if (key === 'logConsole') renderLogConsole(prog);
+      });
+
+      if (wState.hazardLine) { drawHazardStripe(0, 16, false); drawHazardStripe(canvas.height - 16, 16, true); }
+
+      // 자석 스냅 가이드라인 (드래그 시 정중앙/상하좌우 안내선 표시)
+      if ((draggingItem || draggingBackground) && !isExporting) {
+        if (snapGuides.x !== null) {
+          ctx.save(); ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+          ctx.beginPath(); ctx.moveTo(snapGuides.x, 0); ctx.lineTo(snapGuides.x, canvas.height); ctx.stroke(); ctx.restore();
+        }
+        if (snapGuides.y !== null) {
+          ctx.save(); ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+          ctx.beginPath(); ctx.moveTo(0, snapGuides.y); ctx.lineTo(canvas.width, snapGuides.y); ctx.stroke(); ctx.restore();
+        }
+      }
+
+      if (draggingItem && !isExporting) {
+        const it = elements[draggingItem];
+        ctx.save(); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        ctx.strokeRect(it.x - 2, it.y - 2, it.w + 4, it.h + 4); ctx.restore();
+      }
+    }
+
+    function renderBarcodeLabel(prog) {
+      const it = elements.barcode; ctx.save();
+      ctx.fillStyle = '#f8fafc'; ctx.fillRect(it.x, it.y, it.w, it.h);
+      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2; ctx.strokeRect(it.x + 4, it.y + 4, it.w - 8, it.h - 8);
+
+      ctx.fillStyle = '#0f172a';
+      const bars = [3, 1, 4, 2, 5, 2, 1, 4, 3, 2, 6, 2, 3, 1, 4, 2, 3];
+      let curX = it.x + 16;
+      bars.forEach((w, idx) => { if (idx % 2 === 0) ctx.fillRect(curX, it.y + 16, w, 32); curX += w + 2.5; });
+
+      const scanY = it.y + 16 + (Math.sin(prog * Math.PI * 2) * 0.5 + 0.5) * 32;
+      ctx.fillStyle = cSys; ctx.shadowColor = cSys; ctx.shadowBlur = 10;
+      ctx.fillRect(it.x + 12, scanY, it.w - 24, 2); ctx.shadowBlur = 0;
+
+      ctx.font = 'bold 12px "Share Tech Mono"'; ctx.textAlign = 'center'; ctx.fillStyle = '#0f172a';
+      ctx.fillText('DPA-0100 // OVERRIDE', it.x + it.w / 2, it.y + 64);
+      ctx.restore();
+    }
+
+    function renderProfile(it, rawName, rawDanger, label, color) {
+      const name = rawName.trim() || `UNKNOWN`;
+      const danger = parseInt(rawDanger) || 0;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(5, 5, 10, 0.85)'; ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+      ctx.fillRect(it.x, it.y, it.w, it.h); ctx.strokeRect(it.x, it.y, it.w, it.h);
+
+      ctx.fillStyle = color; ctx.fillRect(it.x, it.y, it.w, 18);
+      ctx.fillStyle = '#000000'; ctx.font = 'bold 11px "Share Tech Mono"'; ctx.textAlign = 'left';
+      ctx.fillText(label, it.x + 8, it.y + 13);
+
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 20px Pretendard';
+      ctx.fillText(name, it.x + 16, it.y + 46);
+
+      const barX = it.x + 16, barY = it.y + 62, barW = it.w - 32, barH = 8;
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(barX, barY, barW, barH);
+      
+      let shake = (danger > 80) ? (Math.random() - 0.5) * 3 : 0;
+      ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = danger > 80 ? 15 : 0;
+      ctx.fillRect(barX, barY, (barW * (danger / 100)) + shake, barH); ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#94a3b8'; ctx.font = '10px "Share Tech Mono"';
+      ctx.fillText(`DANGER_LVL : ${danger}%`, it.x + 16, it.y + 82);
+      ctx.restore();
+    }
+
+    function renderWarningBox(prog) {
+      const it = elements.warningBox;
+      const text = quoteText.value.trim() || quoteText.placeholder.replace('예: ', '');
+      if (!text) return;
+
+      ctx.save();
+      const isBlink = Math.sin(prog * Math.PI * 8) > 0;
+      ctx.fillStyle = isBlink ? cSys : 'rgba(10, 0, 0, 0.9)';
+      ctx.strokeStyle = cSys; ctx.lineWidth = 2;
+      ctx.fillRect(it.x, it.y, it.w, it.h); ctx.strokeRect(it.x, it.y, it.w, it.h);
+
+      ctx.fillStyle = isBlink ? '#ffffff' : cSys; ctx.font = 'bold 14px "Share Tech Mono"'; ctx.textAlign = 'left';
+      ctx.fillText('! SYSTEM_WARNING', it.x + 16, it.y + 24);
+
+      ctx.fillStyle = '#ffffff'; ctx.font = '500 13px Pretendard';
+      ctx.fillText(text.length > 20 ? text.slice(0, 20) + '...' : text, it.x + 16, it.y + 44);
+      ctx.restore();
+    }
+
+    function renderLogConsole(prog) {
+      const it = elements.logConsole;
+      ctx.save();
+
+      ctx.fillStyle = 'rgba(0, 0, 5, 0.85)'; ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; ctx.lineWidth = 1;
+      ctx.fillRect(it.x, it.y, it.w, it.h); ctx.strokeRect(it.x, it.y, it.w, it.h);
+
+      ctx.fillStyle = '#111111'; ctx.fillRect(it.x, it.y, it.w, 24);
+      ctx.fillStyle = cSys; ctx.font = 'bold 12px "Share Tech Mono"'; ctx.textAlign = 'left';
+      ctx.fillText('root@dopa-sys:~# tail -f /var/log/mind.log', it.x + 10, it.y + 16);
+
+      const total = logEntries.length;
+      const stepDur = 0.75 / total; 
+      let currentY = it.y + 42;
+
+      logEntries.forEach((log, idx) => {
+        const text = log.text.trim() || log.placeholder;
+        const entryProgStart = idx * stepDur;
+        
+        if (prog >= entryProgStart) {
+          let typeColor = '#94a3b8'; let label = '[SYS]';
+          if (log.type === 'left') { typeColor = cLeft; label = '[L_USR]'; }
+          if (log.type === 'right') { typeColor = cRight; label = '[R_USR]'; }
+          if (log.type === 'err') { typeColor = cSys; label = '[ERROR]'; }
+
+          ctx.font = 'bold 11px "Share Tech Mono"'; ctx.fillStyle = typeColor;
+          ctx.fillText(label, it.x + 12, currentY);
+
+          const localProg = Math.min(1, (prog - entryProgStart) / (stepDur * 0.8));
+          const charCount = Math.ceil(localProg * text.length);
+          const showText = text.substring(0, charCount);
+
+          ctx.font = '12.5px Pretendard'; ctx.fillStyle = '#e2e8f0';
+          const lines = getWrappedLines(ctx, showText, it.w - 80);
+          
+          lines.forEach((line, lIdx) => {
+            ctx.fillText(line, it.x + 64, currentY + lIdx * 18);
+            if (lIdx === lines.length - 1 && localProg < 1) {
+              const lw = ctx.measureText(line).width;
+              ctx.fillStyle = typeColor;
+              ctx.fillRect(it.x + 64 + lw + 2, currentY - 10 + lIdx * 18, 6, 12);
+            }
+          });
+          currentY += 18 * lines.length + 12;
+        }
+      });
+
+      if (prog >= 0.75 && Math.floor(prog * 20) % 2 === 0) {
+        ctx.fillStyle = cSys; ctx.fillRect(it.x + 12, currentY, 8, 14);
+      }
+      ctx.restore();
+    }
+
+    draw(0);
+    function startPreviewLoop() {
+      stopPreviewLoop();
+      previewTimer = setInterval(() => {
+        if (isExporting) return;
+        animProgress = (animProgress + 0.007) % 1; draw(animProgress);
+      }, 50);
+    }
+    function stopPreviewLoop() { if (previewTimer) { clearInterval(previewTimer); previewTimer = null; } }
+    startPreviewLoop();
+
+    // ================= 고화질 내보내기 =================
+    const btnGenerateGIF = document.getElementById('btnGenerateGIF');
+    const btnGenerateMP4 = document.getElementById('btnGenerateMP4');
+    const loadingStatus = document.getElementById('loadingStatus');
+    const progressBar = document.getElementById('progressBar');
+    const statusMsg = document.getElementById('statusMsg');
+    const resultArea = document.getElementById('resultArea');
+    const previewMediaWrapper = document.getElementById('previewMediaWrapper');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnShareX = document.getElementById('btnShareX');
+
+    btnGenerateGIF.addEventListener('click', () => {
+      isExporting = true; stopPreviewLoop();
+      btnGenerateGIF.disabled = true; btnGenerateMP4.disabled = true;
+      loadingStatus.classList.remove('hidden'); resultArea.classList.add('hidden');
+      progressBar.style.width = '15%'; statusMsg.textContent = '> CAPTURING_FRAMES...';
+
+      const frames = [];
+      for (let i = 0; i < 20; i++) { draw(i / 20); frames.push(canvas.toDataURL('image/png')); }
+
+      progressBar.style.width = '45%'; statusMsg.textContent = '> ENCODING_GIF...';
+      gifshot.createGIF({
+        images: frames, gifWidth: 960, gifHeight: 540, interval: 0.25, sampleInterval: 2, numWorkers: 2
+      }, function(obj) {
+        isExporting = false; startPreviewLoop();
+        btnGenerateGIF.disabled = false; btnGenerateMP4.disabled = false;
+        loadingStatus.classList.add('hidden');
+        if (!obj.error) {
+          previewMediaWrapper.innerHTML = `<img src="${obj.image}" class="w-full h-full object-cover">`;
+          btnDownload.href = obj.image; btnDownload.download = `dopa_override_dual.gif`;
+          resultArea.classList.remove('hidden'); 
+        }
+      });
+    });
+
+    btnGenerateMP4.addEventListener('click', () => {
+      isExporting = true; stopPreviewLoop();
+      btnGenerateGIF.disabled = true; btnGenerateMP4.disabled = true;
+      loadingStatus.classList.remove('hidden'); resultArea.classList.add('hidden');
+      progressBar.style.width = '10%'; statusMsg.textContent = '> RECORDING_VIDEO_STREAM...';
+
+      draw(0.0);
+      const stream = canvas.captureStream(30);
+      let mimeType = 'video/mp4';
+      if (!MediaRecorder.isTypeSupported('video/mp4')) mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+      
+      let recorder;
+      try { recorder = new MediaRecorder(stream, { mimeType }); } catch (e) { recorder = new MediaRecorder(stream); }
+
+      const chunks = [];
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'video/mp4' });
+        const videoUrl = URL.createObjectURL(blob);
+        previewMediaWrapper.innerHTML = `<video src="${videoUrl}" autoplay loop muted playsinline class="w-full h-full object-cover"></video>`;
+        btnDownload.href = videoUrl; btnDownload.download = `dopa_override_dual.mp4`;
+        
+        isExporting = false; startPreviewLoop();
+        btnGenerateGIF.disabled = false; btnGenerateMP4.disabled = false;
+        loadingStatus.classList.add('hidden'); resultArea.classList.remove('hidden');
+        
+      };
+
+      recorder.start();
+      let currentFrame = 0; const totalSteps = 180;
+      const stepInterval = setInterval(() => {
+        draw(currentFrame / totalSteps); currentFrame++;
+        progressBar.style.width = `${Math.min(95, Math.round((currentFrame / totalSteps) * 100))}%`;
+        statusMsg.textContent = `> COMPILING_VIDEO (${Math.round(currentFrame / 30)}/6s)...`;
+        if (currentFrame >= totalSteps) { clearInterval(stepInterval); recorder.stop(); }
+      }, 33);
+    });
+
+    btnShareX.addEventListener('click', () => {
+      const url = window.location.href;
+      const text = encodeURIComponent(`[SYSTEM OVERRIDE] 사이버펑크 듀얼 페어틀 ⚠️\n#도파 #DOPA #페어틀 #사이버펑크 #자캐 #혐관\n`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+    });
+  </script>
+<script src="/shell/shell.js"></script>
+</body>
+</html>

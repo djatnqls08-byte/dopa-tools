@@ -36,7 +36,7 @@
     color: "#F0185E", showTape: true, showStamp: true, motion: true,
     photos: {}, pos: {}, off: {},
   };
-  const SLOTS = { s1: "왼쪽 인물", s2: "오른쪽 인물", e1: "증거 사진 1", e2: "증거 사진 2" };
+  const SLOTS = { s1: "A (왼쪽 폴라로이드)", s2: "B (오른쪽 폴라로이드)", e1: "증거 사진 1", e2: "증거 사진 2" };
   let S = JSON.parse(JSON.stringify(DEF));
   try { const v = JSON.parse(localStorage.getItem(LS) || "null"); if (v) S = Object.assign(JSON.parse(JSON.stringify(DEF)), v, { a: Object.assign({}, DEF.a, v.a), b: Object.assign({}, DEF.b, v.b) }); } catch (e) {}
   const gifs = {};   // 슬롯별 움짤 프레임 (dataURL 배열 · 저장 안 함)
@@ -208,7 +208,7 @@
   }
   function markOpts() { const sel = $("#markLine"); if (!sel) return; const cur = String(S.markLine); sel.innerHTML = `<option value="-1">동그라미 없음</option>` + S.tr.map((ln, i) => `<option value="${i}">${i + 1}번째 줄 · ${esc((ln.text || "").slice(0, 12))}</option>`).join(""); sel.value = cur; }
   function trRows() {
-    $("#trRows").innerHTML = S.tr.map((ln, i) => `<div class="cf-tr"><select data-k="tr.${i}.who" class="sh-field"><option value="a">왼쪽</option><option value="b">오른쪽</option><option value="-">없음</option></select><input data-k="tr.${i}.time" class="sh-field" maxlength="5" placeholder="02:14"><input data-k="tr.${i}.text" class="sh-field" maxlength="26" placeholder="대사"></div>`).join("");
+    $("#trRows").innerHTML = S.tr.map((ln, i) => `<div class="cf-tr"><select data-k="tr.${i}.who" class="sh-field"><option value="a">A</option><option value="b">B</option><option value="-">없음</option></select><input data-k="tr.${i}.time" class="sh-field" maxlength="5" placeholder="02:14"><input data-k="tr.${i}.text" class="sh-field" maxlength="26" placeholder="대사"></div>`).join("");
   }
   function cardRows() {
     $("#cardRows").innerHTML = S.cards.map((c, i) => `<div class="sh-col"><span class="sh-lab">증거 0${i + 1}</span><input data-k="cards.${i}.title" class="sh-field" maxlength="16" placeholder="제목"><input data-k="cards.${i}.desc" class="sh-field" maxlength="30" placeholder="한 줄 설명"></div>`).join("");

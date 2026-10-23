@@ -10,7 +10,7 @@
     nameA: "서태영", nameAEn: "SEO TAEYOUNG", riskA: 34, traitA1: "원칙주의", traitA2: "방심",
     nameB: "도가연", nameBEn: "DO GAYEON", riskB: 97, traitB1: "집요함", traitB2: "계획범", quoteB: "이제 이 화면, 내 거야.",
     bigText: "SYSTEM OVERRIDE", warnText: "접근 권한이 거부되었습니다.", marquee: "SUB_01 ⇄ SUB_02 /// OVERRIDE ///",
-    log1: "접속 확인 · 서태영", log1Type: "system", log2: "보고서 정리 끝. 로그아웃할게.", log2Type: "A", log3: "외부 접속 감지 · 포트 0427", log3Type: "error",
+    log1: "접속 확인 · {A}", log1Type: "system", log2: "보고서 정리 끝. 로그아웃할게.", log2Type: "A", log3: "외부 접속 감지 · 포트 0427", log3Type: "error",
     log4: "늦었어. 이미 들어와 있거든.", log4Type: "B", log5: "권한 이전 완료", log5Type: "system",
     colorSys: "#F0185E", colorA: "#F0185E", colorB: "#19E3EE",
     showCards: true, showLog: true, showWarn: true, showBarcode: true, showFrame: true, showMarquee: true,
@@ -57,7 +57,9 @@
   function frameOf(k, t) { const fr = gifs[k]; return fr && fr.length ? fr[Math.floor(t * fr.length * 2) % fr.length] : S.photos[k] || ""; }
   function render(t) {
     if (!inst) return;
-    inst.props = Object.assign({}, S.p, { t: S.motion ? t : 0.86, photoA: frameOf("A", t), photoB: frameOf("B", t) });
+    const nm = (v) => (typeof v === "string" ? v.replace(/\{A\}/g, S.p.nameA || "A").replace(/\{B\}/g, S.p.nameB || "B") : v);   // 글 속 {A} {B} 는 이름으로
+    const pp = {}; Object.entries(S.p).forEach(([k, v]) => (pp[k] = /^log\d$|^quoteB$|^warnText$|^marquee$|^bigText$/.test(k) ? nm(v) : v));
+    inst.props = Object.assign({}, pp, { t: S.motion ? t : 0.86, photoA: frameOf("A", t), photoB: frameOf("B", t) });
     const vals = inst.renderVals();
     const [sa, pa] = photoCss("A"), [sb, pb] = photoCss("B");
     Object.assign(vals, { photoASize: sa, photoAPos: pa, photoBSize: sb, photoBPos: pb });
@@ -79,7 +81,7 @@
     const mo = $("#neoMotion"); mo.checked = S.motion; mo.addEventListener("change", () => { S.motion = mo.checked; save(); });
   }
   function photoRows() {
-    $("#phRows").innerHTML = [["A", "왼쪽 인물 (화면 주인)"], ["B", "오른쪽 인물 (침입자)"]].map(([k, l]) => `<div class="sh-sec"><div class="sh-h"><b>${l}</b><span class="sh-status">${S.photos[k] ? (gifs[k] ? "움짤" : "사진") : "비어 있음"}</span></div>
+    $("#phRows").innerHTML = [["A", "A · 화면 주인"], ["B", "B · 침입자"]].map(([k, l]) => `<div class="sh-sec"><div class="sh-h"><b>${l}</b><span class="sh-status">${S.photos[k] ? (gifs[k] ? "움짤" : "사진") : "비어 있음"}</span></div>
       <label class="sh-upload"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>사진·움짤 넣기<input type="file" accept="image/*" data-up="${k}" hidden></label>
       <div class="sh-sub"><span>움짤이 멈춰 보이면</span><label>파일에서 고르기<input type="file" accept="*/*" data-up="${k}" hidden></label></div>
       <div class="sh-row"><span class="sh-lab">크기</span><input type="range" min="1" max="3" step="0.01" value="${(S.pos[k] || {}).z || 1}" data-zoom="${k}"></div>
