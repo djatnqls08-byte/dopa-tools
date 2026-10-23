@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>도삐의 무료 도구함 · DOPA</title>
-<meta name="description" content="캐릭터 이미지만 넣으면 끝 · 페어틀·세션카드 무료 도구 모음 · 가입 없음">
+<meta name="description" content="캐릭터 이미지만 넣으면 끝 · 페어틀 무료 도구 모음 · 가입 없음">
 <meta property="og:title" content="도삐의 무료 도구함 · DOPA">
-<meta property="og:description" content="캐릭터 이미지만 넣으면 끝 · 페어틀·세션카드 무료 도구 모음 · 가입 없음">
+<meta property="og:description" content="캐릭터 이미지만 넣으면 끝 · 페어틀 무료 도구 모음 · 가입 없음">
 <meta name="theme-color" content="#121314">
 <!-- 버셀 웹 분석 -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -58,7 +58,7 @@ footer a { color:var(--text); font-weight:700; }
   <header>
     <div class="brand"><img src="/logo.svg" alt="">DOPA · TOOLS</div>
     <h1>캐릭터 이미지만 넣으면 끝,<br><em>도삐의 무료 도구함</em></h1>
-    <p class="lead">페어틀·세션카드를 클릭 몇 번으로 만들어요. 가입 없이 바로 쓰고, PNG·GIF로 저장할 수 있어요.</p>
+    <p class="lead">페어틀을 클릭 몇 번으로 만들어요. 가입 없이 바로 쓰고, PNG·GIF로 저장할 수 있어요.</p>
     <div class="chips"><span class="chip">가입 <b>X</b></span><span class="chip">무료</span><span class="chip">새 틀 계속 추가</span></div>
   </header>
 
@@ -86,10 +86,11 @@ const FALLBACK = [
   { t: "디카 뷰파인더", d: "최애를 카메라에 담아보세요!", i: IMG + "prompt/1791382649485-bo0pa0.gif", l: "/viewfinder/", g: "페어틀", o: 2 },
   { t: "시스템 오버라이드", d: "시스템 에러! 사이버 터미널에서 만난 두 사람.", i: IMG + "prompt/1791391557710-6tdo3z.gif", l: "/override/", g: "페어틀", o: 3 },
   { t: "수사 보드", d: "내 페어의 은밀한 수사 기록을 붉은 실로 엮어보세요.", i: IMG + "link/1791420748115-tnu2g1.gif", l: "/board/", g: "페어틀", o: 4 },
-  { t: "시나리오 카드 만들기", d: "만들기 어려운 세션카드를 클릭으로 쉽게.", i: IMG + "link/1791423531798-57t1v2.jpg", l: "/card/", g: "세션카드", o: 5 },
 ];
 // 옛 개별 사이트 주소 → 이 사이트 안의 주소
-const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/", "dopa-card.vercel.app": "/card/" };
+const MOVED = { "dopa-pairframe.vercel.app": "/diary/", "dopa-gif.vercel.app": "/viewfinder/", "dopa-override.vercel.app": "/override/", "dopa-board.vercel.app": "/board/" };
+const HIDE = ["dopa-card.vercel.app"];   // 10/23 자기야: 세션카드 메이커는 도구함에서 뺀다 (앱 탐색 바로가기는 시트 그대로)
+const hidden = (u) => { try { return HIDE.includes(new URL(u, location.href).host); } catch (e) { return false; } };
 const local = (u) => { try { const x = new URL(u, location.href); if (MOVED[x.host]) return MOVED[x.host]; if (x.host === location.host) return x.pathname; return x.href; } catch (e) { return u; } };
 
 function csv(text) {
@@ -125,7 +126,7 @@ render(FALLBACK);
 fetch(SHEET).then((r) => r.ok ? r.text() : Promise.reject(r.status)).then((t) => {
   const [head, ...rows] = csv(t); const ix = (k) => head.findIndex((h) => h.trim() === k);
   const [on, ti, de, im, li, ta, or] = ["공개여부", "제목", "설명", "이미지", "링크", "태그", "순서"].map(ix);
-  const list = rows.filter((r) => String(r[on]).trim().toUpperCase() === "TRUE" && r[ti] && r[li])
+  const list = rows.filter((r) => String(r[on]).trim().toUpperCase() === "TRUE" && r[ti] && r[li] && !hidden(r[li].trim()))
     .map((r) => ({ t: r[ti].trim(), d: (r[de] || "").trim(), i: (r[im] || "").trim(), l: r[li].trim(), g: (r[ta] || "").trim(), o: Number(r[or]) || 0 }));
   if (list.length) render(list);
 }).catch(() => {});
