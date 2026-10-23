@@ -12,7 +12,7 @@
     
     <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 380px; background: linear-gradient(0deg, #0B0B0C 0%, rgba(11, 11, 12, 0) 100%); pointer-events: none;"></div>
     <sc-if value="{{ subMovie }}" hint-placeholder-val="{{ true }}"><div style="position: absolute; left: 0; right: 0; bottom: 300px; display: flex; justify-content: center; padding-left: 740px; padding-right: 420px; pointer-events: none; opacity: {{ subOp }};">
-      <div style="font-size: 30px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; color: #FFFFFF; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85), 0 0 1px #000000;">{{ subText }}</div>
+      <div style="font-size: 30px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; color: #FFFFFF; text-align: center; word-break: keep-all; text-wrap: balance; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85), 0 0 1px #000000;">{{ subText }}</div>
     </div></sc-if>
     <sc-if value="{{ subCard }}" hint-placeholder-val="{{ false }}">
       <div style="position: absolute; left: 770px; top: 410px; width: 380px; background: rgba(22, 23, 26, 0.88); border: 1px solid #2A2C2F; border-radius: 16px; padding: 16px 18px 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45); pointer-events: none;">
@@ -38,8 +38,8 @@
     <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1; color: #A3A6AB;">
       <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2BD576; box-shadow: 0 0 0 {{ liveRing }} rgba(43, 213, 118, {{ liveOp }});"></span>같이 보는 중</span>
       <div style="display: flex;">
-        <div style="width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 2px solid #0B0B0C; background: #2A2C2F;"><image-slot id="mv4-nav-a" shape="rect" placeholder=" "></image-slot></div>
-        <div style="width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 2px solid #0B0B0C; background: #2A2C2F; margin-left: -8px;"><image-slot id="mv4-nav-b" shape="rect" placeholder=" "></image-slot></div>
+        <div style="position: relative; width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 2px solid #0B0B0C; background: #2A2C2F;"><image-slot id="mv4-nav-a" shape="rect" placeholder=" "></image-slot></div>
+        <div style="position: relative; width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 2px solid #0B0B0C; background: #2A2C2F; margin-left: -8px;"><image-slot id="mv4-nav-b" shape="rect" placeholder=" "></image-slot></div>
       </div>
     </div>
   </div>
