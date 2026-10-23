@@ -183,7 +183,7 @@
   document.addEventListener("click", (e) => {
     const a = e.target.closest && e.target.closest("a"); if (!a) return;
     if (a.hasAttribute("download") && a.getAttribute("href")) { const ext = ((a.getAttribute("download") || "").split(".").pop() || "").toLowerCase(); track("save", { scene: /^(png|gif|mp4|webm)$/.test(ext) ? ext : "file" }); }
-    else if (/tumblbug\.com/.test(a.href)) track("tumblbug");
+    else if (/tumblbug\.com|tum\.bg/.test(a.href)) track("tumblbug");
   }, true);
 
   window.SH = { toast, open, close, setMode, zoom };
