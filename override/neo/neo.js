@@ -113,8 +113,8 @@
   function setupDrag() {
     let d = null;
     $("#stage").addEventListener("pointerdown", (e) => {
-      const el = e.target.closest("div"); if (!el) return;
-      if (!/url\(/.test(getComputedStyle(el).backgroundImage)) return;
+      // 사진 위에 얇은 장식 층이 덮여 있어서, 눌린 자리 아래 겹친 요소 중 사진 칸을 찾는다
+      const el = document.elementsFromPoint(e.clientX, e.clientY).find((x) => x.closest && x.closest("#canvas") && /url\(/.test(x.style.backgroundImage || "")); if (!el) return;
       const r = $("#stage").getBoundingClientRect(), k = e.clientX < r.left + r.width / 2 ? "A" : "B";   // 왼쪽 사진 = A, 오른쪽 = B
       if (!S.photos[k]) return; const p = Object.assign({ x: 50, y: 50, z: 1 }, S.pos[k]); d = { k, p, sx: e.clientX, sy: e.clientY, x: p.x, y: p.y }; $("#stage").setPointerCapture(e.pointerId); e.preventDefault();
     });
