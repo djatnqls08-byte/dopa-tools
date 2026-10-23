@@ -8,9 +8,9 @@
   const TOOLS = [
     { k: "diary", t: "비밀 다이어리", img: IMG + "link/1792141936943-wtl5ut.gif" },
     { k: "viewfinder", t: "디카 뷰파인더", img: IMG + "prompt/1791382649485-bo0pa0.gif" },
-    { k: "override", t: "시스템 오버라이드", img: IMG + "prompt/1791391557710-6tdo3z.gif" },
-    { k: "board", t: "수사 보드", img: IMG + "link/1791420748115-tnu2g1.gif" },
-    { k: "movie", t: "영화 감상", img: "/movie/thumb.png" },
+    { k: "override", t: "시스템 오버라이드", img: "/override/thumb.jpg" },
+    { k: "board", t: "수사 보드", img: "/board/thumb.jpg" },
+    { k: "movie", t: "영화 감상", img: "/movie/thumb.jpg" },
   ];
   const me = document.body.dataset.tool;
   const LS_MODE = "dopa_tools_mode";

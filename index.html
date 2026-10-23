@@ -183,7 +183,7 @@ const FALLBACK = [
 ];
 // 시트에 아직 줄이 없는 새 틀 (시트 '링크' 탭에 줄을 넣으면 그 줄이 대신 쓰인다)
 const LOCAL = [
-  { t: "영화 감상", d: "둘이 같이 본 영화, 티켓부터 리뷰까지.", i: "/movie/thumb.png", l: "/movie/", g: "페어틀", o: 5 },
+  { t: "영화 감상", d: "둘이 같이 본 영화, 티켓부터 리뷰까지.", i: "/movie/thumb.jpg", l: "/movie/", g: "페어틀", o: 5 },
   { t: "특수 격리실 00호", d: "그는 내 캐릭터의 이름을 기억한다. 갈래 길을 골라 살아남는 괴담.", i: "https://dopa-survival.vercel.app/og.png", l: "https://dopa-survival.vercel.app/?from=tools", g: "", o: 6 },
 ];
 // 옛 개별 사이트 주소 → 이 사이트 안의 주소
@@ -231,7 +231,8 @@ function render(list) {
   }).join("");
 }
 
-const withLocal = (list) => list.concat(LOCAL.filter((x) => !list.some((y) => local(y.l) === x.l)));
+const same = (a, b) => { try { const x = new URL(a, location.href), y = new URL(b, location.href); return (MOVED[x.host] || x.host + x.pathname) === (MOVED[y.host] || y.host + y.pathname) || local(a) === local(b); } catch (e) { return a === b; } };   // 주소 뒤 ?from= 은 무시
+const withLocal = (list) => list.concat(LOCAL.filter((x) => !list.some((y) => same(y.l, x.l))));
 render(withLocal(FALLBACK));
 fetch(SHEET).then((r) => (r.ok ? r.text() : Promise.reject(r.status))).then((t) => {
   const [head, ...rows] = csv(t); const ix = (k) => head.findIndex((h) => h.trim() === k);
