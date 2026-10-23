@@ -145,7 +145,9 @@
     const mk = $("#stage .cf-mark"), nt = $("#stage .cf-note"); if (!mk) return;
     const ml = Number(S.markLine), sp = $(`#stage .cf-type[data-i="${ml}"]`); if (!sp) return;
     const box = mk.parentNode, row = sp.parentNode.parentNode;
+    const shown = sp.textContent; sp.textContent = sp.dataset.full;   // 타이핑 중이어도 대사 전체 길이로 잰다
     const x = sp.parentNode.offsetLeft, y = row.offsetTop, w = Math.max(40, sp.offsetWidth);
+    sp.textContent = shown;
     mk.style.left = x - 12 + "px"; mk.style.top = y - 1 + "px"; mk.style.width = w + 24 + "px"; mk.style.transform = "rotate(-3deg)";
     if (nt) {
       const o = (S.off && S.off.note) || { x: 0, y: 0 }, room = box.clientWidth - (x + w + 22);
