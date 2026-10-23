@@ -188,8 +188,7 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 .sh-check2 input { width:20px; height:20px; accent-color:var(--accent); flex:none; }
 @media (max-width: 760px) { .sh-title { flex-wrap:wrap; } .sh-modes { order:3; } .sh-modes a { padding:5px 12px; font-size:.74rem; } }
 /* 우리 색판 */
-.sh-cpk { position:fixed; z-index:95; width:260px; padding:14px; border-radius:16px; background:var(--panel); border:1px solid var(--border2); box-shadow:0 20px 60px rgba(0,0,0,.45); display:flex; flex-direction:column; gap:12px; color:var(--text); font-family:inherit; }
-.sh-cpk.sheet { left:8px !important; right:8px; bottom:calc(8px + env(safe-area-inset-bottom, 0px)); top:auto !important; width:auto; }
+.sh-cpk { position:relative; width:100%; padding:14px; border-radius:14px; background:var(--panel2); border:1px solid var(--border2); display:flex; flex-direction:column; gap:12px; color:var(--text); font-family:inherit; }
 .sh-cpk-sv { position:relative; height:150px; border-radius:10px; cursor:crosshair; touch-action:none; }
 .sh-cpk-dot { position:absolute; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 2px 6px rgba(0,0,0,.4); pointer-events:none; }
 .sh .sh-cpk-hue { flex:none; -webkit-appearance:none; appearance:none; width:100%; height:14px; border-radius:7px; background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00) !important; }

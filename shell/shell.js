@@ -129,17 +129,17 @@
     code.addEventListener("input", () => { if (hexOk(code.value)) { [pk.h, pk.s, pk.v] = rgb2hsv(...h2r(norm(code.value))); paint(true); } else code.classList.add("bad"); });
     code.addEventListener("keydown", (e) => { if (e.key === "Enter") hidePk(); });
     el.querySelector(".sh-cpk-ok").onclick = hidePk;
-    document.addEventListener("pointerdown", (e) => { if (!el.hidden && !el.contains(e.target) && e.target !== pk.target) hidePk(); }, true);
+    document.addEventListener("pointerdown", (e) => { const row = pk.target && (pk.target.closest(".sh-color") || pk.target); if (!el.hidden && !el.contains(e.target) && !(row && row.contains(e.target))) hidePk(); }, true);
     addEventListener("keydown", (e) => { if (e.key === "Escape" && !el.hidden) hidePk(); });
     return pk;
   }
   function hidePk() { if (pk) { pk.el.hidden = true; pk.target = null; } }
   function showPk(cp) {
-    const p = picker(); p.target = null; p.load(cp.value || "#F0185E"); p.target = cp; p.el.hidden = false;
-    const r = cp.getBoundingClientRect(), w = p.el.offsetWidth, h = p.el.offsetHeight;
-    if (innerWidth <= 760) { p.el.classList.add("sheet"); p.el.style.left = ""; p.el.style.top = ""; }
-    else { p.el.classList.remove("sheet"); p.el.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left - w + r.width)) + "px"; p.el.style.top = (r.bottom + 8 + h > innerHeight ? Math.max(8, r.top - h - 8) : r.bottom + 8) + "px"; }
-    setTimeout(() => { const c = p.el.querySelector("input[type=text]"); if (innerWidth > 760) c.select(); }, 30);
+    const p = picker(), row = cp.closest(".sh-color") || cp;
+    if (!p.el.hidden && p.target === cp) { hidePk(); return; }   // 같은 줄을 다시 누르면 접는다
+    row.after(p.el);   // '직접 고르기' 줄 바로 밑에 펼친다 (10/23 자기야)
+    p.target = null; p.load(cp.value || "#F0185E"); p.target = cp; p.el.hidden = false;
+    p.el.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
   document.addEventListener("click", (e) => { const cp = e.target.closest && e.target.closest('input[type="color"]'); if (!cp) return; e.preventDefault(); showPk(cp); }, true);
 
