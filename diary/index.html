@@ -69,7 +69,7 @@
     </div>
     <div class="sh-canvas dc" id="shCanvas"><div id="stageBox"><div id="zoomer"><div id="stage"><div id="canvas"></div></div></div></div></div>
     <div class="sh-under">
-      <button type="button" class="sh-btn sm" id="zoom">🔍 크게 보기</button>
+      <button type="button" class="sh-btn sm sh-zoombtn" id="shZoom"><svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>크게 보기</button><button type="button" id="zoom" hidden></button>
       <span id="status" role="status"></span>
     </div>
     <div id="stTools" hidden>
@@ -152,7 +152,7 @@
   const st = document.getElementById("status"), dl = document.getElementById("dlStatus");
   new MutationObserver(() => { dl.textContent = st.textContent; }).observe(st, { childList: true, characterData: true, subtree: true });
   const stage = document.getElementById("stage"), cv = document.getElementById("shCanvas");
-  const ratio = () => { const w = parseFloat(stage.style.width) || 1600, h = parseFloat(stage.style.height) || 900; cv.style.maxWidth = `min(100%, calc((100vh - 230px) * ${w / h}))`; };
+  const ratio = () => { const w = parseFloat(stage.style.width) || 1600, h = parseFloat(stage.style.height) || 900; cv.style.maxWidth = `min(100%, calc((100vh - 230px) * ${w / h}))`; cv.style.setProperty("--ar", String(w / h)); };
   new MutationObserver(ratio).observe(stage, { attributes: true, attributeFilter: ["style"] }); ratio();
   new ResizeObserver(() => window.dispatchEvent(new Event("resize"))).observe(cv);
 })();

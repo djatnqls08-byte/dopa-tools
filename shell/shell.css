@@ -170,3 +170,12 @@ body.sh { padding:0 !important; min-height:0 !important; }
 .sh-dots { display:flex; flex-wrap:wrap; gap:10px; }
 .sh-dots .color-btn { width:34px; height:34px; border-radius:50%; border:2px solid var(--border2); cursor:pointer; }
 .sh-dots .color-btn.on { outline:2px solid var(--text); outline-offset:2px; }
+/* 크게 보기: 화면 가득 띄워서 보기 (10/23 자기야 "크게보기가 너무 후져") — 편집·끌기는 그대로 된다 */
+.sh-zoombtn { align-self:center; }
+.sh-zoombg { position:fixed; inset:0; z-index:70; background:rgba(8,8,10,.88); backdrop-filter:blur(4px); }
+.sh-zoomx { position:fixed; z-index:76; top:max(14px, env(safe-area-inset-top)); right:max(14px, env(safe-area-inset-right)); width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.12); color:#fff; font-size:1.4rem; cursor:pointer; }
+body.sh-zoomed { overflow:hidden; }
+body.sh-zoomed .sh-center { z-index:75; }
+body.sh-zoomed .sh-canvas { position:fixed; z-index:72; left:50%; top:50%; transform:translate(-50%,-50%); width:min(96vw, calc((100dvh - 96px) * var(--ar, 1.7778))); max-width:none !important; border-radius:12px; box-shadow:0 30px 90px rgba(0,0,0,.6); }
+body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body.sh-zoomed .sh-zoombtn { visibility:hidden; }
+@media (max-width: 760px) { .sh-zoombtn { padding:6px 10px; font-size:.76rem; } }

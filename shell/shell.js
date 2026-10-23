@@ -82,5 +82,21 @@
   function stickyH() { if (center) document.documentElement.style.setProperty("--sticky-h", center.getBoundingClientRect().height + "px"); }
   addEventListener("resize", stickyH); if (window.ResizeObserver && center) new ResizeObserver(stickyH).observe(center); stickyH();
 
-  window.SH = { toast, open, close, setMode };
+  // 크게 보기: 화면 가득 (닫기 = × · 바깥 누르기 · Esc)
+  const cvs = $(".sh-canvas");
+  function zoom(on) {
+    document.body.classList.toggle("sh-zoomed", on);
+    let bg = $(".sh-zoombg"), x = $(".sh-zoomx");
+    if (on && !bg) { bg = document.createElement("div"); bg.className = "sh-zoombg"; bg.onclick = () => zoom(false); document.body.appendChild(bg); x = document.createElement("button"); x.className = "sh-zoomx"; x.setAttribute("aria-label", "크게 보기 닫기"); x.textContent = "×"; x.onclick = () => zoom(false); document.body.appendChild(x); }
+    if (bg) bg.hidden = !on; if (x) x.hidden = !on;
+    dispatchEvent(new Event("resize"));
+  }
+  if (cvs) {
+    let zb = $("#shZoom");
+    if (!zb) { zb = document.createElement("button"); zb.id = "shZoom"; zb.type = "button"; zb.className = "sh-btn sm sh-zoombtn"; zb.innerHTML = '<svg class="i" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>크게 보기'; cvs.after(zb); }
+    zb.addEventListener("click", () => zoom(true));
+    addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.classList.contains("sh-zoomed")) zoom(false); });
+  }
+
+  window.SH = { toast, open, close, setMode, zoom };
 })();
