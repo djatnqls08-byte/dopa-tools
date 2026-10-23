@@ -65,6 +65,7 @@
       <a class="sh-mback" href="/" aria-label="도구함으로"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
       <span class="sh-pill">#페어틀</span>
       <h1>비밀 다이어리</h1>
+      <nav class="sh-modes" id="tplModes" aria-label="틀 모양"><button type="button" data-tpl="diary">다이어리</button><button type="button" data-tpl="os">민트 OS</button><button type="button" data-tpl="square">정사각</button></nav>
       <p>너와 처음 만난 날, 둘만의 기억을 남기다.</p>
     </div>
     <div class="sh-canvas dc" id="shCanvas"><div id="stageBox"><div id="zoomer"><div id="stage"><div id="canvas"></div></div></div></div></div>
@@ -112,8 +113,7 @@
       </div>
       <div class="sh-pane" data-pane="deco" hidden>
         <div class="sh-sec">
-          <div class="sh-h"><b>틀 모양</b></div>
-          <select id="tpl" class="sh-field" aria-label="틀 고르기"></select>
+          <select id="tpl" hidden aria-hidden="true"></select>
           <label class="sh-check">움직이는 효과<input type="checkbox" id="anim" checked></label>
         </div>
         <div class="sh-sec">
@@ -167,6 +167,11 @@
   const paint = () => { const v = sel.value, c = TC[v] || TC["딸기우유"]; chips.forEach((b) => b.classList.toggle("on", b.dataset.theme === v)); document.documentElement.style.setProperty("--accent", c[0]); document.documentElement.style.setProperty("--glow", c[1]); };
   chips.forEach((b) => b.addEventListener("click", () => { sel.value = b.dataset.theme; sel.dispatchEvent(new Event("change")); paint(); }));
   setTimeout(paint, 0);
+  // 틀 모양: 제목 옆 모드 버튼 (수사 보드·오버라이드와 같은 모양 · 10/23 자기야)
+  const tpl = document.getElementById("tpl"), modes = [...document.querySelectorAll("#tplModes [data-tpl]")];
+  const syncTpl = () => modes.forEach((b) => b.classList.toggle("on", b.dataset.tpl === tpl.value));
+  modes.forEach((b) => b.addEventListener("click", () => { if (tpl.value === b.dataset.tpl) return; tpl.value = b.dataset.tpl; tpl.dispatchEvent(new Event("change")); syncTpl(); }));
+  const waitTpl = setInterval(() => { if (tpl.options.length) { clearInterval(waitTpl); syncTpl(); } }, 100);
 })();
 </script>
 <script src="/shell/shell.js"></script>

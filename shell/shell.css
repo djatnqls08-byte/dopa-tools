@@ -210,3 +210,6 @@ body.sh-zoomed .sh-title, body.sh-zoomed .sh-tip, body.sh-zoomed .sh-under, body
 /* 구역 사이 구분선이 위 버튼에 딱 붙던 것 (10/23 '회색 라인') → 구분선 위아래로 같은 여백 */
 .sh-pane { display:flex; flex-direction:column; }
 .sh-sec + .sh-sec { margin-top:20px; }
+.sh-modes button { padding:6px 14px; border-radius:999px; border:0; background:none; font-size:.8rem; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit; }
+.sh-modes button.on { background:var(--accent); color:#fff; }
+@media (max-width: 760px) { .sh-modes button { padding:5px 12px; font-size:.74rem; } }
