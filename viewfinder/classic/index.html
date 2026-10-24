@@ -1055,16 +1055,7 @@
       draw(0.0);
 
       const stream = canvas.captureStream(30);
-      let mimeType = 'video/mp4';
-      if (!MediaRecorder.isTypeSupported('video/mp4')) {
-        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-          mimeType = 'video/webm;codecs=vp9';
-        } else if (MediaRecorder.isTypeSupported('video/webm')) {
-          mimeType = 'video/webm';
-        } else {
-          mimeType = '';
-        }
-      }
+      let mimeType = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1.4d0028', 'video/mp4;codecs=avc1.42E01F', 'video/mp4;codecs=avc1', 'video/webm;codecs=vp9', 'video/webm'].find((t) => MediaRecorder.isTypeSupported(t)) || ''; /* X는 VP9 MP4를 거부 → H.264 먼저 */
 
       let recorder;
       try {
