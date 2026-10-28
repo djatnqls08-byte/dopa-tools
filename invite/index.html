@@ -125,7 +125,6 @@ h1{font-family:GmarketSans,Pretendard,sans-serif;font-size:clamp(44px,13vw,64px)
 </style>
 </head>
 <body>
-
 <main class="wrap">
   <div class="top">
     <div><img class="logo logo-dark" src="dopa-logo-h-night.svg" alt="DOPA">
@@ -190,5 +189,17 @@ h1{font-family:GmarketSans,Pretendard,sans-serif;font-size:clamp(44px,13vw,64px)
 
   <p class="foot">DOPA studio · X <a href="https://x.com/DOPA_studio" target="_blank" rel="noopener">@DOPA_studio</a></p>
 </main>
+<script>
+/* 숫자 세기: 도구함(shell.js)과 같은 survival_events 표 · ep=invite · view = 페이지 열림, start = 신청서 버튼 누름 · src 는 ?src= (없으면 ?from=, referrer) */
+(() => {
+  if (!/dopa-tools\.vercel\.app$/.test(location.host)) return;
+  const T_SB = "https://qytikqvngyvrszjygbbn.supabase.co", T_PK = "sb_publishable_h-nZS3_gVKpcLxgowjGK_Q_mr4bFXAp";
+  const tsrc = (() => { try { const p = new URLSearchParams(location.search); const q = p.get("src") || p.get("from"); const r = document.referrer ? new URL(document.referrer).host : ""; const v = q || (/t\.co$|x\.com$|twitter\.com$/.test(r) ? "x" : /threads/.test(r) ? "threads" : r && r !== location.host ? r : ""); if (v) sessionStorage.setItem("dopa_tools_src", v.slice(0, 40)); return sessionStorage.getItem("dopa_tools_src") || "direct"; } catch (e) { return "direct"; } })();
+  const tsid = (() => { try { let v = sessionStorage.getItem("dopa_tools_sid"); if (!v) { v = Math.random().toString(36).slice(2, 12); sessionStorage.setItem("dopa_tools_sid", v); } return v; } catch (e) { return ""; } })();
+  function track(ev) { try { fetch(`${T_SB}/rest/v1/survival_events`, { method: "POST", keepalive: true, headers: { apikey: T_PK, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ ev, ep: "invite", sid: tsid, src: tsrc }) }).catch(() => {}); } catch (e) {} }
+  track("view");
+  document.addEventListener("click", (e) => { const a = e.target.closest("a"); if (a && /docs\.google\.com\/forms/.test(a.href)) track("start"); });
+})();
+</script>
 </body>
 </html>
