@@ -68,6 +68,16 @@ h1 em { font-style:normal; color:var(--accent); }
 .chips { display:flex; flex-wrap:wrap; gap:8px; }
 .chip { display:inline-flex; align-items:center; gap:6px; padding:7px 13px; border-radius:999px; border:1px solid var(--border2); background:var(--panel); font-size:.8rem; font-weight:700; }
 .chip b { color:var(--accent); }
+/* 맛보기 초대장 띠 (10/29) */
+.inv { display:flex; align-items:center; gap:18px; margin:0 0 36px; padding:18px 20px; border-radius:18px; border:1px solid color-mix(in srgb, var(--accent) 40%, transparent); background:linear-gradient(120deg, color-mix(in srgb, var(--accent) 12%, var(--panel)), var(--panel) 70%); transition:transform .2s, border-color .2s; }
+.inv:hover { transform:translateY(-2px); border-color:var(--accent); }
+.inv-ic { flex:none; width:48px; height:48px; border-radius:14px; display:grid; place-items:center; background:var(--accent); color:#fff; }
+.inv-ic svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.inv-tx { display:flex; flex-direction:column; gap:4px; min-width:0; flex:1; }
+.inv-tx strong { font-size:1.05rem; letter-spacing:-.02em; word-break:keep-all; }
+.inv-tx span { color:var(--muted); font-size:.86rem; word-break:keep-all; }
+.inv-go { flex:none; display:inline-flex; align-items:center; gap:6px; padding:12px 16px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:.9rem; white-space:nowrap; }
+.inv-go svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 
 .sec-h { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:8px 0 16px; }
 .sec-h h2 { margin:0; font-size:1.25rem; font-weight:800; letter-spacing:-.02em; }
@@ -123,6 +133,8 @@ footer a { color:var(--text); font-weight:700; }
   .grid, .how { grid-template-columns:minmax(0, 1fr); }
   .top .x-link span { display:none; }
   .cta { padding:22px; }
+  .inv { flex-wrap:wrap; gap:14px; padding:16px; }
+  .inv-go { width:100%; justify-content:center; }
 }
 </style>
 </head>
@@ -150,6 +162,12 @@ footer a { color:var(--text); font-weight:700; }
       <span class="tb-go">알림 신청하기 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
   </section>
+
+  <a class="inv" href="/invite/" aria-label="도파 맛보기 초대장 신청 페이지 열기">
+    <span class="inv-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2.4"/></svg></span>
+    <span class="inv-tx"><strong>도파 맛보기 초대장 · 1차 20명</strong><span>정식 오픈 전에 먼저 맛봐 주세요 · 라이트 50턴 + 플래시 50턴 · 11/2(월) 23:59 마감</span></span>
+    <span class="inv-go">초대장 신청하기 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+  </a>
 
   <div class="sec-h"><h2>페어틀 · 놀거리</h2><span id="count"></span></div>
   <main class="grid" id="grid" aria-live="polite"></main>
@@ -257,6 +275,7 @@ document.addEventListener("click", (e) => {
   const a = e.target.closest("a"); if (!a) return;
   if (a.dataset.tool) track("start", { scene: (local(a.getAttribute("href")).replace(/\//g, "") || "ext").slice(0, 10) });
   else if (a.classList.contains("tb")) track("tumblbug");
+  else if (a.classList.contains("inv")) track("invite");
 });
 </script>
 </body>
