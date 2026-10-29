@@ -152,7 +152,7 @@
     const HQ = /[?&]hq=1/.test(location.search), FPS = HQ ? 30 : 20, N = FPS * LOOP / 1000, vw = HQ ? 1600 : 1280, vh = HQ ? 900 : 720, frames = [];   // 10/23 자기야 "화질 후짐" → 720p·초당 20장 (?hq=1 이면 1600×900·30장)
     for (let f = 0; f < N; f++) { status(`영상 장면 만드는 중… ${f + 1}/${N}`); frames.push(await shot(S.motion ? f / N : 0.86, vw, vh)); }
     const rec = document.createElement("canvas"); rec.width = vw; rec.height = vh; const rx = rec.getContext("2d"); rx.drawImage(frames[0], 0, 0);
-    const stream = rec.captureStream(30); const mime = ["video/mp4;codecs=avc1.640028", "video/mp4;codecs=avc1.4d0028", "video/mp4;codecs=avc1.42E01F", "video/mp4;codecs=avc1", "video/webm;codecs=vp9", "video/webm"].find((t) => window.MediaRecorder \&\& MediaRecorder.isTypeSupported(t)) || "video/webm"; /* X는 VP9 MP4를 거부 → H.264(avc1) 먼저 */
+    const stream = rec.captureStream(30); const mime = ["video/mp4;codecs=avc1.640028", "video/mp4;codecs=avc1.4d0028", "video/mp4;codecs=avc1.42E01F", "video/mp4;codecs=avc1", "video/webm;codecs=vp9", "video/webm"].find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || "video/webm"; /* X는 VP9 MP4를 거부 → H.264(avc1) 먼저 */
     const mr = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: HQ ? 16e6 : 10e6 }); const chunks = []; mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((ok) => (mr.onstop = ok)); mr.start(); status("영상으로 묶는 중… 5초");
     for (let f = 0; f < N; f++) { rx.drawImage(frames[f], 0, 0); await new Promise((r) => setTimeout(r, 1000 / FPS)); }
